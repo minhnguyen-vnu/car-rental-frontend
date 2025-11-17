@@ -1,0 +1,120 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>Create Account</h2>
+
+    <!-- Success message -->
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <!-- Error message -->
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Register form -->
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Username <span class="required">*</span></label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="username"
+          placeholder="Only lowercase letters (6-50 chars)"
+          [disabled]="loading"
+          required
+        />
+        <small class="hint">Only lowercase letters, 6-50 characters</small>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email <span class="required">*</span></label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="your@email.com"
+          [disabled]="loading"
+          required
+        />
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label for="phone">Phone <span class="required">*</span></label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          [(ngModel)]="phone"
+          placeholder="+84xxxxxxxxx or 0xxxxxxxxx"
+          [disabled]="loading"
+          required
+        />
+        <small class="hint">9-11 digits, can start with +</small>
+      </div>
+
+      <!-- Real Name -->
+      <div class="form-group">
+        <label for="realName">Full Name <span class="required">*</span></label>
+        <input
+          type="text"
+          id="realName"
+          name="realName"
+          [(ngModel)]="realName"
+          placeholder="Your full name (6-50 chars)"
+          [disabled]="loading"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password <span class="required">*</span></label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="6-50 characters"
+          [disabled]="loading"
+          required
+        />
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          placeholder="Re-enter password"
+          [disabled]="loading"
+          required
+        />
+      </div>
+
+      <!-- Submit button -->
+      <button
+        type="submit"
+        class="btn-register"
+        [disabled]="loading || !registerForm.valid"
+      >
+        <span *ngIf="!loading">Register</span>
+        <span *ngIf="loading">Creating account...</span>
+      </button>
+    </form>
+
+    <!-- Login link -->
+    <div class="login-link">
+      Already have an account?
+      <a routerLink="/login">Login here</a>
+    </div>
+  </div>
+</div>
