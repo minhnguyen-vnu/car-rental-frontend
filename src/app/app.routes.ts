@@ -2,28 +2,35 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  // Public routes
+
+   // truy cập http://localhost:4200/test-search
+{
+  path: 'test-search',                    
+  loadComponent: () => import('./features/fleet/search/search.component')
+                       .then(m => m.SearchComponent)
+},
+
+  // Public
   {
     path: 'login',
-    loadComponent: () => import('./features/fleet/search/search.component').then(m => m.SearchComponent)
+    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
   },
 
-  // Protected route - Search Vehicle
+  // Protected
   {
     path: 'search',
     canActivate: [authGuard],
     loadComponent: () => import('./features/fleet/search/search.component').then(m => m.SearchComponent)
   },
 
-  // Default route (sau khi login thì chuyển về search)
+  // Default: chưa login → login, đã login → search
   {
     path: '',
-    redirectTo: '/search',
-    pathMatch: 'full',
-    canActivate: [authGuard]   // bảo vệ luôn cả redirect
+    canActivate: [authGuard], 
+    loadComponent: () => import('./features/fleet/search/search.component').then(m => m.SearchComponent)
   },
 
-  // 404 - vẫn giữ login để người chưa đăng nhập không bị lạc
+  // 404
   {
     path: '**',
     redirectTo: '/login'

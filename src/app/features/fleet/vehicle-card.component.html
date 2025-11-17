@@ -1,0 +1,26 @@
+
+    <div class="vehicle-card">
+      <!-- Ảnh xe (tạm dùng placeholder) -->
+      <div class="car-image">
+        <img src="" alt="Xe">
+      </div>
+
+      <!-- Thông tin chính -->
+      <div class="car-info">
+        <h3>{{ vehicle.brand }} {{ vehicle.model }}</h3>
+        <p><strong>Biển số:</strong> {{ vehicle.licensePlate }}</p>
+        <p><strong>Mã xe:</strong> {{ vehicle.vehicleCode }}</p>
+        <p><strong>Loại:</strong> {{ vehicle.vehicleType }} • {{ vehicle.seats }} chỗ</p>
+        <p><strong>Giá thuê:</strong> {{ vehicle.basePrice | number }} đ/ngày</p>
+        <p><strong>Trạng thái:</strong>
+          <span [class]="vehicle.status === 'AVAILABLE' ? 'status-available' : 'status-other'">
+            {{ vehicle.status === 'AVAILABLE' ? 'Sẵn sàng' : 'Bảo trì' }}
+          </span>
+        </p>
+      </div>
+
+      <!-- Nút xem chi tiết -->
+      <div class="car-actions">
+        <button class="btn-detail">Xem chi tiết</button>
+      </div>
+    </div>

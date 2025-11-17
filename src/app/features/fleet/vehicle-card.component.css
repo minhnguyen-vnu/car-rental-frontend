@@ -1,0 +1,64 @@
+.vehicles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.vehicle-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: white;
+}
+
+.car-image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.car-info {
+  padding: 16px;
+}
+
+.car-info h3 {
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+}
+
+.car-info p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.status-available { color: #28a745; font-weight: bold; }
+.status-other { color: #dc3545; font-weight: bold; }
+
+.car-actions {
+  padding: 0 16px 16px;
+}
+
+.btn-detail {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-detail:hover {
+  background: #0056b3;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+  font-size: 18px;
+}
