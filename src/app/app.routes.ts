@@ -5,17 +5,25 @@ export const routes: Routes = [
   // Public routes
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
+    loadComponent: () => import('./features/fleet/search/search.component').then(m => m.SearchComponent)
   },
 
-  // Default route
+  // Protected route - Search Vehicle
+  {
+    path: 'search',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/fleet/search/search.component').then(m => m.SearchComponent)
+  },
+
+  // Default route (sau khi login thì chuyển về search)
   {
     path: '',
-    redirectTo: '/login',
-    pathMatch: 'full'
+    redirectTo: '/search',
+    pathMatch: 'full',
+    canActivate: [authGuard]   // bảo vệ luôn cả redirect
   },
 
-  // 404
+  // 404 - vẫn giữ login để người chưa đăng nhập không bị lạc
   {
     path: '**',
     redirectTo: '/login'
