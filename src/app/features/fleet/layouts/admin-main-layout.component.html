@@ -1,0 +1,39 @@
+<div class="admin-layout">
+  <!-- Thanh điều hướng -->
+  <header class="admin-header">
+    <h2>Quản lý xe</h2>
+    <nav class="admin-tabs">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'search'"
+        (click)="setTab('search')">
+        Tìm kiếm xe
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'add'"
+        (click)="setTab('add')">
+        Thêm xe mới
+      </button>
+    </nav>
+  </header>
+
+  <!-- Container nội dung -->
+  <main class="admin-content">
+    @switch (activeTab) {
+      @case ('search') {
+        <app-search role="admin"></app-search>
+      }
+      @case ('add') {
+        <div class="add-vehicle-page">
+          <h3>Thêm xe mới</h3>
+          <app-info-form
+            mode="create"
+            (save)="onVehicleAdded()"
+            (cancel)="setTab('search')">
+          </app-info-form>
+        </div>
+      }
+    }
+  </main>
+</div>

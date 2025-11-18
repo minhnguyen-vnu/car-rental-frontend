@@ -61,4 +61,44 @@ export class VehicleService {
       })
     );
   }
+  updateVehicle(request: VehicleRequestDTO): Observable<GeneralResponse<VehicleResponseDTO>> {
+    return this.http.put<GeneralResponse<VehicleResponseDTO>>(`${this.baseUrl}/update`, request).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 404 || err.status === 0) {
+          console.warn('Mock: Cập nhật xe ID', request.id);
+          const updated = { ...request, id: request.id! } as VehicleResponseDTO;
+          const idx = this.mockData.findIndex(v => v.id === request.id);
+          if (idx !== -1) this.mockData[idx] = updated;
+          return of({
+            status: 'SUCCESS' as any,
+            data: updated,
+            message: 'Cập nhật thành công (mock)'
+          }).pipe(delay(600));
+        }
+        throw err;
+      })
+    );
+  }
+
+  removeVehicle(id: number): Observable<GeneralResponse<null>> {
+    return this.http.delete<GeneralResponse<null>>(`${this.baseUrl}/remove`, { body: { id } }).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 404 || err.status === 0) {
+          console.warn('Mock: Xóa xe ID', id);
+          this.mockData = this.mockData.filter(v => v.id !== id);
+          return of({
+            status: 'SUCCESS' as any,
+            data: null,
+            message: 'Xóa thành công (mock)'
+          }).pipe(delay(400));
+        }
+        throw err;
+      })
+    );
+  }
+
+  addVehicle(request: VehicleRequestDTO): Observable<GeneralResponse<VehicleResponseDTO>> {
+    return this.http.post<GeneralResponse<VehicleResponseDTO>>(`${this.baseUrl}/add`, request);
+  }
+
 }

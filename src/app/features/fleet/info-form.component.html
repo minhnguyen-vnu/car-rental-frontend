@@ -1,0 +1,101 @@
+<div class="info-form">
+  <h2>{{ title }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+
+    <div class="field">
+      <label>ID</label>
+    <input type="text" formControlName="id" readonly>
+    </div>
+
+    <div class="field">
+      <label>Mã xe <span class="req">*</span></label>
+      <input type="text" formControlName="vehicleCode">
+      <small class="error" *ngIf="hasError('vehicleCode', 'required')">Bắt buộc</small>
+    </div>
+
+    <div class="field">
+      <label>Biển số <span class="req">*</span></label>
+      <input type="text" formControlName="licensePlate" placeholder="51H-12345">
+      <small class="error" *ngIf="hasError('licensePlate', 'pattern')">Sai định dạng</small>
+    </div>
+
+    <div class="field">
+      <label>Hãng xe <span class="req">*</span></label>
+      <input type="text" formControlName="brand">
+    </div>
+
+    <div class="field">
+      <label>Mẫu xe <span class="req">*</span></label>
+      <input type="text" formControlName="model">
+    </div>
+
+    <div class="field">
+      <label>Loại xe</label>
+      <select formControlName="vehicleType">
+        <option>Sedan</option><option>SUV</option><option>MPV</option><option>Hatchback</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Số ghế</label>
+      <input type="number" formControlName="seats">
+    </div>
+
+    <div class="field">
+      <label>Hộp số</label>
+      <select formControlName="transmission">
+        <option>Tự động</option><option>Số sàn</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Nhiên liệu</label>
+      <select formControlName="fuelType">
+        <option>Xăng</option><option>Dầu</option><option>Điện</option><option>Hybrid</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Màu sắc</label>
+      <input type="text" formControlName="color">
+    </div>
+
+    <div class="field">
+      <label>Năm sản xuất</label>
+      <input type="number" formControlName="year">
+    </div>
+
+    <div class="field">
+      <label>Giá thuê/ngày (đ)</label>
+      <input type="number" formControlName="basePrice">
+    </div>
+
+    <div class="field">
+      <label>Trạng thái</label>
+      <select formControlName="status">
+        <option value="AVAILABLE">Sẵn sàng</option>
+        <option value="MAINTENANCE">Bảo trì</option>
+        <option value="RENTED">Đang thuê</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Chi nhánh ID</label>
+      <input type="number" formControlName="branchId">
+    </div>
+
+    <div class="field">
+      <label>Thời gian quay đầu (phút)</label>
+      <input type="number" formControlName="turnaroundMinutes">
+    </div>
+
+    <!-- Nút chỉ hiện khi editMode = true -->
+    <div class="form-actions" *ngIf="showActions">
+      <button type="button" class="btn-cancel" (click)="onCancel()">Hủy</button>
+      <button type="submit" class="btn-save" [disabled]="form.invalid || isSubmitting">
+        {{ isSubmitting ? 'Đang lưu...' : (mode === 'create' ? 'Thêm xe' : 'Lưu thay đổi') }}
+      </button>
+    </div>
+  </form>
+</div>

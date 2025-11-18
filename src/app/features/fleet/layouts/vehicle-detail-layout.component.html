@@ -1,0 +1,37 @@
+<div class="detail-layout">
+  <!-- Header -->
+  <div class="header">
+    <button class="btn-back" (click)="router.navigate([mode === 'admin' ? '/admin' : '/search'])">
+      ← Quay lại
+    </button>
+    <h1>Chi tiết xe</h1>
+    <div class="header-actions">
+      <!-- Chỉ admin mới thấy -->
+      <button *ngIf="mode === 'admin' && !editMode" class="btn-edit" (click)="startEdit()">
+        Cập nhật
+      </button>
+      <button *ngIf="mode === 'admin' && !editMode" class="btn-delete" (click)="confirmDelete()">
+        Xóa xe
+      </button>
+
+      <!-- Chỉ customer thấy -->
+      <button *ngIf="mode === 'customer'" class="btn-rent" (click)="onRent()">
+        Thuê xe ngay
+      </button>
+    </div>
+  </div>
+
+  <!-- Nội dung -->
+  <div class="detail-content" *ngIf="vehicle && !loading; else loadingTpl">
+    <app-info-form
+      [vehicle]="vehicle"
+      [mode]="editMode ? 'edit' : 'view'"
+      (save)="onSaved($event)"
+      (cancel)="onCancelEdit()">
+    </app-info-form>
+  </div>
+
+  <ng-template #loadingTpl>
+    <p class="loading">Đang tải thông tin xe...</p>
+  </ng-template>
+</div>
