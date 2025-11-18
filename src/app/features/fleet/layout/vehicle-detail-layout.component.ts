@@ -1,8 +1,8 @@
 // src/app/features/fleet/layouts/vehicle-detail-layout/vehicle-detail-layout.component.ts
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VehicleService, VehicleResponseDTO } from '../../../core/services/vehicle.service';
+import { VehicleResponseDTO, VehicleService } from '../../../core/services/vehicle.service';
 import { InfoFormComponent } from '../info-form.component';
 import { NgIf } from '@angular/common';
 
@@ -16,30 +16,39 @@ type DetailMode = 'admin' | 'customer';
   styleUrl: './vehicle-detail-layout.component.css'
 })
 export class VehicleDetailLayoutComponent implements OnInit {
-  @Input() mode: DetailMode = 'customer';  // admin hoặc customer
-
+  mode: DetailMode = 'customer';
   vehicle?: VehicleResponseDTO;
   editMode = false;
-  loading = true;
+  loading = false; // ← Không cần loading nữa!
 
   constructor(
+    private vehicleService: VehicleService,
     private route: ActivatedRoute,
-    public router: Router,
-    private vehicleService: VehicleService
+    public router: Router
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      alert('Không tìm thấy xe');
-      this.router.navigate(['/']);
-      return;
-    }
+  // 1. Lấy mode từ route data
+  this.route.data.subscribe(data => {
+    this.mode = (data['mode'] as DetailMode) || 'customer';
+  });
 
-    this.loadVehicle(+id);
+  // 2. ĐỌC TRỰC TIẾP TỪ history.state – CHẠY MƯỢT DÙ F5 HAY BACK/FORWARD
+  const state = history.state;
+  if (state?.vehicle) {
+    this.vehicle = state.vehicle;
+    this.loading = false;
+    return;
   }
 
-  private loadVehicle(id: number): void {
+  // 3. Fallback: nếu không có state (vào trực tiếp URL) → lấy ID từ param và gọi API
+  const id = this.route.snapshot.paramMap.get('id');
+  if (id) {
+    this.loadVehicleFromApi(+id);
+  }
+}
+
+  private loadVehicleFromApi(id: number): void {
     this.vehicleService.getVehicles({ id }).subscribe({
       next: (res) => {
         this.vehicle = res.data?.[0];

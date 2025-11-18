@@ -59,6 +59,7 @@ export class InfoFormComponent implements OnInit, OnChanges {
 
   private createForm(): void {
     this.form = this.fb.group({
+        id: [{ value: '', disabled: true }],
       vehicleCode: ['', [Validators.required, Validators.minLength(3)]],
       licensePlate: ['', [Validators.required, Validators.pattern(/^\d{2}[A-Z]-\d{5}$/)]],
       brand: ['', Validators.required],
@@ -80,14 +81,17 @@ export class InfoFormComponent implements OnInit, OnChanges {
     this.form.reset();
 
     const dataToUse = this.mode === 'create' ? this.emptyVehicle : (this.vehicle || this.emptyVehicle);
-
+setTimeout(() => {
     this.form.patchValue(dataToUse);
+    console.log('Patched form with data:', dataToUse);
 
     if (this.mode === 'view') {
       this.form.disable();
     } else {
       this.form.enable();
+      this.form.get('id')?.disable();
     }
+}, 0);
   }
 
   onSubmit(): void {

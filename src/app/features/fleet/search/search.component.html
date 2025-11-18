@@ -2,7 +2,21 @@
 
 <form (ngSubmit)="search()" #searchForm="ngForm">
   <div class="grid">
-    <!-- các input giữ nguyên -->
+    <input placeholder="ID" type="number" [(ngModel)]="request.id" name="id">
+    <input placeholder="Mã xe" [(ngModel)]="request.vehicleCode" name="vehicleCode">
+    <input placeholder="Biển số" [(ngModel)]="request.licensePlate" name="licensePlate">
+    <input placeholder="Hãng" [(ngModel)]="request.brand" name="brand">
+    <input placeholder="Mẫu xe" [(ngModel)]="request.model" name="model">
+    <input placeholder="Loại xe" [(ngModel)]="request.vehicleType" name="vehicleType">
+    <input placeholder="Số ghế" type="number" [(ngModel)]="request.seats" name="seats">
+    <input placeholder="Hộp số" [(ngModel)]="request.transmission" name="transmission">
+    <input placeholder="Nhiên liệu" [(ngModel)]="request.fuelType" name="fuelType">
+    <input placeholder="Màu sắc" [(ngModel)]="request.color" name="color">
+    <input placeholder="Năm sản xuất" type="number" [(ngModel)]="request.year" name="year">
+    <input placeholder="Giá cơ bản" type="number" step="0.01" [(ngModel)]="request.basePrice" name="basePrice">
+    <input placeholder="Trạng thái" [(ngModel)]="request.status" name="status">
+    <input placeholder="Chi nhánh ID" type="number" [(ngModel)]="request.branchId" name="branchId">
+    <input placeholder="Thời gian quay đầu (phút)" type="number" [(ngModel)]="request.turnaroundMinutes" name="turnaroundMinutes">
   </div>
   <button type="submit" [disabled]="loading">
     {{ loading ? 'Đang tìm...' : 'Tìm kiếm' }}
@@ -10,19 +24,20 @@
 </form>
 
 <div class="vehicles-grid" style="margin-top: 20px">
-  @for (vehicle of vehicles; track vehicle.id) {
-    <app-vehicle-card
-      [vehicle]="vehicle"
-      (viewDetail)="onViewDetail($event)" />
-  } @empty {
-    @if (!loading && searchForm.submitted) {
-      <p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
-        Không tìm thấy xe nào phù hợp.
-      </p>
-    }
-  }
+  <app-vehicle-card 
+    *ngFor="let vehicle of vehicles; trackBy: trackById"
+    [vehicle]="vehicle"
+    (viewDetail)="onViewDetail($event)">
+  </app-vehicle-card>
+
+  <!-- Không có kết quả -->
+  <p *ngIf="vehicles.length === 0 && !loading && searchForm.submitted"
+     style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: #666; font-size: 18px;">
+    Không tìm thấy xe nào phù hợp.
+  </p>
 </div>
 
-@if (loading) {
-  <p style="text-align: center; padding: 20px;">Đang tải dữ liệu...</p>
-}
+<!-- Loading -->
+<div *ngIf="loading" style="text-align: center; padding: 40px;">
+  <p>Đang tải dữ liệu...</p>
+</div>
