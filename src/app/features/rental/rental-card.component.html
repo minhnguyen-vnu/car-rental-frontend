@@ -1,0 +1,19 @@
+<!-- rental-card.component.html -->
+<div class="rental-card">
+  <div class="header">
+    <h3>{{ rental.transactionCode }}</h3>
+    <span class="status" [ngClass]="rental.status">
+      {{ rental.status }}
+    </span>
+  </div>
+
+  <div class="info">
+    <p><strong>Xe:</strong> ID {{ rental.vehicleId }}</p>
+    <p><strong>Khách:</strong> ID {{ rental.userId }}</p>
+    <p><strong>Nhận xe:</strong> {{ rental.pickupTime | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>Trả xe:</strong> {{ rental.returnTime | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>Tổng tiền:</strong> {{ rental.totalAmount | number }} {{ rental.currency }}</p>
+  </div>
+
+  <button class="btn-detail" (click)="onViewDetail()">Xem chi tiết</button>
+</div>

@@ -1,0 +1,21 @@
+/* rental-detail.component.css */
+.detail-container { padding: 20px; max-width: 800px; margin: 0 auto; }
+.actions { margin-bottom: 20px; display: flex; gap: 10px; }
+.btn-edit { background: #ffc107; color: black; }
+.btn-cancel { background: #6c757d; color: white; }
+.btn-save { background: #28a745; color: white; }
+.btn-back { background: #6c757d; color: white; }
+
+.rental-form .form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+.rental-form label { width: 180px; font-weight: bold; }
+.rental-form input, .rental-form select {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

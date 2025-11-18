@@ -1,85 +1,46 @@
-.admin-layout {
-  min-height: 100vh;
-  background: #f8f9fa;
-}
-
-.admin-header {
-  background: white;
-  padding: 20px 40px;
-  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
+/* admin-main-layout.component.css */
 .admin-header h2 {
   margin: 0;
   color: #2c3e50;
-  font-size: 26px;
 }
 
 .admin-tabs {
   display: flex;
-  gap: 8px;
-  background: #e9ecef;
-  padding: 6px;
-  border-radius: 12px;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
-  padding: 12px 32px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
+  background: #e9ecef;
+  border-radius: 6px;
   cursor: pointer;
-  background: transparent;
-  color: #495057;
-  transition: all 0.3s;
-}
-
-.tab-btn:hover {
-  background: rgba(255,255,255,0.5);
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
 .tab-btn.active {
   background: #007bff;
   color: white;
-  box-shadow: 0 4px 12px rgba(0,123,255,0.3);
 }
 
-.admin-content {
-  padding: 30px 40px;
-  max-width: 1400px;
-  margin: 0 auto;
+.tab-btn:hover:not(.active) {
+  background: #d4e2fc;
 }
 
-.add-vehicle-page {
+.rental-manage-page, .add-vehicle-page {
+  padding: 20px;
   background: white;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  margin-top: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.add-vehicle-page h3 {
-  margin: 0 0 24px 0;
-  color: #1a1a1a;
-  font-size: 24px;
-  text-align: center;
-}
-
-@media (max-width: 768px) {
-  .admin-header {
-    flex-direction: column;
-    text-align: center;
-  }
-  .admin-tabs {
-    width: 100%;
-    justify-content: center;
-  }
-  .tab-btn {
-    flex: 1;
-  }
+.rental-manage-page h3 {
+  margin-top: 0;
+  color: #495057;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
 }

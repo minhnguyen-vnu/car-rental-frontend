@@ -1,0 +1,23 @@
+/* search.component.css */
+.search-container { padding: 20px; }
+.filter-box {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+.filter-box input, .filter-box select {
+  padding: 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+.filter-box button {
+  padding: 8px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}

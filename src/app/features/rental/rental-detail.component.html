@@ -1,0 +1,61 @@
+<!-- rental-detail.component.html -->
+<div class="detail-container">
+  <h2>{{ title }} #{{ rental?.transactionCode }}</h2>
+
+  <div class="actions">
+    <button *ngIf="mode === 'view'" (click)="enterEdit()" class="btn-edit">Cập nhật</button>
+    <button *ngIf="showActions" (click)="cancel()" class="btn-cancel">Hủy</button>
+    <button *ngIf="showActions" (click)="save()" [disabled]="isSubmitting" class="btn-save">
+      {{ isSubmitting ? 'Đang lưu...' : 'Xác nhận' }}
+    </button>
+    <button (click)="location.back()" class="btn-back">Quay lại</button>
+  </div>
+
+  <form [formGroup]="form" class="rental-form">
+    <div class="form-row">
+      <label>ID:</label>
+      <input type="text" formControlName="id" readonly>
+    </div>
+
+    <div class="form-row">
+      <label>Mã giao dịch:</label>
+      <input type="text" formControlName="transactionCode" readonly>
+    </div>
+
+    <div class="form-row">
+      <label>Khách hàng ID:</label>
+      <input type="text" formControlName="userId" readonly>
+    </div>
+
+    <div class="form-row">
+      <label>Xe ID:</label>
+      <input type="text" formControlName="vehicleId" readonly>
+    </div>
+
+    <div class="form-row">
+      <label>Trạng thái:</label>
+      <select formControlName="status">
+        <option value="PENDING">PENDING</option>
+        <option value="CONFIRMED">CONFIRMED</option>
+        <option value="CANCELLED">CANCELLED</option>
+        <option value="COMPLETED">COMPLETED</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label>Thời gian nhận xe:</label>
+      <input type="datetime-local" formControlName="pickupTime">
+    </div>
+
+    <div class="form-row">
+      <label>Thời gian trả xe:</label>
+      <input type="datetime-local" formControlName="returnTime">
+    </div>
+
+    <div class="form-row">
+      <label>Tổng tiền:</label>
+      <input type="number" formControlName="totalAmount">
+      <span>{{ form.get('currency')?.value }}</span>
+    </div>
+  </form>
+</div>

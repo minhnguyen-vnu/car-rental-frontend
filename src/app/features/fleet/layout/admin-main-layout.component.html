@@ -1,37 +1,51 @@
+<!-- admin-main-layout.component.html -->
 <div class="admin-layout">
-  <!-- Thanh điều hướng -->
   <header class="admin-header">
-    <h2>Quản lý xe</h2>
+    <h2>Quản trị hệ thống</h2>
     <nav class="admin-tabs">
       <button
         class="tab-btn"
-        [class.active]="activeTab === 'search'"
-        (click)="setTab('search')">
+        [class.active]="activeTab === 'vehicle-search'"
+        (click)="setTab('vehicle-search')">
         Tìm kiếm xe
       </button>
+
       <button
         class="tab-btn"
-        [class.active]="activeTab === 'add'"
-        (click)="setTab('add')">
+        [class.active]="activeTab === 'vehicle-add'"
+        (click)="setTab('vehicle-add')">
         Thêm xe mới
+      </button>
+
+      <!-- TAB MỚI -->
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'rental-manage'"
+        (click)="setTab('rental-manage')">
+        Quản lý đơn thuê
       </button>
     </nav>
   </header>
 
-  <!-- Container nội dung -->
   <main class="admin-content">
     @switch (activeTab) {
-      @case ('search') {
+      @case ('vehicle-search') {
         <app-search role="admin"></app-search>
       }
-      @case ('add') {
+      @case ('vehicle-add') {
         <div class="add-vehicle-page">
           <h3>Thêm xe mới</h3>
           <app-info-form
             mode="create"
             (save)="onVehicleAdded()"
-            (cancel)="setTab('search')">
+            (cancel)="setTab('vehicle-search')">
           </app-info-form>
+        </div>
+      }
+      @case ('rental-manage') {
+        <div class="rental-manage-page">
+          <h3>Quản lý đơn thuê xe</h3>
+          <app-rental-search></app-rental-search>
         </div>
       }
     }

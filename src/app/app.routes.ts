@@ -20,6 +20,12 @@ export const routes: Routes = [
                .then(m => m.VehicleDetailLayoutComponent),
   data: { mode: 'admin' }
 },
+// Thêm route chi tiết rental (nếu chưa có)
+{
+  path: 'admin/rental/:id',
+  loadComponent: () => import('./features/rental/rental-detail.component')
+               .then(m => m.RentalDetailComponent)
+},
 
   // Public
   {

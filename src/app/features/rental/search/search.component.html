@@ -1,0 +1,30 @@
+<!-- search.component.html -->
+<div class="search-container">
+  <h2>Tìm kiếm đơn thuê xe</h2>
+
+  <div class="filter-box">
+    <input [(ngModel)]="filter.transactionCode" placeholder="Mã giao dịch" />
+    <input [(ngModel)]="filter.userId" type="number" placeholder="ID khách hàng" />
+    <input [(ngModel)]="filter.vehicleId" type="number" placeholder="ID xe" />
+
+    <select [(ngModel)]="filter.status">
+      <option value="">Tất cả trạng thái</option>
+      <option value="PENDING">PENDING</option>
+      <option value="CONFIRMED">CONFIRMED</option>
+      <option value="CANCELLED">CANCELLED</option>
+      <option value="COMPLETED">COMPLETED</option>
+    </select>
+
+    <button (click)="search()" [disabled]="loading">
+      {{ loading ? 'Đang tìm...' : 'Tìm kiếm' }}
+    </button>
+  </div>
+
+  <div class="results">
+    <app-rental-card
+      *ngFor="let r of rentals"
+      [rental]="r"
+      (viewDetail)="onViewDetail($event)">
+    </app-rental-card>
+  </div>
+</div>
