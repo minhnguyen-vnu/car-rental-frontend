@@ -5,6 +5,8 @@ import { RentalCardComponent } from '../rental-card.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { StorageService } from '../../../core/services/storage.service';  // thêm dòng này
+import { RequestContext } from '../../../shared/models/request-context.model';
 
 @Component({
   selector: 'app-rental-search',
@@ -18,13 +20,33 @@ export class RentalSearchComponent implements OnInit {
   rentals: RentalResponseDTO[] = [];
   loading = false;
 
+  // Thêm 2 biến mới
+  isCustomerMode = false;
+  currentUser: RequestContext | null = null;
+
   constructor(
     private rentalService: RentalService,
-    private router: Router
+    private router: Router,
+    private storageService: StorageService   // thêm inject
   ) {}
 
   ngOnInit() {
+    this.checkUserRole();
     this.search();
+  }
+
+  private checkUserRole() {
+    this.currentUser = this.storageService.getUser();
+    if (!this.currentUser) {
+      this.currentUser = {
+        userId: 66771508,
+        role: 'customer'
+      }
+    }
+    if (this.currentUser?.role === 'customer') {
+      this.isCustomerMode = true;
+      this.filter.userId = this.currentUser.userId;  // tự động điền và khóa
+    }
   }
 
   search() {
@@ -39,6 +61,7 @@ export class RentalSearchComponent implements OnInit {
   }
 
   onViewDetail(id: number) {
+    // Admin và customer cùng xem chi tiết ở link giống nhau (sau này bạn có thể đổi)
     this.router.navigate(['/admin/rental', id]);
   }
 }

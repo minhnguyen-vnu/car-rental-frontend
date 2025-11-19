@@ -1,0 +1,63 @@
+/* user-main-layout.component.scss */
+.user-layout {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.user-header {
+  background: #1976d2;
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+  h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.8rem;
+  }
+}
+
+.user-tabs {
+  display: flex;
+  gap: 1rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+
+  &.active {
+    border-bottom-color: white;
+    font-weight: 600;
+  }
+
+  &:hover:not(.active) {
+    background: rgba(255,255,255,0.1);
+  }
+}
+
+.user-content {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.search-page,
+.rental-history-page {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.rental-history-page h3 {
+  margin-top: 0;
+  color: #1976d2;
+  border-bottom: 2px solid #1976d2;
+  padding-bottom: 0.5rem;
+}

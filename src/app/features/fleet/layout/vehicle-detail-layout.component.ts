@@ -92,9 +92,11 @@ export class VehicleDetailLayoutComponent implements OnInit {
 
   // Người dùng: thuê xe (tạm để trống)
   onRent(): void {
-    // Sau này gắn: this.router.navigate(['/rent', this.vehicle?.id]);
-    alert('Chức năng thuê xe đang phát triển...');
-  }
+  if (!this.vehicle?.id) return;
+
+  // Điều hướng đến trang tạo đơn thuê, truyền vehicleId qua param
+  this.router.navigate(['/rental/create', this.vehicle.id]);
+}
 
   // Hủy sửa
   onCancelEdit(): void {

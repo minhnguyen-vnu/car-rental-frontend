@@ -3,11 +3,19 @@
   <h2>{{ title }} #{{ rental?.transactionCode }}</h2>
 
   <div class="actions">
-    <button *ngIf="mode === 'view'" (click)="enterEdit()" class="btn-edit">Cập nhật</button>
-    <button *ngIf="showActions" (click)="cancel()" class="btn-cancel">Hủy</button>
-    <button *ngIf="showActions" (click)="save()" [disabled]="isSubmitting" class="btn-save">
-      {{ isSubmitting ? 'Đang lưu...' : 'Xác nhận' }}
+    <!-- Chỉ Admin ở chế độ view mới thấy nút Cập nhật -->
+    <button *ngIf="canEdit" (click)="enterEdit()" class="btn-edit">
+      Cập nhật
     </button>
+
+    <!-- Chỉ hiện khi đang edit (chỉ admin) -->
+    <button *ngIf="showActions" (click)="cancel()" class="btn-cancel">
+      Hủy
+    </button>
+    <button *ngIf="showActions" (click)="save()" [disabled]="isSubmitting" class="btn-save">
+      {{ isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi' }}
+    </button>
+
     <button (click)="location.back()" class="btn-back">Quay lại</button>
   </div>
 
@@ -34,11 +42,11 @@
 
     <div class="form-row">
       <label>Trạng thái:</label>
-      <select formControlName="status">
-        <option value="PENDING">PENDING</option>
-        <option value="CONFIRMED">CONFIRMED</option>
-        <option value="CANCELLED">CANCELLED</option>
-        <option value="COMPLETED">COMPLETED</option>
+      <select formControlName="status" [attr.disabled]="!isAdmin || mode === 'view' ? true : null">
+        <option value="PENDING">Chờ xác nhận</option>
+        <option value="CONFIRMED">Đã xác nhận</option>
+        <option value="CANCELLED">Đã hủy</option>
+        <option value="COMPLETED">Hoàn thành</option>
       </select>
     </div>
 
@@ -58,4 +66,9 @@
       <span>{{ form.get('currency')?.value }}</span>
     </div>
   </form>
+
+  <!-- Thông báo cho khách hàng -->
+  <div *ngIf="isCustomer" class="customer-notice">
+    Bạn chỉ có thể xem thông tin đơn thuê. Liên hệ admin nếu cần hỗ trợ.
+  </div>
 </div>

@@ -1,0 +1,39 @@
+<!-- user-main-layout.component.html -->
+<div class="user-layout">
+  <header class="user-header">
+    <h2>Thuê xe tự lái</h2>
+    <nav class="user-tabs">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'vehicle-search'"
+        (click)="setTab('vehicle-search')">
+        Tìm kiếm xe
+      </button>
+
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'rental-history'"
+        (click)="setTab('rental-history')">
+        Lịch sử thuê xe
+      </button>
+    </nav>
+  </header>
+
+  <main class="user-content">
+    @switch (activeTab) {
+      @case ('vehicle-search') {
+        <div class="search-page">
+          <app-search role="customer"></app-search>
+        </div>
+      }
+
+      @case ('rental-history') {
+        <div class="rental-history-page">
+          <h3>Lịch sử thuê xe của tôi</h3>
+          <!-- Tạm dùng app-rental-search, sau này sẽ thay bằng component riêng cho customer -->
+          <app-rental-search></app-rental-search>
+        </div>
+      }
+    }
+  </main>
+</div>

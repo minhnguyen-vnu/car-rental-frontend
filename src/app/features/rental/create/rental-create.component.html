@@ -1,0 +1,54 @@
+<!-- rental-create.component.html -->
+<div class="rental-create-container">
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">← Quay lại</button>
+    <h2>Thuê xe: {{ vehicle?.brand }} {{ vehicle?.model }}</h2>
+  </div>
+
+  <div class="content" *ngIf="vehicle && !loading; else loadingTpl">
+    <div class="vehicle-summary">
+      <!-- <img [src]="vehicle.images?.[0] || '/assets/placeholder-car.jpg'" alt="Xe" class="car-img"> -->
+      <div class="info">
+        <p><strong>Biển số:</strong> {{ vehicle.licensePlate }}</p>
+        <p><strong>Giá thuê/ngày:</strong> {{ vehicle.basePrice | number }} VND</p>
+        <p><strong>Trạng thái:</strong> <span class="status available">Còn trống</span></p>
+      </div>
+    </div>
+
+    <form [formGroup]="rentalForm" (ngSubmit)="onSubmit()" class="rental-form">
+      <h3>Chọn thời gian thuê</h3>
+
+      <div class="form-row">
+        <label>Thời gian nhận xe *</label>
+        <input type="datetime-local" formControlName="pickupTime" required>
+      </div>
+
+      <div class="form-row">
+        <label>Thời gian trả xe *</label>
+        <input
+          type="datetime-local"
+          formControlName="returnTime"
+          required>
+      </div>
+
+      <div class="summary">
+        <p>Số ngày thuê: <strong>{{ calculateDays() }} ngày</strong></p>
+        <p class="total">Tổng tiền: <strong>{{ totalAmount | number }} VND</strong></p>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="goBack()" class="btn-cancel">Hủy</button>
+        <button
+          type="submit"
+          [disabled]="submitting || rentalForm.invalid || calculateDays() <= 0"
+          class="btn-primary">
+          {{ submitting ? 'Đang xử lý...' : 'Xác nhận đặt xe' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <ng-template #loadingTpl>
+    <p class="loading">Đang tải thông tin xe...</p>
+  </ng-template>
+</div>

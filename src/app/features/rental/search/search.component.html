@@ -4,7 +4,12 @@
 
   <div class="filter-box">
     <input [(ngModel)]="filter.transactionCode" placeholder="Mã giao dịch" />
-    <input [(ngModel)]="filter.userId" type="number" placeholder="ID khách hàng" />
+    <input 
+  [(ngModel)]="filter.userId" 
+  type="number" 
+  placeholder="ID khách hàng" 
+  [disabled]="isCustomerMode" 
+  [attr.readonly]="isCustomerMode ? true : null" />
     <input [(ngModel)]="filter.vehicleId" type="number" placeholder="ID xe" />
 
     <select [(ngModel)]="filter.status">

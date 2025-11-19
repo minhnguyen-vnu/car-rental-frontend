@@ -1,9 +1,11 @@
 // src/app/features/rental/detail/rental-detail.component.ts
-import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RentalService, RentalResponseDTO, RentalRequestDTO } from '../../core/services/rental.service';
+import { StorageService } from '../../core/services/storage.service';
+import { RequestContext } from '../../shared/models/request-context.model';
 import { CommonModule } from '@angular/common';
 
 type DetailMode = 'view' | 'edit';
@@ -15,30 +17,40 @@ type DetailMode = 'view' | 'edit';
   templateUrl: './rental-detail.component.html',
   styleUrls: ['./rental-detail.component.css']
 })
-export class RentalDetailComponent implements OnInit, OnChanges {
+export class RentalDetailComponent implements OnInit {
   rental!: RentalResponseDTO;
   mode: DetailMode = 'view';
   form!: FormGroup;
   isSubmitting = false;
 
+  // Role detection
+  user: RequestContext | null = null;
+  isAdmin = false;
+  isCustomer = false;
+
   constructor(
     private route: ActivatedRoute,
     public location: Location,
     private fb: FormBuilder,
-    private rentalService: RentalService
+    private rentalService: RentalService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
+    this.user = this.storageService.getUser();
+    if (!this.user) {
+      this.user = {
+        userId: 66771508,
+        role: 'customer'
+      }
+    }
+    this.isAdmin = this.user?.role === 'ADMIN';
+    this.isCustomer = this.user?.role === 'CUSTOMER';
+
     this.createForm();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadRental(+id);
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['rental'] && this.form) {
-      this.applyDataAndMode();
     }
   }
 
@@ -58,6 +70,11 @@ export class RentalDetailComponent implements OnInit, OnChanges {
       currency: [{ value: '', disabled: true }],
       status: ['']
     });
+
+    // Nếu là customer → luôn disable form, không cho edit
+    if (this.isCustomer) {
+      this.form.disable();
+    }
   }
 
   private loadRental(id: number): void {
@@ -65,7 +82,7 @@ export class RentalDetailComponent implements OnInit, OnChanges {
       next: (res) => {
         if (res.data && res.data.length > 0) {
           this.rental = res.data[0];
-          this.applyDataAndMode();
+          this.applyDataToForm();
         }
       },
       error: () => {
@@ -75,9 +92,8 @@ export class RentalDetailComponent implements OnInit, OnChanges {
     });
   }
 
-  private applyDataAndMode(): void {
+  private applyDataToForm(): void {
     setTimeout(() => {
-      // Chuyển đổi thời gian về định dạng datetime-local
       const pickup = this.rental.pickupTime ? this.toDateTimeLocal(this.rental.pickupTime) : '';
       const returnT = this.rental.returnTime ? this.toDateTimeLocal(this.rental.returnTime) : '';
 
@@ -87,37 +103,48 @@ export class RentalDetailComponent implements OnInit, OnChanges {
         returnTime: returnT
       });
 
-      // Tự động disable toàn bộ khi ở chế độ view
-      if (this.mode === 'view') {
+      // Customer: luôn ở view mode + disable form
+      if (this.isCustomer) {
+        this.mode = 'view';
+        this.form.disable();
+      }
+      // Admin: có thể vào edit mode
+      else if (this.mode === 'view') {
         this.form.disable();
       } else {
-        this.form.enable();
-        // Chỉ cho phép sửa một số field
-        this.form.get('id')?.disable();
-        this.form.get('transactionCode')?.disable();
-        this.form.get('userId')?.disable();
-        this.form.get('vehicleId')?.disable();
-        this.form.get('paymentId')?.disable();
-        this.form.get('pickupBranchId')?.disable();
-        this.form.get('returnBranchId')?.disable();
-        this.form.get('durationDays')?.disable();
-        this.form.get('currency')?.disable();
+        this.enableEditableFields();
       }
     }, 0);
   }
 
   enterEdit(): void {
+    if (!this.isAdmin) return; // Bảo vệ thêm
+
     this.mode = 'edit';
-    this.applyDataAndMode();
+    this.enableEditableFields();
+  }
+
+  private enableEditableFields(): void {
+    this.form.enable();
+    // Vẫn khóa các field không được sửa
+    this.form.get('id')?.disable();
+    this.form.get('transactionCode')?.disable();
+    this.form.get('userId')?.disable();
+    this.form.get('vehicleId')?.disable();
+    this.form.get('paymentId')?.disable();
+    this.form.get('pickupBranchId')?.disable();
+    this.form.get('returnBranchId')?.disable();
+    this.form.get('durationDays')?.disable();
+    this.form.get('currency')?.disable();
   }
 
   cancel(): void {
     this.mode = 'view';
-    this.applyDataAndMode();
+    this.applyDataToForm();
   }
 
   save(): void {
-    if (this.form.invalid || this.isSubmitting) return;
+    if (!this.isAdmin || this.form.invalid || this.isSubmitting) return;
 
     this.isSubmitting = true;
 
@@ -134,7 +161,7 @@ export class RentalDetailComponent implements OnInit, OnChanges {
       next: (res) => {
         this.rental = res.data!;
         this.mode = 'view';
-        this.applyDataAndMode();
+        this.applyDataToForm();
         this.isSubmitting = false;
         alert('Cập nhật thành công!');
       },
@@ -145,7 +172,7 @@ export class RentalDetailComponent implements OnInit, OnChanges {
     });
   }
 
-  // Helper chuyển đổi thời gian
+  // Helper thời gian
   private toDateTimeLocal(iso: string): string {
     return iso ? new Date(iso).toISOString().slice(0, 16) : '';
   }
@@ -155,10 +182,19 @@ export class RentalDetailComponent implements OnInit, OnChanges {
   }
 
   get title(): string {
-    return this.mode === 'view' ? 'Chi tiết đơn thuê' : 'Chỉnh sửa đơn thuê';
+    return this.isCustomer
+      ? 'Chi tiết đơn thuê xe của tôi'
+      : this.mode === 'view'
+        ? 'Chi tiết đơn thuê'
+        : 'Chỉnh sửa đơn thuê';
+  }
+
+  // Chỉ admin và đang ở view mode mới thấy nút Cập nhật
+  get canEdit(): boolean {
+    return this.isAdmin && this.mode === 'view';
   }
 
   get showActions(): boolean {
-    return this.mode === 'edit';
+    return this.isAdmin && this.mode === 'edit';
   }
 }

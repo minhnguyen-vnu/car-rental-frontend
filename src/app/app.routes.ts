@@ -10,15 +10,32 @@ export const routes: Routes = [
                .then(m => m.AdminMainLayoutComponent)
 },
 {
+path: 'test-user',
+  loadComponent: () => import('./features/fleet/layout/user-main-layout.component')
+               .then(m => m.UserMainLayoutComponent)
+},
+{
   path: 'test-search',                    
   loadComponent: () => import('./features/fleet/search/search.component')
                        .then(m => m.SearchComponent)
+},
+{
+  path: 'rental/create/:vehicleId',
+  loadComponent: () => import('./features/rental/create/rental-create.component')
+               .then(m => m.RentalCreateComponent),
+  data: { title: 'Thuê xe' }
 },
 {
   path: 'admin/vehicle/:id',
   loadComponent: () => import('./features/fleet/layout/vehicle-detail-layout.component')
                .then(m => m.VehicleDetailLayoutComponent),
   data: { mode: 'admin' }
+},
+{
+  path: 'vehicle/:id',
+  loadComponent: () => import('./features/fleet/layout/vehicle-detail-layout.component')
+               .then(m => m.VehicleDetailLayoutComponent),
+  data: { mode: 'customer' }
 },
 // Thêm route chi tiết rental (nếu chưa có)
 {
