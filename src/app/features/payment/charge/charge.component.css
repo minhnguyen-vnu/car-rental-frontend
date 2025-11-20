@@ -1,0 +1,26 @@
+.charge-page {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+mat-card {
+  margin-bottom: 1.5rem;
+}
+
+.selection-form {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+  flex-wrap: wrap;
+
+  mat-form-field {
+    flex: 1;
+    min-width: 180px;
+  }
+}
+
+.summary-card {
+  background-color: #f5f5f5;
+  font-size: 1.1rem;
+}

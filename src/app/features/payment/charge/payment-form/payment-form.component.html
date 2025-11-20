@@ -1,0 +1,15 @@
+<div class="payment-confirm">
+  <h3>Xác nhận thanh toán</h3>
+  <p>Bạn sẽ được chuyển đến cổng thanh toán <strong>VNPAY</strong> để hoàn tất.</p>
+  <p>Không cần nhập thông tin thẻ ở đây – hệ thống sẽ chuyển hướng an toàn.</p>
+
+  <div class="actions">
+    <button mat-stroked-button color="accent" (click)="onBack()" [disabled]="loading">
+      Quay lại
+    </button>
+    <button mat-raised-button color="primary" (click)="onConfirmPayment()" [disabled]="loading">
+      <span *ngIf="!loading">Đồng ý & Thanh toán</span>
+      <span *ngIf="loading">Đang chuyển hướng...</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="charge-page">
+
+  <!-- PHẦN 3: Thông tin giao dịch (luôn hiển thị) -->
+  <mat-card class="summary-card">
+    <mat-card-header>
+      <mat-card-title>Thông tin đơn thuê xe</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p><strong>Mã đơn:</strong> #{{ rentalId }}</p>
+      <p><strong>Số tiền thanh toán:</strong> {{ amount | number:'1.0-0' }} VND</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- PHẦN 1: Chọn phương thức (chỉ hiện khi chưa chọn) -->
+  <mat-card class="selection-card" *ngIf="!showPaymentForm">
+    <mat-card-header>
+      <mat-card-title>Chọn phương thức thanh toán</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="selectionForm" class="selection-form">
+        <mat-form-field appearance="fill">
+          <mat-label>Phương thức</mat-label>
+          <mat-select formControlName="method">
+            <mat-option *ngFor="let m of methods" [value]="m">{{ m }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Cổng thanh toán</mat-label>
+          <mat-select formControlName="provider">
+            <mat-option *ngFor="let p of providers" [value]="p">{{ p }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="onContinue()">
+          Tiếp tục
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- PHẦN 2: Form thanh toán (hiện sau khi chọn) -->
+  <div *ngIf="showPaymentForm">
+    <app-payment-form
+      [rentalId]="rentalId"
+      [amount]="amount"
+      (success)="onPaymentSuccess($event)"
+      (back)="onBackFromForm()">
+    </app-payment-form>
+  </div>
+
+</div>

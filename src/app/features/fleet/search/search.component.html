@@ -16,7 +16,7 @@
     <input placeholder="Giá cơ bản" type="number" step="0.01" [(ngModel)]="request.basePrice" name="basePrice">
     <input placeholder="Trạng thái" [(ngModel)]="request.status" name="status">
     <input placeholder="Chi nhánh ID" type="number" [(ngModel)]="request.branchId" name="branchId">
-    <input placeholder="Thời gian quay đầu (phút)" type="number" [(ngModel)]="request.turnaroundMinutes" name="turnaroundMinutes">
+    <!-- <input placeholder="Thời gian quay đầu (phút)" type="number" [(ngModel)]="request.turnaroundMinutes" name="turnaroundMinutes"> -->
   </div>
   <button type="submit" [disabled]="loading">
     {{ loading ? 'Đang tìm...' : 'Tìm kiếm' }}
