@@ -59,7 +59,8 @@ export class InfoFormComponent implements OnInit, OnChanges {
 
   private createForm(): void {
     this.form = this.fb.group({
-        id: [{ value: '', disabled: true }],
+      imageUrl: [{ value: '', visible: false }],
+      id: [{ value: '', disabled: true }],
       vehicleCode: ['', [Validators.required, Validators.minLength(3)]],
       licensePlate: ['', [Validators.required, Validators.pattern(/^\d{2}[A-Z]-\d{5}$/)]],
       brand: ['', Validators.required],
@@ -89,6 +90,7 @@ setTimeout(() => {
       this.form.disable();
     } else {
       this.form.enable();
+          // always disable id field
       this.form.get('id')?.disable();
     }
 }, 0);

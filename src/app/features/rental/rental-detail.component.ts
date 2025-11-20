@@ -41,7 +41,7 @@ export class RentalDetailComponent implements OnInit {
     if (!this.user) {
       this.user = {
         userId: 66771508,
-        role: 'customer'
+        role: 'ADMIN'
       }
     }
     this.isAdmin = this.user?.role === 'ADMIN';
@@ -136,6 +136,10 @@ export class RentalDetailComponent implements OnInit {
     this.form.get('returnBranchId')?.disable();
     this.form.get('durationDays')?.disable();
     this.form.get('currency')?.disable();
+    // không cho sửa ngày giờ nhận, trả xe
+    this.form.get('pickupTime')?.disable();
+    this.form.get('returnTime')?.disable();
+  
   }
 
   cancel(): void {

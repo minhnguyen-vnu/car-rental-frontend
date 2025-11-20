@@ -38,9 +38,10 @@ export class RentalSearchComponent implements OnInit {
   private checkUserRole() {
     this.currentUser = this.storageService.getUser();
     if (!this.currentUser) {
+      alert('mock user cho mục đích thử nghiệm');
       this.currentUser = {
         userId: 66771508,
-        role: 'customer'
+        role: 'admin'
       }
     }
     if (this.currentUser?.role === 'customer') {

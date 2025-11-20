@@ -61,6 +61,19 @@ export const routes: Routes = [
       .then(m => m.VehicleDetailLayoutComponent),
     data: { mode: 'customer' }
   },
+{
+    path: 'admin/vehicle/:id',
+    // canActivate: [authGuard],
+    loadComponent: () => import('./features/fleet/layout/vehicle-detail-layout.component')
+      .then(m => m.VehicleDetailLayoutComponent),
+    data: { mode: 'admin' }
+  },
+  {
+    path: 'admin/rental/:id',
+    // canActivate: [authGuard],
+    loadComponent: () => import('./features/rental/rental-detail.component')
+      .then(m => m.RentalDetailComponent)
+  },
 
 
   // ================================================================

@@ -7,7 +7,7 @@ import { VehicleCardComponent } from '../vehicle-card.component';
 import { VehicleService, VehicleRequestDTO, VehicleResponseDTO } from '../../../core/services/vehicle.service';
 import { CommonModule } from '@angular/common';
 
-type Role = 'admin' | 'customer';
+type Role = 'ADMIN' | 'USER';
 
 @Component({
   selector: 'app-search',
@@ -17,7 +17,7 @@ type Role = 'admin' | 'customer';
   styleUrl: './search.component.css'
 })
 export class SearchComponent implements OnInit {
-  @Input() role: Role = 'customer';  // ← Nhận từ cha (admin-main-layout hoặc user-main-layout)
+  @Input() role: Role = 'USER';  // ← Nhận từ cha (admin-main-layout hoặc user-main-layout)
 
   request: VehicleRequestDTO = {};
   vehicles: VehicleResponseDTO[] = [];
@@ -54,7 +54,7 @@ onViewDetail(id: number) {
   const vehicle = this.vehicles.find(v => v.id === id);
   if (!vehicle) return;
   console.log('Viewing details for vehicle:', vehicle);
-  const url = this.role === 'admin' 
+  const url = this.role === 'ADMIN' 
     ? `/admin/vehicle/${id}` 
     : `/vehicle/${id}`;
 

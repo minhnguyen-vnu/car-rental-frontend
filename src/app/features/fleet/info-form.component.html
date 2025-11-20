@@ -2,6 +2,11 @@
   <h2>{{ title }}</h2>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+    <!-- Nếu mode là 'view' thì không hiện trường Ảnh xe -->
+    <div class="field" *ngIf="mode !== 'view'">
+      <label>Ảnh xe</label>
+      <input type="text" formControlName="imageUrl" placeholder="URL ảnh xe">
+    </div>
 
     <div class="field">
       <label>ID</label>

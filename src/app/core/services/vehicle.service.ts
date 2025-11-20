@@ -22,6 +22,7 @@ export interface VehicleRequestDTO {
   status?: string;
   branchId?: number;
   turnaroundMinutes?: number;
+  imageUrl?: string;
 }
 
 export interface VehicleResponseDTO extends VehicleRequestDTO {
