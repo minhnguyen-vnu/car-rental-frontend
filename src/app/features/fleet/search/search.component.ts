@@ -22,6 +22,8 @@ export class SearchComponent implements OnInit {
   request: VehicleRequestDTO = {};
   vehicles: VehicleResponseDTO[] = [];
   loading = false;
+  vehicleCategories: string[] = ['SUV', 'SEDAN', 'HATCHBACK', 'TRUCK'];
+  vehicleTransmissionTypes: string[] = ['MANUAL', 'AUTOMATIC'];
 
   constructor(
     private vehicleService: VehicleService,

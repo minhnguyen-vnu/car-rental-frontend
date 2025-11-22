@@ -19,13 +19,20 @@
         <input placeholder="Mẫu xe" [(ngModel)]="request.model" name="model">
       </div>
       <div class="input-group">
-        <input placeholder="Loại xe" [(ngModel)]="request.vehicleType" name="vehicleType">
+        <select [(ngModel)]="request.vehicleType" name="vehicleType" class="select-input" >
+          <!-- default là all, hiện tất cả -->
+          <option value="">Tất cả loại xe</option>
+          <option *ngFor="let cat of vehicleCategories" [value]="cat">{{ cat }}</option>
+        </select>
       </div>
       <div class="input-group">
         <input placeholder="Số ghế" type="number" [(ngModel)]="request.seats" name="seats">
       </div>
       <div class="input-group" >
-        <input placeholder="Hộp số" [(ngModel)]="request.transmission" name="transmission">
+        <select [(ngModel)]="request.transmission" name="transmission" class="select-input">
+          <option value="">Tất cả hộp số</option>
+          <option *ngFor="let type of vehicleTransmissionTypes" [value]="type">{{ type }}</option>
+        </select>
       </div>
       <div class="input-group" *ngIf="role !== 'USER'">
         <input placeholder="Nhiên liệu" [(ngModel)]="request.fuelType" name="fuelType">
@@ -42,7 +49,7 @@
       <div class="input-group" *ngIf="role !== 'USER'">
         <input placeholder="Trạng thái" [(ngModel)]="request.status" name="status">
       </div>
-      <div class="input-group">
+      <div class="input-group" *ngIf="role !== 'USER'">
         <input placeholder="Chi nhánh ID" type="number" [(ngModel)]="request.branchId" name="branchId">
       </div>
     </div>

@@ -20,6 +20,19 @@ export class RentalCreateComponent implements OnInit {
   vehicleId!: number;
   loading = false;
   submitting = false;
+  // ít nhất từ ngày mai từ 08:00 đến 22:00
+  minPickupTime: string = (() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(8, 0, 0, 0);
+    return tomorrow.toISOString().slice(0, 16);
+  })();
+  maxPickupHour = 22;
+  minReturnHour = 8;
+
+
+
+  branches = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5},{id: 6},{id: 7},{id: 8},{id: 9},{id: 10}]; 
 
   constructor(
     private route: ActivatedRoute,
@@ -27,7 +40,8 @@ export class RentalCreateComponent implements OnInit {
     private fb: FormBuilder,
     private rentalService: RentalService,
     private vehicleService: VehicleService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    
   ) {}
 
   ngOnInit(): void {
@@ -38,6 +52,26 @@ export class RentalCreateComponent implements OnInit {
     // Tự động tính lại khi thay đổi thời gian
     this.rentalForm.get('pickupTime')?.valueChanges.subscribe(() => this.updateCalculations());
     this.rentalForm.get('returnTime')?.valueChanges.subscribe(() => this.updateCalculations());
+
+    this.rentalForm.get('pickupTime')?.valueChanges.subscribe(value => {
+   if (!this.isValidHour(value)) {
+      const fixed = this.normalizeToValidHour(value);
+      this.rentalForm.patchValue({ pickupTime: fixed }, { emitEvent: false });
+    }
+});
+  
+this.rentalForm.get('returnTime')?.valueChanges.subscribe(value => {
+
+   if (!this.isValidHour(value)) {
+      const fixed = this.normalizeToValidHour(value);
+      this.rentalForm.patchValue({ returnTime: fixed }, { emitEvent: false });
+    }
+
+});
+
+   
+
+    
   }
 
 
@@ -80,6 +114,7 @@ export class RentalCreateComponent implements OnInit {
 
   const pickup = this.rentalForm.get('pickupTime')?.value;
   const returnT = this.rentalForm.get('returnTime')?.value;
+  
 
   if (pickup && returnT && returnT > pickup) {
     const diffMs = new Date(returnT).getTime() - new Date(pickup).getTime();
@@ -128,7 +163,7 @@ onSubmit(): void {
     pickupTime: new Date(formValue.pickupTime).toISOString(),
     returnTime: new Date(formValue.returnTime).toISOString(),
     pickupBranchId: +formValue.pickupBranchId,
-    returnBranchId: +formValue.returnBranchId,
+    returnBranchId: formValue.returnBranchId,
     durationDays: this.durationDays,
     totalAmount: this.totalAmount
   };
@@ -171,29 +206,21 @@ onSubmit(): void {
     }
   });
 }
+/**durationDays là return - pickup và làm tròn 
+ví dụ 4.2 ngày thành 4.5, 3.1 ngày thành 3.5 ngày, 4.7 ngày thành 5 ngày */
 
-  caculateHours() {
-    const pickup = this.rentalForm.get('pickupTime')?.value;
-    const returnT = this.rentalForm.get('returnTime')?.value;
-    if (pickup && returnT && returnT > pickup) {
-      const diffMs = new Date(returnT).getTime() - new Date(pickup).getTime();
-      const hours = Math.ceil(diffMs / (1000 * 60 * 60));
-      return hours;
-    }
-    return 0;
-  }
 
   calculateDays() {
-    // if day less than 1, return hours difference as string
     const pickup = this.rentalForm.get('pickupTime')?.value;
     const returnT = this.rentalForm.get('returnTime')?.value;
     if (pickup && returnT && returnT > pickup) {
       const diffMs = new Date(returnT).getTime() - new Date(pickup).getTime();
-      const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-      return days;
+      const days = diffMs / (1000 * 60 * 60 * 24);
+      return Math.round(days + 0.5); // làm tròn lên .5
     }
     return 0;
   }
+
   goBack(): void {
     this.router.navigate(['/search']);
   }
@@ -203,5 +230,32 @@ onSubmit(): void {
 
 get totalAmount(): number {
   return this.rentalForm.get('totalAmount')?.value || 0;
+}
+
+private isValidHour(dateStr: string): boolean {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  const h = d.getHours();
+  return h >= 8 && h <= 22;
+}
+
+private normalizeToValidHour(dateStr: string): string {
+  const d = new Date(dateStr);
+  let h = d.getHours();
+
+  if (h < 8) d.setHours(8, 0, 0);
+  if (h > 22) d.setHours(22, 0, 0);
+
+  return d.toISOString().slice(0, 16);
+}
+
+public minReturnTime(): string {
+  const pickup = this.rentalForm.get('pickupTime')?.value;
+  if (!pickup) return '';
+
+  const returnDate = new Date(pickup);
+  returnDate.setDate(returnDate.getDate() + 1);
+  returnDate.setHours(8, 0, 0, 0);
+  return returnDate.toISOString().slice(0, 16);
 }
 }

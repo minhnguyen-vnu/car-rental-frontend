@@ -98,3 +98,41 @@
   border: 1px solid #ccc;
   border-radius: 6px;
 }
+
+.form-row select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: white;
+  color: #333;
+  transition: 0.25s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Icon mũi tên tinh tế (SVG màu #555) */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23555' height='18' viewBox='0 0 20 20' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M5.5 7.5l4.5 4.5 4.5-4.5 1 1-5.5 5.5-5.5-5.5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1rem;
+}
+
+/* Hover đồng bộ với input */
+.form-row select:hover {
+  background-color: #f8f9fa;
+}
+
+/* Focus giống input datetime-local */
+.form-row select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+  background-color: white;
+}
+
+/* Disabled option placeholder style */
+.form-row select option[disabled] {
+  color: #999;
+}
