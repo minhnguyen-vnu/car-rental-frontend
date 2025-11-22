@@ -5,6 +5,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, delay } from 'rxjs/operators';
 import { GeneralResponse } from '../../shared/models/general-response.model';
+import { environment } from '../../../environments/environment';
 
 export interface VehicleRequestDTO {
   id?: number;
@@ -33,7 +34,7 @@ export interface VehicleResponseDTO extends VehicleRequestDTO {
   providedIn: 'root'
 })
 export class VehicleService {
-  private readonly baseUrl = '/vehicle';
+  private readonly baseUrl = `${environment.apiUrl}/vehicle`;
 
   // Mock data đẹp để test
   private mockData: VehicleResponseDTO[] = [
