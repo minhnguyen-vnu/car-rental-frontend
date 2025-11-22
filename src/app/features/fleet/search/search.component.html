@@ -1,43 +1,73 @@
-<h2>Tra cứu Xe</h2>
+<div class="search-container">
+  <h2>Tra cứu Xe</h2>
 
-<form (ngSubmit)="search()" #searchForm="ngForm">
-  <div class="grid">
-    <input placeholder="ID" type="number" [(ngModel)]="request.id" name="id" *ngIf="role !== 'USER'">
-    <input placeholder="Mã xe" [(ngModel)]="request.vehicleCode" name="vehicleCode" *ngIf="role !== 'USER'">
-    <input placeholder="Biển số" [(ngModel)]="request.licensePlate" name="licensePlate" *ngIf="role !== 'USER'">
-    <input placeholder="Hãng" [(ngModel)]="request.brand" name="brand">
-    <input placeholder="Mẫu xe" [(ngModel)]="request.model" name="model">
-    <input placeholder="Loại xe" [(ngModel)]="request.vehicleType" name="vehicleType">
-    <input placeholder="Số ghế" type="number" [(ngModel)]="request.seats" name="seats">
-    <input placeholder="Hộp số" [(ngModel)]="request.transmission" name="transmission" *ngIf="role !== 'USER'">
-    <input placeholder="Nhiên liệu" [(ngModel)]="request.fuelType" name="fuelType" *ngIf="role !== 'USER'">
-    <input placeholder="Màu sắc" [(ngModel)]="request.color" name="color">
-    <input placeholder="Năm sản xuất" type="number" [(ngModel)]="request.year" name="year" *ngIf="role !== 'USER'">
-    <input placeholder="Giá cơ bản" type="number" step="0.01" [(ngModel)]="request.basePrice" name="basePrice">
-    <input placeholder="Trạng thái" [(ngModel)]="request.status" name="status" *ngIf="role !== 'USER'">
-    <input placeholder="Chi nhánh ID" type="number" [(ngModel)]="request.branchId" name="branchId">
-    <!-- <input placeholder="Thời gian quay đầu (phút)" type="number" [(ngModel)]="request.turnaroundMinutes" name="turnaroundMinutes"> -->
+  <form (ngSubmit)="search()" #searchForm="ngForm" class="search-form">
+    <div class="grid">
+      <div class="input-group">
+        <input placeholder="ID" type="number" [(ngModel)]="request.id" name="id">
+      </div>
+      <div class="input-group">
+        <input placeholder="Mã xe" [(ngModel)]="request.vehicleCode" name="vehicleCode">
+      </div>
+      <div class="input-group">
+        <input placeholder="Biển số" [(ngModel)]="request.licensePlate" name="licensePlate">
+      </div>
+      <div class="input-group">
+        <input placeholder="Hãng" [(ngModel)]="request.brand" name="brand">
+      </div>
+      <div class="input-group">
+        <input placeholder="Mẫu xe" [(ngModel)]="request.model" name="model">
+      </div>
+      <div class="input-group">
+        <input placeholder="Loại xe" [(ngModel)]="request.vehicleType" name="vehicleType">
+      </div>
+      <div class="input-group">
+        <input placeholder="Số ghế" type="number" [(ngModel)]="request.seats" name="seats">
+      </div>
+      <div class="input-group">
+        <input placeholder="Hộp số" [(ngModel)]="request.transmission" name="transmission">
+      </div>
+      <div class="input-group">
+        <input placeholder="Nhiên liệu" [(ngModel)]="request.fuelType" name="fuelType">
+      </div>
+      <div class="input-group">
+        <input placeholder="Màu sắc" [(ngModel)]="request.color" name="color">
+      </div>
+      <div class="input-group">
+        <input placeholder="Năm sản xuất" type="number" [(ngModel)]="request.year" name="year">
+      </div>
+      <div class="input-group">
+        <input placeholder="Giá cơ bản" type="number" step="0.01" [(ngModel)]="request.basePrice" name="basePrice">
+      </div>
+      <div class="input-group">
+        <input placeholder="Trạng thái" [(ngModel)]="request.status" name="status">
+      </div>
+      <div class="input-group">
+        <input placeholder="Chi nhánh ID" type="number" [(ngModel)]="request.branchId" name="branchId">
+      </div>
+    </div>
+    <button type="submit" [disabled]="loading" class="search-btn">
+      <span *ngIf="!loading">🔍 Tìm kiếm</span>
+      <span *ngIf="loading">⏳ Đang tìm...</span>
+    </button>
+  </form>
+
+  <div class="vehicles-grid">
+    <app-vehicle-card
+      *ngFor="let vehicle of vehicles; trackBy: trackById"
+      [vehicle]="vehicle"
+      (viewDetail)="onViewDetail($event)">
+    </app-vehicle-card>
+
+    <div *ngIf="vehicles.length === 0 && !loading && searchForm.submitted" class="no-results">
+      <div class="no-results-icon">🚗</div>
+      <p>Không tìm thấy xe nào phù hợp.</p>
+      <small>Thử điều chỉnh bộ lọc tìm kiếm của bạn</small>
+    </div>
   </div>
-  <button type="submit" [disabled]="loading">
-    {{ loading ? 'Đang tìm...' : 'Tìm kiếm' }}
-  </button>
-</form>
 
-<div class="vehicles-grid" style="margin-top: 20px">
-  <app-vehicle-card 
-    *ngFor="let vehicle of vehicles; trackBy: trackById"
-    [vehicle]="vehicle"
-    (viewDetail)="onViewDetail($event)">
-  </app-vehicle-card>
-
-  <!-- Không có kết quả -->
-  <p *ngIf="vehicles.length === 0 && !loading && searchForm.submitted"
-     style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: #666; font-size: 18px;">
-    Không tìm thấy xe nào phù hợp.
-  </p>
-</div>
-
-<!-- Loading -->
-<div *ngIf="loading" style="text-align: center; padding: 40px;">
-  <p>Đang tải dữ liệu...</p>
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Đang tải dữ liệu...</p>
+  </div>
 </div>
