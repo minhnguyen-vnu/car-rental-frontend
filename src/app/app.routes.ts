@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
+  
 
   // ================================================================
   // 1. TEST ROUTES – KHÔNG CẦN ĐĂNG NHẬP (để bạn preview giao612 diện)
@@ -31,6 +32,18 @@ export const routes: Routes = [
   // ================================================================
   // 2. PUBLIC ROUTES – AI CŨNG TRUY CẬP ĐƯỢC
   // ================================================================
+  {
+    path: 'payment-success',
+    loadComponent: () => import('./features/payment/result.component')
+      .then(m => m.PaymentResultComponent),
+    data: { success: true }           // ← truyền trạng thái qua data
+  },
+  {
+    path: 'payment-fail',
+    loadComponent: () => import('./features/payment/result.component')
+      .then(m => m.PaymentResultComponent),
+    data: { success: false }
+  },
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login.component')
@@ -70,6 +83,12 @@ export const routes: Routes = [
   },
   {
     path: 'admin/rental/:id',
+    // canActivate: [authGuard],
+    loadComponent: () => import('./features/rental/rental-detail.component')
+      .then(m => m.RentalDetailComponent)
+  },
+  {
+    path: 'rental/:id',
     // canActivate: [authGuard],
     loadComponent: () => import('./features/rental/rental-detail.component')
       .then(m => m.RentalDetailComponent)

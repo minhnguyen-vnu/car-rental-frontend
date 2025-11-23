@@ -48,8 +48,12 @@ export class LoginComponent {
     this.authService.login(request).subscribe({
       next: (response) => {
         this.loading = false;
-        // Login success -> redirect to vehicles
-        this.router.navigate(['/vehicles']);
+        const role = localStorage.getItem('role')?.toUpperCase();
+        if (role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/user']);
+        }
       },
       error: (error) => {
         this.loading = false;

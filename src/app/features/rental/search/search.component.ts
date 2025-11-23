@@ -41,7 +41,7 @@ export class RentalSearchComponent implements OnInit {
       alert('mock user cho mục đích thử nghiệm');
       this.currentUser = {
         userId: 66771508,
-        role: 'ADMIN'
+        role: 'USER'
       };
     }
 
@@ -65,6 +65,10 @@ export class RentalSearchComponent implements OnInit {
 
   onViewDetail(id: number) {
     // Admin và customer cùng xem chi tiết ở link giống nhau (sau này bạn có thể đổi)
+    if (this.isCustomerMode) {
+      this.router.navigate(['/rental', id]);
+      return;
+    }
     this.router.navigate(['/admin/rental', id]);
   }
 }

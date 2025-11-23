@@ -1,0 +1,20 @@
+<div class="payment-result-container">
+  <!-- Nút quay lại -->
+  
+
+  <!-- Thông báo kết quả -->
+  <div class="result-message" [ngClass]="{'success': isSuccess, 'failure': !isSuccess}">
+    <h2 *ngIf="isSuccess">Thanh toán thành công!</h2>
+    <h2 *ngIf="!isSuccess">Thanh toán thất bại</h2>
+    
+    <p *ngIf="isSuccess">
+      Cảm ơn bạn đã thực hiện giao dịch. Đơn hàng đã được xử lý thành công.
+    </p>
+    <p *ngIf="!isSuccess">
+      Rất tiếc, giao dịch không thành công. Vui lòng thử lại hoặc liên hệ hỗ trợ.
+    </p>
+  </div>
+  <button class="back-btn" (click)="goBack()">
+    Quay lại
+  </button>
+</div>

@@ -41,7 +41,7 @@ export class RentalDetailComponent implements OnInit {
     if (!this.user) {
       this.user = {
         userId: 66771508,
-        role: 'ADMIN'
+        role: 'USER'
       }
     }
     this.isAdmin = this.user?.role === 'ADMIN';
