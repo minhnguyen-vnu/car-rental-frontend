@@ -1,4 +1,3 @@
-// src/app/features/rental/create/rental-create.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -20,19 +19,10 @@ export class RentalCreateComponent implements OnInit {
   vehicleId!: number;
   loading = false;
   submitting = false;
-  // ít nhất từ ngày mai từ 08:00 đến 22:00
-  minPickupTime: string = (() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(8, 0, 0, 0);
-    return tomorrow.toISOString().slice(0, 16);
-  })();
-  maxPickupHour = 22;
-  minReturnHour = 8;
+  minPickupDate = '';
+  timeSlots: string[] = [];
 
-
-
-  branches = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5},{id: 6},{id: 7},{id: 8},{id: 9},{id: 10}]; 
+  branches = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5},{id: 6},{id: 7},{id: 8},{id: 9},{id: 10}];
 
   constructor(
     private route: ActivatedRoute,
@@ -41,55 +31,46 @@ export class RentalCreateComponent implements OnInit {
     private rentalService: RentalService,
     private vehicleService: VehicleService,
     private storageService: StorageService,
-    
+
   ) {}
 
   ngOnInit(): void {
+    this.timeSlots = this.buildTimeSlots();
     this.vehicleId = +this.route.snapshot.paramMap.get('vehicleId')!;
     this.createForm();
+    this.setupValueSync();
     this.loadVehicle();
 
     // Tự động tính lại khi thay đổi thời gian
     this.rentalForm.get('pickupTime')?.valueChanges.subscribe(() => this.updateCalculations());
     this.rentalForm.get('returnTime')?.valueChanges.subscribe(() => this.updateCalculations());
-
-    this.rentalForm.get('pickupTime')?.valueChanges.subscribe(value => {
-   if (!this.isValidHour(value)) {
-      const fixed = this.normalizeToValidHour(value);
-      this.rentalForm.patchValue({ pickupTime: fixed }, { emitEvent: false });
-    }
-});
-  
-this.rentalForm.get('returnTime')?.valueChanges.subscribe(value => {
-
-   if (!this.isValidHour(value)) {
-      const fixed = this.normalizeToValidHour(value);
-      this.rentalForm.patchValue({ returnTime: fixed }, { emitEvent: false });
-    }
-
-});
-
-   
-
-    
   }
 
 
 
   private createForm(): void {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = tomorrow.toISOString().slice(0, 16);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const pickupDate = this.toDateInputValue(tomorrow);
+    const returnDate = this.toDateInputValue(this.addDays(tomorrow, 1));
+    const defaultPickupSlot = '09:00';
+    const defaultReturnSlot = '11:00';
+    this.minPickupDate = pickupDate;
 
-  this.rentalForm = this.fb.group({
-    pickupTime: [tomorrowStr, Validators.required],
-    returnTime: ['', Validators.required],
-    pickupBranchId: [1, Validators.required],
-    returnBranchId: [1, Validators.required],
-    durationDays: [0],        // thêm
-    totalAmount: [0]          // thêm
-  });
-}
+    this.rentalForm = this.fb.group({
+      pickupDate: [pickupDate, Validators.required],
+      pickupSlot: [defaultPickupSlot, Validators.required],
+      returnDate: [returnDate, Validators.required],
+      returnSlot: [defaultReturnSlot, Validators.required],
+      pickupTime: [`${pickupDate}T${defaultPickupSlot}`, Validators.required],
+      returnTime: [`${returnDate}T${defaultReturnSlot}`, Validators.required],
+      pickupBranchId: [1, Validators.required],
+      returnBranchId: [1, Validators.required],
+      durationDays: [0],
+      totalAmount: [0]
+    });
+  }
 
   private loadVehicle(): void {
     this.loading = true;
@@ -108,31 +89,27 @@ this.rentalForm.get('returnTime')?.valueChanges.subscribe(value => {
     });
   }
 
-  // Tính số ngày + tổng tiền
- private updateCalculations(): void {
-  if (!this.vehicle?.basePrice) return; // bạn đang dùng basePrice thay vì dailyRate
+  private updateCalculations(): void {
+    if (!this.vehicle?.basePrice) return;
 
-  const pickup = this.rentalForm.get('pickupTime')?.value;
-  const returnT = this.rentalForm.get('returnTime')?.value;
-  
+    const pickup = this.rentalForm.get('pickupTime')?.value;
+    const returnT = this.rentalForm.get('returnTime')?.value;
 
-  if (pickup && returnT && returnT > pickup) {
-    const diffMs = new Date(returnT).getTime() - new Date(pickup).getTime();
-    const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-    const total = days * this.vehicle.basePrice;
+    if (pickup && returnT && returnT > pickup) {
+      const days = this.calculateDays(); // Dùng hàm này thay vì Math.ceil
+      const total = days * this.vehicle.basePrice;
 
-    // Cập nhật vào form → tự động hiển thị + gửi đi
-    this.rentalForm.patchValue({
-      durationDays: days,
-      totalAmount: total
-    }, { emitEvent: false });
-  } else {
-    this.rentalForm.patchValue({
-      durationDays: 0,
-      totalAmount: 0
-    }, { emitEvent: false });
+      this.rentalForm.patchValue({
+        durationDays: days,
+        totalAmount: total
+      }, { emitEvent: false });
+    } else {
+      this.rentalForm.patchValue({
+        durationDays: 0,
+        totalAmount: 0
+      }, { emitEvent: false });
+    }
   }
-}
 
 
 onSubmit(): void {
@@ -140,7 +117,7 @@ onSubmit(): void {
 
   let user = this.storageService.getUser();
   if (!user) {
-  
+
     user = {
 
       userId: 66771508,
@@ -206,7 +183,7 @@ onSubmit(): void {
     }
   });
 }
-/**durationDays là return - pickup và làm tròn 
+/**durationDays là return - pickup và làm tròn
 ví dụ 4.2 ngày thành 4.5, 3.1 ngày thành 3.5 ngày, 4.7 ngày thành 5 ngày */
 
 
@@ -215,8 +192,19 @@ ví dụ 4.2 ngày thành 4.5, 3.1 ngày thành 3.5 ngày, 4.7 ngày thành 5 ng
     const returnT = this.rentalForm.get('returnTime')?.value;
     if (pickup && returnT && returnT > pickup) {
       const diffMs = new Date(returnT).getTime() - new Date(pickup).getTime();
-      const days = diffMs / (1000 * 60 * 60 * 24);
-      return Math.round(days + 0.5); // làm tròn lên .5
+      const minutes = diffMs / (1000 * 60);
+      const actualDays = minutes / (24.0 * 60.0);
+      const dFloor = Math.floor(actualDays);
+      const frac = actualDays - dFloor;
+
+      let rounded;
+      if (frac === 0) {
+        rounded = dFloor;
+      } else {
+        rounded = (frac <= 0.5) ? dFloor + 0.5 : dFloor + 1.0;
+      }
+
+      return rounded;
     }
     return 0;
   }
@@ -232,30 +220,93 @@ get totalAmount(): number {
   return this.rentalForm.get('totalAmount')?.value || 0;
 }
 
-private isValidHour(dateStr: string): boolean {
-  if (!dateStr) return false;
-  const d = new Date(dateStr);
-  const h = d.getHours();
-  return h >= 8 && h <= 22;
-}
+  minReturnDate(): string {
+    return this.rentalForm.get('pickupDate')?.value || this.minPickupDate;
+  }
 
-private normalizeToValidHour(dateStr: string): string {
-  const d = new Date(dateStr);
-  let h = d.getHours();
+  private buildTimeSlots(): string[] {
+    const slots: string[] = [];
+    for (let hour = 8; hour <= 22; hour++) {
+      const hourStr = hour.toString().padStart(2, '0');
+      slots.push(`${hourStr}:00`);
+      if (hour !== 22) {
+        slots.push(`${hourStr}:30`);
+      }
+    }
+    return slots;
+  }
 
-  if (h < 8) d.setHours(8, 0, 0);
-  if (h > 22) d.setHours(22, 0, 0);
+  private toDateInputValue(date: Date): string {
+    return date.toISOString().slice(0, 10);
+  }
 
-  return d.toISOString().slice(0, 16);
-}
+  private addDays(date: Date, days: number): Date {
+    const clone = new Date(date);
+    clone.setDate(clone.getDate() + days);
+    return clone;
+  }
 
-public minReturnTime(): string {
-  const pickup = this.rentalForm.get('pickupTime')?.value;
-  if (!pickup) return '';
+  private setupValueSync(): void {
+    this.syncPickupDateTime();
+    this.syncReturnDateTime();
 
-  const returnDate = new Date(pickup);
-  returnDate.setDate(returnDate.getDate() + 1);
-  returnDate.setHours(8, 0, 0, 0);
-  return returnDate.toISOString().slice(0, 16);
-}
+    this.rentalForm.get('pickupDate')?.valueChanges.subscribe(() => {
+      this.syncPickupDateTime();
+      this.ensureReturnAfterPickup();
+    });
+    this.rentalForm.get('pickupSlot')?.valueChanges.subscribe(() => {
+      this.syncPickupDateTime();
+      this.ensureReturnAfterPickup();
+    });
+    this.rentalForm.get('returnDate')?.valueChanges.subscribe(() => this.syncReturnDateTime());
+    this.rentalForm.get('returnSlot')?.valueChanges.subscribe(() => this.syncReturnDateTime());
+  }
+
+  private syncPickupDateTime(): void {
+    const date = this.rentalForm.get('pickupDate')?.value;
+    const slot = this.rentalForm.get('pickupSlot')?.value;
+    if (!date || !slot) return;
+    this.rentalForm.patchValue({ pickupTime: `${date}T${slot}` }, { emitEvent: true });
+  }
+
+  private syncReturnDateTime(): void {
+    const date = this.rentalForm.get('returnDate')?.value;
+    const slot = this.rentalForm.get('returnSlot')?.value;
+    if (!date || !slot) return;
+    this.rentalForm.patchValue({ returnTime: `${date}T${slot}` }, { emitEvent: true });
+  }
+
+  private ensureReturnAfterPickup(): void {
+    const pickupDate = this.rentalForm.get('pickupDate')?.value;
+    const pickupSlot = this.rentalForm.get('pickupSlot')?.value;
+    const returnDate = this.rentalForm.get('returnDate')?.value;
+    const returnSlot = this.rentalForm.get('returnSlot')?.value;
+
+    if (!pickupDate) return;
+
+    if (!returnDate || returnDate < pickupDate) {
+      this.rentalForm.patchValue({ returnDate: pickupDate }, { emitEvent: false });
+    }
+
+    if (pickupDate === this.rentalForm.get('returnDate')?.value && pickupSlot && returnSlot && returnSlot <= pickupSlot) {
+      const nextSlot = this.findNextSlot(pickupSlot);
+      if (nextSlot) {
+        this.rentalForm.patchValue({ returnSlot: nextSlot }, { emitEvent: false });
+      } else {
+        const nextDate = this.toDateInputValue(this.addDays(new Date(pickupDate), 1));
+        this.rentalForm.patchValue({
+          returnDate: nextDate,
+          returnSlot: this.timeSlots[0]
+        }, { emitEvent: false });
+      }
+    }
+
+    this.syncReturnDateTime();
+  }
+
+  private findNextSlot(currentSlot: string): string | null {
+    const index = this.timeSlots.indexOf(currentSlot);
+    if (index === -1) return null;
+    return this.timeSlots[index + 1] || null;
+  }
 }

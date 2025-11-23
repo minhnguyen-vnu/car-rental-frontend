@@ -1,57 +1,57 @@
-<div class="login-container">
-  <div class="login-card">
-    <h2>Login to Car Rental</h2>
+<div class="auth-page">
+  <div class="form-shell form-shell--narrow">
+    <section class="form-card">
+      <p class="eyebrow">Chào mừng trở lại</p>
+      <h2 class="form-title">Đăng nhập hệ thống</h2>
+      <p class="form-subtitle">Quản lý đội xe và đơn thuê trên cùng một bảng điều khiển.</p>
 
-    <!-- Error message -->
-    <div class="error-message" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
-
-    <!-- Login form -->
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-      <!-- Username -->
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          [(ngModel)]="username"
-          placeholder="Enter username"
-          [disabled]="loading"
-          required
-        />
+      <div class="message-box is-error" *ngIf="errorMessage">
+        {{ errorMessage }}
       </div>
 
-      <!-- Password -->
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          [(ngModel)]="password"
-          placeholder="Enter password"
-          [disabled]="loading"
-          required
-        />
-      </div>
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="form-grid form-grid--single">
+        <div class="input-stack">
+          <label for="username">Tên đăng nhập</label>
+          <input
+            class="input-control"
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Tên đăng nhập"
+            [disabled]="loading"
+            required
+          />
+        </div>
 
-      <!-- Submit button -->
-      <button
-        type="submit"
-        class="btn-login"
-        [disabled]="loading || !loginForm.valid"
-      >
-        <span *ngIf="!loading">Login</span>
-        <span *ngIf="loading">Logging in...</span>
-      </button>
-    </form>
+        <div class="input-stack">
+          <label for="password">Mật khẩu</label>
+          <input
+            class="input-control"
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Nhập mật khẩu"
+            [disabled]="loading"
+            required
+          />
+        </div>
 
-    <!-- Register link -->
-    <div class="register-link">
-      Don't have an account?
-      <a routerLink="/register">Register here</a>
-    </div>
+        <button
+          type="submit"
+          class="primary-btn full-width submit-btn"
+          [disabled]="loading || !loginForm.valid"
+        >
+          <span *ngIf="!loading">Đăng nhập</span>
+          <span *ngIf="loading">Đang kiểm tra...</span>
+        </button>
+      </form>
+    </section>
+
+    <p class="form-footer">
+      Chưa có tài khoản?
+      <a class="inline-link" routerLink="/register">Tạo tài khoản ngay</a>
+    </p>
   </div>
 </div>

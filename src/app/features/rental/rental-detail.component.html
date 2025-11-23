@@ -1,74 +1,127 @@
 <!-- rental-detail.component.html -->
-<div class="detail-container">
-  <h2>{{ title }} #{{ rental?.transactionCode }}</h2>
-
-  <div class="actions">
-    <!-- Chỉ Admin ở chế độ view mới thấy nút Cập nhật -->
-    <button *ngIf="canEdit" (click)="enterEdit()" class="btn-edit">
-      Cập nhật
-    </button>
-
-    <!-- Chỉ hiện khi đang edit (chỉ admin) -->
-    <button *ngIf="showActions" (click)="cancel()" class="btn-cancel">
-      Hủy
-    </button>
-    <button *ngIf="showActions" (click)="save()" [disabled]="isSubmitting" class="btn-save">
-      {{ isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi' }}
-    </button>
-
-    <button (click)="location.back()" class="btn-back">Quay lại</button>
-  </div>
-
-  <form [formGroup]="form" class="rental-form">
-    <div class="form-row">
-      <label>ID:</label>
-      <input type="text" formControlName="id" readonly>
+<div class="rental-detail-page">
+  <div class="form-shell form-shell--wide">
+    <div class="detail-header">
+      <div>
+        <p class="eyebrow">Lịch sử thuê xe</p>
+        <h2 class="form-title">{{ title }}</h2>
+        <p class="form-subtitle">
+          Mã giao dịch #{{ form.get('transactionCode')?.value || '---' }}
+        </p>
+      </div>
+      <div class="detail-header__actions">
+        @if (canEdit) {
+          <button class="primary-btn" (click)="enterEdit()">Cập nhật</button>
+        }
+        @if (showActions) {
+          <button class="secondary-btn" (click)="cancel()">Hủy</button>
+        }
+        @if (showActions) {
+          <button
+            class="primary-btn"
+            (click)="save()"
+            [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi' }}
+          </button>
+        }
+        <button type="button" class="ghost-btn back-link" (click)="location.back()">← Quay lại</button>
+      </div>
     </div>
 
-    <div class="form-row">
-      <label>Mã giao dịch:</label>
-      <input type="text" formControlName="transactionCode" readonly>
-    </div>
+    @if (rental) {
+      <section class="info-panel detail-meta">
+        <div class="detail-meta__grid">
+          <p><strong>Khách hàng:</strong> #{{ form.get('userId')?.value }}</p>
+          <p><strong>Xe:</strong> #{{ form.get('vehicleId')?.value }}</p>
+          <p><strong>Chi nhánh nhận:</strong> #{{ form.get('pickupBranchId')?.value }}</p>
+          <p><strong>Chi nhánh trả:</strong> #{{ form.get('returnBranchId')?.value }}</p>
+          <p><strong>Số ngày:</strong> {{ form.get('durationDays')?.value || 0 }} ngày</p>
+          <p><strong>Thanh toán:</strong> #{{ form.get('paymentId')?.value || '---' }}</p>
+        </div>
+        <span
+          class="status-pill"
+          [ngClass]="'status-' + (form.get('status')?.value || '').toLowerCase()">
+          {{ form.get('status')?.value || '---' }}
+        </span>
+      </section>
+    }
 
-    <div class="form-row">
-      <label>Khách hàng ID:</label>
-      <input type="text" formControlName="userId" readonly>
-    </div>
+    <form [formGroup]="form" class="form-card form-grid form-grid--two detail-form">
+      <div class="grid-full section-heading">
+        <h3>Thông tin đơn</h3>
+        <p class="section-subtitle">Các trường bị khóa khi bạn không có quyền chỉnh sửa.</p>
+      </div>
 
-    <div class="form-row">
-      <label>Xe ID:</label>
-      <input type="text" formControlName="vehicleId" readonly>
-    </div>
+      <div class="input-stack">
+        <label>ID</label>
+        <input class="input-control" type="text" formControlName="id" readonly>
+      </div>
 
-    <div class="form-row">
-      <label>Trạng thái:</label>
-      <select formControlName="status" [attr.disabled]="!isAdmin || mode === 'view' ? true : null">
-        <option value="PENDING">Chờ xác nhận</option>
-        <option value="CONFIRMED">Đã xác nhận</option>
-        <option value="CANCELLED">Đã hủy</option>
-        <option value="COMPLETED">Hoàn thành</option>
-      </select>
-    </div>
+      <div class="input-stack">
+        <label>Mã giao dịch</label>
+        <input class="input-control" type="text" formControlName="transactionCode" readonly>
+      </div>
 
-    <div class="form-row">
-      <label>Thời gian nhận xe:</label>
-      <input type="datetime-local" formControlName="pickupTime">
-    </div>
+      <div class="input-stack">
+        <label>Khách hàng ID</label>
+        <input class="input-control" type="text" formControlName="userId" readonly>
+      </div>
 
-    <div class="form-row">
-      <label>Thời gian trả xe:</label>
-      <input type="datetime-local" formControlName="returnTime">
-    </div>
+      <div class="input-stack">
+        <label>Xe ID</label>
+        <input class="input-control" type="text" formControlName="vehicleId" readonly>
+      </div>
 
-    <div class="form-row">
-      <label>Tổng tiền:</label>
-      <input type="number" formControlName="totalAmount">
-      <span>{{ form.get('currency')?.value }}</span>
-    </div>
-  </form>
+      <div class="input-stack">
+        <label>Trạng thái</label>
+        <select
+          class="select-control"
+          formControlName="status"
+          [attr.disabled]="!isAdmin || mode === 'view' ? true : null">
+          <option value="PENDING">Chờ xác nhận</option>
+          <option value="CONFIRMED">Đã xác nhận</option>
+          <option value="CANCELLED">Đã hủy</option>
+          <option value="COMPLETED">Hoàn thành</option>
+        </select>
+      </div>
 
-  <!-- Thông báo cho khách hàng -->
-  <div *ngIf="isCustomer" class="customer-notice">
-    Bạn chỉ có thể xem thông tin đơn thuê. Liên hệ admin nếu cần hỗ trợ.
+      <div class="input-stack">
+        <label>Thanh toán ID</label>
+        <input class="input-control" type="text" formControlName="paymentId" readonly>
+      </div>
+
+      <div class="grid-full section-heading">
+        <h3>Lịch nhận / trả</h3>
+        <p class="section-subtitle">Thời gian được khóa để đảm bảo tính toàn vẹn lịch sử.</p>
+      </div>
+
+      <div class="input-stack">
+        <label>Thời gian nhận xe</label>
+        <input class="input-control" type="datetime-local" formControlName="pickupTime">
+      </div>
+
+      <div class="input-stack">
+        <label>Thời gian trả xe</label>
+        <input class="input-control" type="datetime-local" formControlName="returnTime">
+      </div>
+
+      <div class="grid-full section-heading">
+        <h3>Thanh toán</h3>
+      </div>
+
+      <div class="input-stack amount-group">
+        <label>Tổng tiền</label>
+        <div class="amount-input">
+          <input class="input-control" type="number" formControlName="totalAmount">
+          <span class="amount-addon">{{ form.get('currency')?.value }}</span>
+        </div>
+      </div>
+    </form>
+
+    @if (isCustomer) {
+      <div class="message-box is-info">
+        Bạn chỉ có thể xem thông tin đơn thuê. Liên hệ quản trị viên nếu cần hỗ trợ.
+      </div>
+    }
   </div>
 </div>

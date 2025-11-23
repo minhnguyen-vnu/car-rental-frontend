@@ -41,12 +41,14 @@ export class RentalSearchComponent implements OnInit {
       alert('mock user cho mục đích thử nghiệm');
       this.currentUser = {
         userId: 66771508,
-        role: 'admin'
-      }
+        role: 'ADMIN'
+      };
     }
-    if (this.currentUser?.role === 'customer') {
+
+    const role = this.currentUser?.role?.toUpperCase();
+    if (role === 'USER' || role === 'CUSTOMER') {
       this.isCustomerMode = true;
-      this.filter.userId = this.currentUser.userId;  // tự động điền và khóa
+      this.filter.userId = this.currentUser?.userId;  // tự động điền và khóa
     }
   }
 

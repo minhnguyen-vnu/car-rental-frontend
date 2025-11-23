@@ -1,120 +1,137 @@
-<div class="register-container">
-  <div class="register-card">
-    <h2>Create Account</h2>
+<div class="auth-page auth-page--register">
+  <div class="form-shell form-shell--wide">
+    <section class="form-card form-card--spacious">
+      <p class="eyebrow">Tạo tài khoản</p>
+      <h2 class="form-title">Cùng chúng tôi quản lý đội xe</h2>
+      <p class="form-subtitle">Nhập các thông tin chính xác để kích hoạt tài khoản Car Rental.</p>
 
-    <!-- Success message -->
-    <div class="success-message" *ngIf="successMessage">
-      {{ successMessage }}
-    </div>
+      @if (successMessage) {
+        <div class="message-box is-success">
+          {{ successMessage }}
+        </div>
+      }
+      @if (errorMessage) {
+        <div class="message-box is-error">
+          {{ errorMessage }}
+        </div>
+      }
 
-    <!-- Error message -->
-    <div class="error-message" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
+      <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="form-grid form-grid--two">
+        <div class="input-stack">
+          <label for="username">
+            Username <span class="required">*</span>
+          </label>
+          <input
+            class="input-control"
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Chỉ chữ thường 6-50 ký tự"
+            [disabled]="loading"
+            required
+          />
+          <small class="field-hint">Sử dụng chữ thường, không dấu, 6-50 ký tự</small>
+        </div>
 
-    <!-- Register form -->
-    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
-      <!-- Username -->
-      <div class="form-group">
-        <label for="username">Username <span class="required">*</span></label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          [(ngModel)]="username"
-          placeholder="Only lowercase letters (6-50 chars)"
-          [disabled]="loading"
-          required
-        />
-        <small class="hint">Only lowercase letters, 6-50 characters</small>
-      </div>
+        <div class="input-stack">
+          <label for="email">
+            Email <span class="required">*</span>
+          </label>
+          <input
+            class="input-control"
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="you@email.com"
+            [disabled]="loading"
+            required
+          />
+        </div>
 
-      <!-- Email -->
-      <div class="form-group">
-        <label for="email">Email <span class="required">*</span></label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          [(ngModel)]="email"
-          placeholder="your@email.com"
-          [disabled]="loading"
-          required
-        />
-      </div>
+        <div class="input-stack">
+          <label for="phone">
+            Số điện thoại <span class="required">*</span>
+          </label>
+          <input
+            class="input-control"
+            type="tel"
+            id="phone"
+            name="phone"
+            [(ngModel)]="phone"
+            placeholder="+84xxxxxxxxx hoặc 0xxxxxxxxx"
+            [disabled]="loading"
+            required
+          />
+          <small class="field-hint">9-11 số, có thể bắt đầu bằng +84</small>
+        </div>
 
-      <!-- Phone -->
-      <div class="form-group">
-        <label for="phone">Phone <span class="required">*</span></label>
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          [(ngModel)]="phone"
-          placeholder="+84xxxxxxxxx or 0xxxxxxxxx"
-          [disabled]="loading"
-          required
-        />
-        <small class="hint">9-11 digits, can start with +</small>
-      </div>
+        <div class="input-stack">
+          <label for="realName">
+            Họ tên <span class="required">*</span>
+          </label>
+          <input
+            class="input-control"
+            type="text"
+            id="realName"
+            name="realName"
+            [(ngModel)]="realName"
+            placeholder="6-50 ký tự"
+            [disabled]="loading"
+            required
+          />
+        </div>
 
-      <!-- Real Name -->
-      <div class="form-group">
-        <label for="realName">Full Name <span class="required">*</span></label>
-        <input
-          type="text"
-          id="realName"
-          name="realName"
-          [(ngModel)]="realName"
-          placeholder="Your full name (6-50 chars)"
-          [disabled]="loading"
-          required
-        />
-      </div>
+        <div class="input-stack">
+          <label for="password">
+            Mật khẩu <span class="required">*</span>
+          </label>
+          <input
+            class="input-control"
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="6-50 ký tự"
+            [disabled]="loading"
+            required
+          />
+        </div>
 
-      <!-- Password -->
-      <div class="form-group">
-        <label for="password">Password <span class="required">*</span></label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          [(ngModel)]="password"
-          placeholder="6-50 characters"
-          [disabled]="loading"
-          required
-        />
-      </div>
+        <div class="input-stack">
+          <label for="confirmPassword">
+            Nhập lại mật khẩu <span class="required">*</span>
+          </label>
+          <input
+            class="input-control"
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            placeholder="Nhập lại mật khẩu"
+            [disabled]="loading"
+            required
+          />
+        </div>
 
-      <!-- Confirm Password -->
-      <div class="form-group">
-        <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          [(ngModel)]="confirmPassword"
-          placeholder="Re-enter password"
-          [disabled]="loading"
-          required
-        />
-      </div>
+        <button
+          type="submit"
+          class="primary-btn full-width form-submit"
+          [disabled]="loading || !registerForm.valid"
+        >
+          @if (!loading) {
+            <span>Tạo tài khoản</span>
+          } @else {
+            <span>Đang xử lý...</span>
+          }
+        </button>
+      </form>
+    </section>
 
-      <!-- Submit button -->
-      <button
-        type="submit"
-        class="btn-register"
-        [disabled]="loading || !registerForm.valid"
-      >
-        <span *ngIf="!loading">Register</span>
-        <span *ngIf="loading">Creating account...</span>
-      </button>
-    </form>
-
-    <!-- Login link -->
-    <div class="login-link">
-      Already have an account?
-      <a routerLink="/login">Login here</a>
-    </div>
+    <p class="form-footer">
+      Đã có tài khoản?
+      <a class="inline-link" routerLink="/login">Đăng nhập ngay</a>
+    </p>
   </div>
 </div>

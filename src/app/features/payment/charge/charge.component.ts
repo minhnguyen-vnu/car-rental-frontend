@@ -3,9 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { PaymentFormComponent } from './payment-form/payment-form.component';
 
 @Component({
@@ -14,9 +11,6 @@ import { PaymentFormComponent } from './payment-form/payment-form.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatCardModule,
     PaymentFormComponent
   ],
   templateUrl: './charge.component.html',

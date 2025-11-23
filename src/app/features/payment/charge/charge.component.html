@@ -1,52 +1,54 @@
-<div class="charge-page">
+<div class="payment-page">
+  <div class="form-shell form-shell--narrow">
+    <section class="form-card payment-summary-card">
+      <p class="eyebrow">Thông tin đơn thuê</p>
+      <h2 class="form-title">Thanh toán đơn #{{ rentalId }}</h2>
+      <p class="form-subtitle">Hoàn tất thanh toán để chúng tôi giữ xe cho bạn.</p>
 
-  <!-- PHẦN 3: Thông tin giao dịch (luôn hiển thị) -->
-  <mat-card class="summary-card">
-    <mat-card-header>
-      <mat-card-title>Thông tin đơn thuê xe</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p><strong>Mã đơn:</strong> #{{ rentalId }}</p>
-      <p><strong>Số tiền thanh toán:</strong> {{ amount | number:'1.0-0' }} VND</p>
-    </mat-card-content>
-  </mat-card>
+      <div class="summary-panel">
+        <p><strong>Mã đơn:</strong> #{{ rentalId }}</p>
+        <p class="total">Số tiền: <strong>{{ amount | number:'1.0-0' }} VND</strong></p>
+      </div>
+    </section>
 
-  <!-- PHẦN 1: Chọn phương thức (chỉ hiện khi chưa chọn) -->
-  <mat-card class="selection-card" *ngIf="!showPaymentForm">
-    <mat-card-header>
-      <mat-card-title>Chọn phương thức thanh toán</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="selectionForm" class="selection-form">
-        <mat-form-field appearance="fill">
-          <mat-label>Phương thức</mat-label>
-          <mat-select formControlName="method">
-            <mat-option *ngFor="let m of methods" [value]="m">{{ m }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+    @if (!showPaymentForm) {
+      <section class="form-card selection-card">
+        <h3>Chọn phương thức thanh toán</h3>
+        <p class="section-subtitle">Chúng tôi hỗ trợ thanh toán qua VNPAY.</p>
 
-        <mat-form-field appearance="fill">
-          <mat-label>Cổng thanh toán</mat-label>
-          <mat-select formControlName="provider">
-            <mat-option *ngFor="let p of providers" [value]="p">{{ p }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <form [formGroup]="selectionForm" (ngSubmit)="onContinue()" class="form-grid form-grid--single selection-form">
+          <div class="input-stack">
+            <label for="method">Phương thức</label>
+            <select id="method" class="select-control" formControlName="method">
+              <option *ngFor="let m of methods" [value]="m">{{ m }}</option>
+            </select>
+          </div>
 
-        <button mat-raised-button color="primary" (click)="onContinue()">
-          Tiếp tục
-        </button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+          <div class="input-stack">
+            <label for="provider">Cổng thanh toán</label>
+            <select id="provider" class="select-control" formControlName="provider">
+              <option *ngFor="let p of providers" [value]="p">{{ p }}</option>
+            </select>
+          </div>
 
-  <!-- PHẦN 2: Form thanh toán (hiện sau khi chọn) -->
-  <div *ngIf="showPaymentForm">
-    <app-payment-form
-      [rentalId]="rentalId"
-      [amount]="amount"
-      (success)="onPaymentSuccess($event)"
-      (back)="onBackFromForm()">
-    </app-payment-form>
+          <div class="form-actions selection-actions">
+            <button type="submit" class="primary-btn">
+              Tiếp tục
+            </button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @if (showPaymentForm) {
+      <section>
+        <app-payment-form
+          [rentalId]="rentalId"
+          [amount]="amount"
+          (success)="onPaymentSuccess($event)"
+          (back)="onBackFromForm()">
+        </app-payment-form>
+      </section>
+    }
   </div>
-
 </div>

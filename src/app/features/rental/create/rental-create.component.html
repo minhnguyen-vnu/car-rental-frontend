@@ -1,83 +1,123 @@
 <!-- rental-create.component.html -->
-<div class="rental-create-container">
-  <div class="header">
-    <button class="btn-back" (click)="goBack()">← Quay lại</button>
-    <h2>Thuê xe: {{ vehicle?.brand }} {{ vehicle?.model }}</h2>
-  </div>
-
-  <div class="content" *ngIf="vehicle && !loading; else loadingTpl">
-    <div class="vehicle-summary">
-      <!-- <img [src]="vehicle.images?.[0] || '/assets/placeholder-car.jpg'" alt="Xe" class="car-img"> -->
-      <div class="info">
-        <p><strong>Biển số:</strong> {{ vehicle.licensePlate }}</p>
-        <p><strong>Giá thuê/ngày:</strong> {{ vehicle.basePrice | number }} VND</p>
-        <p><strong>Trạng thái:</strong> <span class="status available">Còn trống</span></p>
+<div class="rental-create-page">
+  <div class="form-shell form-shell--wide">
+    <div class="page-header">
+      <button type="button" class="ghost-btn back-btn" (click)="goBack()">← Quay lại</button>
+      <div>
+        <p class="eyebrow">Thuê xe</p>
+        <h2 class="form-title"> {{ vehicle?.brand }} {{ vehicle?.model }}</h2>
       </div>
     </div>
 
-    <form [formGroup]="rentalForm" (ngSubmit)="onSubmit()" class="rental-form">
-      <h3>Chọn chi nhánh</h3>
-     <!-- auto fill pickup branch -->
-      <div class="form-row">
-        <label for="returnBranchId">Chi nhánh trả xe *</label>
-        <select id="returnBranchId" formControlName="returnBranchId" required>
-          <option value="" disabled>Chọn chi nhánh</option>
-          <option  [value]="rentalForm.get('pickupBranchId')?.value">
-            ID: {{ rentalForm.get('pickupBranchId')?.value }}
-          </option>
-        </select>
+    <section class="info-panel" *ngIf="vehicle">
+      <div class="info-panel__content">
+        <p><strong>Biển số:</strong> {{ vehicle.licensePlate }}</p>
+        <p><strong>Giá thuê/ngày:</strong> {{ vehicle.basePrice | number }} VND</p>
       </div>
-      <div class="form-row">
-        <label for="returnBranchId">Chi nhánh trả xe *</label>
-        <select id="returnBranchId" formControlName="returnBranchId" required>
-          <option value="" disabled>Chọn chi nhánh</option>
-          <option *ngFor="let branch of branches" [value]="branch.id">
-            ID: {{ branch.id }}
-          </option>
-        </select>
-      </div>
-      <h3>Chọn thời gian thuê</h3>
+      <span class="info-panel__status">
+        <span class="status-dot"></span> Còn trống
+      </span>
+    </section>
 
-      <div class="form-row">
-        <label>Thời gian nhận xe *</label>
-        <!-- pickupTime must be at least tomorrow, from 8:00 to 22:00 -->
-        <input
-          type="datetime-local"
-          formControlName="pickupTime"
-          [min]="minPickupTime"
-        
-          required>
-      </div>
+    <section class="form-card form-card--spacious" *ngIf="vehicle && !loading; else loadingTpl">
+      <form [formGroup]="rentalForm" (ngSubmit)="onSubmit()" class="form-grid form-grid--two rental-form">
+        <div class="grid-full section-heading">
+          <h3>Chọn chi nhánh</h3>
+          <p class="section-subtitle">Có thể trả xe tại chi nhánh khác nếu cần.</p>
+        </div>
 
-      <div class="form-row">
-        <label>Thời gian trả xe *</label>
-        <!-- min là pickup + 1 ngày -->
-        <input
-          type="datetime-local"
-          formControlName="returnTime"
-          
-          [min]="minReturnTime()"
-          required>
-      </div>
+        <div class="input-stack grid-full">
+          <label for="sameReturn">Chi nhánh trả xe *</label>
+          <select
+            id="sameReturn"
+            class="select-control"
+            formControlName="returnBranchId"
+            required>
+            <option value="" disabled>Chọn chi nhánh</option>
+            <option [value]="rentalForm.get('pickupBranchId')?.value">
+              Trả cùng chi nhánh nhận (ID: {{ rentalForm.get('pickupBranchId')?.value }})
+            </option>
+          </select>
+        </div>
 
-      <div class="summary">
-        <p>Số ngày thuê: <strong>{{ calculateDays() }} ngày</strong></p>
-        <p class="total">Tổng tiền: <strong>{{ totalAmount | number }} VND</strong></p>
-      </div>
+        <div class="input-stack">
+          <label for="returnBranchSelect">Hoặc chọn chi nhánh khác *</label>
+          <select
+            id="returnBranchSelect"
+            class="select-control"
+            formControlName="returnBranchId"
+            required>
+            <option value="" disabled>Chọn chi nhánh</option>
+            <option *ngFor="let branch of branches" [value]="branch.id">
+              ID: {{ branch.id }}
+            </option>
+          </select>
+        </div>
 
-      <div class="actions">
-        <button type="button" (click)="goBack()" class="btn-cancel">Hủy</button>
-        <button
-          type="submit"
-          [disabled]="submitting || rentalForm.invalid || calculateDays() <= 0"
-          class="btn-primary">
-          {{ submitting ? 'Đang xử lý...' : 'Xác nhận đặt xe' }}
-        </button>
-      </div>
-    </form>
+        <div class="grid-full section-heading">
+          <h3>Thời gian thuê</h3>
+          <p class="section-subtitle">Chỉ nhận và trả xe trong khung 08:00 - 22:00 hằng ngày.</p>
+        </div>
+
+        <div class="datetime-grid">
+          <div class="input-stack">
+            <label>Ngày nhận xe *</label>
+            <input
+              class="input-control date-input"
+              type="date"
+              formControlName="pickupDate"
+              [min]="minPickupDate"
+              required>
+          </div>
+
+          <div class="input-stack">
+            <label>Giờ nhận xe *</label>
+            <select class="select-control" formControlName="pickupSlot" required>
+              <option *ngFor="let slot of timeSlots" [value]="slot">{{ slot }}</option>
+            </select>
+            <small class="time-hint">Định dạng 24h, không hiển thị AM/PM</small>
+          </div>
+
+          <div class="input-stack">
+            <label>Ngày trả xe *</label>
+            <input
+              class="input-control date-input"
+              type="date"
+              formControlName="returnDate"
+              [min]="minReturnDate()"
+              required>
+          </div>
+
+          <div class="input-stack">
+            <label>Giờ trả xe *</label>
+            <select class="select-control" formControlName="returnSlot" required>
+              <option *ngFor="let slot of timeSlots" [value]="slot">{{ slot }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-full summary-panel">
+          <p>Số ngày thuê: <strong>{{ calculateDays() }} ngày</strong></p>
+          <p class="total">Tổng tiền: <strong>{{ totalAmount | number }} VND</strong></p>
+        </div>
+
+        <div class="grid-full form-actions">
+          <button type="button" class="secondary-btn" (click)="goBack()">Hủy</button>
+          <button
+            type="submit"
+            class="primary-btn"
+            [disabled]="submitting || rentalForm.invalid || calculateDays() <= 0">
+            {{ submitting ? 'Đang xử lý...' : 'Xác nhận đặt xe' }}
+          </button>
+        </div>
+      </form>
+    </section>
   </div>
 
   <ng-template #loadingTpl>
-    <p class="loading">Đang tải thông tin xe...</p>
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <p>Đang tải thông tin xe...</p>
+    </div>
   </ng-template>
 </div>

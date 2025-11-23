@@ -1,21 +1,122 @@
-/* rental-detail.component.css */
-.detail-container { padding: 20px; max-width: 800px; margin: 0 auto; }
-.actions { margin-bottom: 20px; display: flex; gap: 10px; }
-.btn-edit { background: #ffc107; color: black; }
-.btn-cancel { background: #6c757d; color: white; }
-.btn-save { background: #28a745; color: white; }
-.btn-back { background: #6c757d; color: white; }
-
-.rental-form .form-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16px;
-  gap: 12px;
+.rental-detail-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f5f7ff 0%, #ffffff 60%);
+  padding-bottom: 3rem;
 }
-.rental-form label { width: 180px; font-weight: bold; }
-.rental-form input, .rental-form select {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.detail-header__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.back-link {
+  padding-inline: 0.5rem;
+}
+
+.detail-meta {
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.detail-meta__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem 1.25rem;
+  color: var(--text-muted);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: #eef2ff;
+  color: var(--primary);
+}
+
+.status-pill.status-confirmed {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.status-pill.status-cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.status-pill.status-completed {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.status-pill.status-pending {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.detail-form {
+  margin-top: 1.5rem;
+  gap: 1.25rem;
+}
+
+.grid-full {
+  grid-column: 1 / -1;
+}
+
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.section-heading h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text-strong);
+}
+
+.section-heading .section-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.amount-group .amount-input {
+  position: relative;
+}
+
+.amount-group .amount-input .input-control {
+  padding-right: 4rem;
+}
+
+.amount-addon {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .detail-header {
+    flex-direction: column;
+  }
+
+  .detail-header__actions {
+    justify-content: flex-start;
+  }
 }

@@ -1,138 +1,128 @@
-.rental-create-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+.rental-create-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7f8ff 0%, #ffffff 60%);
+  padding-bottom: 3rem;
 }
 
-.header {
+.page-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
-}
-
-.vehicle-summary {
-  display: flex;
   gap: 1.5rem;
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-}
-
-.car-img {
-  width: 200px;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.rental-form {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-.form-row {
+  justify-content: space-between;
   margin-bottom: 1.5rem;
 }
 
-.form-row label {
-  display: block;
-  margin-bottom: 0.5rem;
+.page-header h2 {
+  margin: 0;
+}
+
+.back-btn {
   font-weight: 600;
-  color: #333;
 }
 
-.form-row input {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
+.rental-form {
+  gap: 1.5rem;
 }
 
-.summary {
-  background: #e3f2fd;
-  padding: 1rem;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  text-align: right;
+.grid-full {
+  grid-column: 1 / -1;
 }
 
-.total {
-  font-size: 1.4rem;
-  color: #d32f2f;
-  font-weight: bold;
-  margin-top: 0.5rem;
-}
-
-.actions {
+.section-heading {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
-.btn-primary {
-  background: #1976d2;
-  color: white;
-  padding: 0.8rem 2rem;
-  border: none;
-  border-radius: 6px;
+.section-heading h3 {
+  margin: 0;
   font-size: 1.1rem;
+  color: var(--text-strong);
+}
+
+.section-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.datetime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.time-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.date-input {
+  border-radius: 16px;
+  background: #fbfbff;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 3px 12px rgba(102, 126, 234, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   cursor: pointer;
 }
 
-.btn-primary:disabled {
-  background: #90caf9;
-  cursor: not-allowed;
+.date-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+  background: #ffffff;
 }
 
-.btn-cancel {
-  padding: 0.8rem 1.5rem;
-  background: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.date-input::-webkit-calendar-picker-indicator {
+  filter: hue-rotate(320deg) saturate(1.2);
+  cursor: pointer;
 }
 
-.form-row select {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-  background: white;
-  color: #333;
-  transition: 0.25s ease;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  /* Icon mũi tên tinh tế (SVG màu #555) */
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23555' height='18' viewBox='0 0 20 20' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M5.5 7.5l4.5 4.5 4.5-4.5 1 1-5.5 5.5-5.5-5.5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 0.8rem center;
-  background-size: 1rem;
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #34d399;
+  display: inline-block;
 }
 
-/* Hover đồng bộ với input */
-.form-row select:hover {
-  background-color: #f8f9fa;
+.loading-card {
+  max-width: 420px;
+  margin: 4rem auto;
+  padding: 2rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.1);
+  text-align: center;
 }
 
-/* Focus giống input datetime-local */
-.form-row select:focus {
-  outline: none;
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
-  background-color: white;
+.spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 4px solid #e2e8f0;
+  border-top-color: var(--primary);
+  margin: 0 auto 1rem;
+  animation: spin 1s linear infinite;
 }
 
-/* Disabled option placeholder style */
-.form-row select option[disabled] {
-  color: #999;
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .info-panel {
+    flex-direction: column;
+  }
 }
