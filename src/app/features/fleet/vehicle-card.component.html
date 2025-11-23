@@ -1,27 +1,52 @@
 
-    <div class="vehicle-card">
-      <!-- ủlẢnh xe (tạm dùng placeholder) -->
-      <div class="car-image">
-        <img src='https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/{{vehicle.imageUrl}}' alt="Xe">
+<div class="vehicle-card">
+  <div class="car-image">
+    <img
+      src="https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/{{ vehicle.imageUrl }}"
+      alt="{{ vehicle.brand }} {{ vehicle.model }}"
+      loading="lazy" />
+
+    <span
+      class="status-pill"
+      [ngClass]="vehicle.status === 'AVAILABLE' ? 'status-available' : 'status-maintenance'">
+      {{ vehicle.status === 'AVAILABLE' ? 'Sẵn sàng' : 'Bảo trì' }}
+    </span>
+  </div>
+
+  <div class="car-body">
+    <div class="car-header">
+      <div>
+        <p class="car-subtitle">Mã xe {{ vehicle.vehicleCode }}</p>
+        <h3 class="car-title">{{ vehicle.brand }} {{ vehicle.model }}</h3>
       </div>
 
-      <!-- Thông tin chính -->
-      <div class="car-info">
-        <h3>{{ vehicle.brand }} {{ vehicle.model }}</h3>
-        <p><strong>Biển số:</strong> {{ vehicle.licensePlate }}</p>
-        <p><strong>Mã xe:</strong> {{ vehicle.vehicleCode }}</p>
-        <p><strong>Loại:</strong> {{ vehicle.vehicleType }} • {{ vehicle.seats }} chỗ</p>
-        <p><strong>Giá thuê:</strong> {{ vehicle.basePrice | number }} đ/ngày</p>
-        <p><strong>Trạng thái:</strong>
-          <span [class]="vehicle.status === 'AVAILABLE' ? 'status-available' : 'status-other'">
-            {{ vehicle.status === 'AVAILABLE' ? 'Sẵn sàng' : 'Bảo trì' }}
-          </span>
-        </p>
+      <div class="price-tag">
+        <span>Giá thuê</span>
+        <strong>{{ vehicle.basePrice | number }} đ/ngày</strong>
       </div>
-
-      <div class="car-actions">
-  <button class="btn-detail" (click)="onViewDetail()">
-    Xem chi tiết
-  </button>
-</div>
     </div>
+
+    <div class="car-meta">
+      <div class="meta-item">
+        <p class="label">Biển số</p>
+        <p class="value">{{ vehicle.licensePlate }}</p>
+      </div>
+
+      <div class="meta-item">
+        <p class="label">Loại xe</p>
+        <p class="value">{{ vehicle.vehicleType }} • {{ vehicle.seats }} chỗ</p>
+      </div>
+
+      <div class="meta-item">
+        <p class="label">Màu sắc</p>
+        <p class="value">{{ vehicle.color || 'Đang cập nhật' }}</p>
+      </div>
+    </div>
+
+    <div class="car-actions">
+      <button class="btn-detail" type="button" (click)="onViewDetail()">
+        Xem chi tiết
+      </button>
+    </div>
+  </div>
+</div>
