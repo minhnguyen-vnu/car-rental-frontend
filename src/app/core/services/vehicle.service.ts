@@ -38,10 +38,10 @@ export class VehicleService {
 
   // Mock data đẹp để test
   private mockData: VehicleResponseDTO[] = [
-    { id: 1, vehicleCode: 'V001', licensePlate: '51H-12345', brand: 'Toyota', model: 'Camry 2.5Q', vehicleType: 'Sedan', seats: 5, transmission: 'Tự động', fuelType: 'Xăng', color: 'Đen', year: 2024, basePrice: 1350000, status: 'AVAILABLE', branchId: 1, turnaroundMinutes: 30 },
-    { id: 2, vehicleCode: 'V002', licensePlate: '51H-67890', brand: 'Honda', model: 'CR-V 1.5L', vehicleType: 'SUV', seats: 7, transmission: 'Tự động', fuelType: 'Xăng', color: 'Trắng', year: 2024, basePrice: 1550000, status: 'AVAILABLE', branchId: 1, turnaroundMinutes: 45 },
-    { id: 3, vehicleCode: 'V003', licensePlate: '51H-99999', brand: 'VinFast', model: 'VF 8 Plus', vehicleType: 'SUV', seats: 5, transmission: 'Tự động', fuelType: 'Điện', color: 'Xanh', year: 2025, basePrice: 1800000, status: 'AVAILABLE', branchId: 2, turnaroundMinutes: 60 },
-    { id: 4, vehicleCode: 'V004', licensePlate: '51H-88888', brand: 'Hyundai', model: 'Tucson 2.0', vehicleType: 'SUV', seats: 5, transmission: 'Tự động', fuelType: 'Dầu', color: 'Đỏ', year: 2023, basePrice: 1150000, status: 'MAINTENANCE', branchId: 1, turnaroundMinutes: 30 },
+    {imageUrl: 'VinFast-VF8-white.png', id: 1, vehicleCode: 'V001', licensePlate: '51H-12345', brand: 'Toyota', model: 'Camry 2.5Q', vehicleType: 'Sedan', seats: 5, transmission: 'Tự động', fuelType: 'Xăng', color: 'Đen', year: 2024, basePrice: 1350000, status: 'AVAILABLE', branchId: 1, turnaroundMinutes: 30 },
+    { imageUrl: 'VinFast-VF8-white.png',id: 2, vehicleCode: 'V002', licensePlate: '51H-67890', brand: 'Honda', model: 'CR-V 1.5L', vehicleType: 'SUV', seats: 7, transmission: 'Tự động', fuelType: 'Xăng', color: 'Trắng', year: 2024, basePrice: 1550000, status: 'AVAILABLE', branchId: 1, turnaroundMinutes: 45 },
+    { imageUrl: 'VinFast-VF8-white.png',id: 3, vehicleCode: 'V003', licensePlate: '51H-99999', brand: 'VinFast', model: 'VF 8 Plus', vehicleType: 'SUV', seats: 5, transmission: 'Tự động', fuelType: 'Điện', color: 'Xanh', year: 2025, basePrice: 1800000, status: 'AVAILABLE', branchId: 2, turnaroundMinutes: 60 },
+    { imageUrl: 'VinFast-VF8-white.png',id: 4, vehicleCode: 'V004', licensePlate: '51H-88888', brand: 'Hyundai', model: 'Tucson 2.0', vehicleType: 'SUV', seats: 5, transmission: 'Tự động', fuelType: 'Dầu', color: 'Đỏ', year: 2023, basePrice: 1150000, status: 'MAINTENANCE', branchId: 1, turnaroundMinutes: 30 },
   ];
 
   constructor(private http: HttpClient) {}
