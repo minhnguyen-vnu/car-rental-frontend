@@ -131,4 +131,8 @@ export class AuthService {
   isAdmin(): boolean {
     return this.hasRole('ADMIN');
   }
+
+  mockLoginForTesting(): void {
+    this.storageService.mockLoginForTesting();
+  }
 }

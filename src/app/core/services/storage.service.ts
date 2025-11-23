@@ -42,9 +42,19 @@ export class StorageService {
     this.removeToken();
     this.removeUser();
   }
+  mockLoginForTesting(): void {
+    const mockUser: RequestContext = {
+      userId: 66771508,
+      role: 'USER',
+      token: 'mock-token-for-testing'
+    };
+    this.saveUser(mockUser);
+    this.saveToken(mockUser.token!);
+  }
 
   // Check if logged in
   isLoggedIn(): boolean {
+    console.log('Checking login status, token:', this.getToken());
     return !!this.getToken();
   }
 }

@@ -210,7 +210,7 @@ ví dụ 4.2 ngày thành 4.5, 3.1 ngày thành 3.5 ngày, 4.7 ngày thành 5 ng
   }
 
   goBack(): void {
-    this.router.navigate(['/search']);
+    this.router.navigate(['/user']);
   }
   get durationDays(): number {
   return this.rentalForm.get('durationDays')?.value || 0;

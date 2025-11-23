@@ -2,146 +2,93 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  
 
-  // ================================================================
-  // 1. TEST ROUTES – KHÔNG CẦN ĐĂNG NHẬP (để bạn preview giao612 diện)
-  // ================================================================
-  {
-    path: 'test-search',
-    loadComponent: () => import('./features/fleet/search/search.component')
-      .then(m => m.SearchComponent)
-  },
-  {
-    path: 'test-user',
-    loadComponent: () => import('./features/fleet/layout/user-main-layout.component')
-      .then(m => m.UserMainLayoutComponent)
-  },
-  {
-    path: 'test-admin',
-    loadComponent: () => import('./features/fleet/layout/admin-main-layout.component')
-      .then(m => m.AdminMainLayoutComponent)
-  },
-  {
-    path: 'test-payment',
-    loadComponent: () => import('./features/payment/charge/charge.component')
-      .then(m => m.PaymentChargeComponent)
-  },
+  // ==================================================================
+  // 1. PUBLIC ROUTES – Ai cũng vào được (không cần login)
+  // ==================================================================
+  { path: 'login',    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
+  { path: 'register', loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent) },
 
-
-  // ================================================================
-  // 2. PUBLIC ROUTES – AI CŨNG TRUY CẬP ĐƯỢC
-  // ================================================================
+  // Trang kết quả thanh toán – cổng thanh toán redirect về
   {
     path: 'payment-success',
-    loadComponent: () => import('./features/payment/result.component')
-      .then(m => m.PaymentResultComponent),
-    data: { success: true }           // ← truyền trạng thái qua data
+    loadComponent: () => import('./features/payment/result.component').then(m => m.PaymentResultComponent),
+    data: { success: true }
   },
   {
     path: 'payment-fail',
-    loadComponent: () => import('./features/payment/result.component')
-      .then(m => m.PaymentResultComponent),
+    loadComponent: () => import('./features/payment/result.component').then(m => m.PaymentResultComponent),
     data: { success: false }
   },
-  {
-    path: 'login',
-    loadComponent: () => import('./features/auth/login/login.component')
-      .then(m => m.LoginComponent)
-  },
-  {
-    path: 'register',
-    loadComponent: () => import('./features/auth/register/register.component')
-      .then(m => m.RegisterComponent)
-  },
 
-  // Thanh toán – có thể truy cập trực tiếp từ link bên ngoài (email, SMS, QR)
-  {
-    path: 'payment-charge',
-    loadComponent: () => import('./features/payment/charge/charge.component')
-      .then(m => m.PaymentChargeComponent)
-  },
-   {
-    path: 'rental/create/:vehicleId',
-    // canActivate: [authGuard],
-    loadComponent: () => import('./features/rental/create/rental-create.component')
-      .then(m => m.RentalCreateComponent),
-    data: { title: 'Thuê xe' }
-  },
+  // Trang nạp tiền (có thể truy cập từ link bên ngoài)
+  { path: 'payment-charge', loadComponent: () => import('./features/payment/charge/charge.component').then(m => m.PaymentChargeComponent) },
+
+  // Chi tiết xe công khai (khách vãng lai xem được)
   {
     path: 'vehicle/:id',
-    loadComponent: () => import('./features/fleet/layout/vehicle-detail-layout.component')
-      .then(m => m.VehicleDetailLayoutComponent),
+    loadComponent: () => import('./features/fleet/layout/vehicle-detail-layout.component').then(m => m.VehicleDetailLayoutComponent),
     data: { mode: 'customer' }
   },
-{
-    path: 'admin/vehicle/:id',
-    // canActivate: [authGuard],
-    loadComponent: () => import('./features/fleet/layout/vehicle-detail-layout.component')
-      .then(m => m.VehicleDetailLayoutComponent),
-    data: { mode: 'admin' }
-  },
+
+  // Tạo hợp đồng thuê xe (có thể truy cập từ link xe công khai)
   {
-    path: 'admin/rental/:id',
-    // canActivate: [authGuard],
-    loadComponent: () => import('./features/rental/rental-detail.component')
-      .then(m => m.RentalDetailComponent)
-  },
-  {
-    path: 'rental/:id',
-    // canActivate: [authGuard],
-    loadComponent: () => import('./features/rental/rental-detail.component')
-      .then(m => m.RentalDetailComponent)
+    path: 'rental/create/:vehicleId',
+    loadComponent: () => import('./features/rental/create/rental-create.component').then(m => m.RentalCreateComponent),
+    data: { title: 'Thuê xe' }
   },
 
 
-  // ================================================================
-  // 3. PROTECTED ROUTES – BẮT BUỘC ĐÃ LOGIN
-  // ================================================================
-  {
-    path: 'search',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/fleet/search/search.component')
-      .then(m => m.SearchComponent)
-  },
- 
-
-
-  // ================================================================
-  // 4. ADMIN ROUTES – ĐÃ LOGIN + ROLE ADMIN
-  // ================================================================
-  {
-    path: 'admin',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/fleet/layout/admin-main-layout.component')
-      .then(m => m.AdminMainLayoutComponent)
-  },
-  {
-    path: 'admin/vehicle/:id',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/fleet/layout/vehicle-detail-layout.component')
-      .then(m => m.VehicleDetailLayoutComponent),
-    data: { mode: 'admin' }
-  },
-  {
-    path: 'admin/rental/:id',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/rental/rental-detail.component')
-      .then(m => m.RentalDetailComponent)
-  },
-
-
-  // ================================================================
-  // 5. DEFAULT & 404
-  // ================================================================
+  // ==================================================================
+  // 2. USER ROUTES – Chỉ USER đã login mới được vào
+  // ==================================================================
   {
     path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/fleet/search/search.component')
-      .then(m => m.SearchComponent)
+    data: { expectedRole: 'USER' },                     // ← Quan trọng!
+    children: [
+      { path: '', redirectTo: 'user', pathMatch: 'full' },
+      { path: 'search',   loadComponent: () => import('./features/fleet/search/search.component').then(m => m.SearchComponent) },
+      { path: 'user',     loadComponent: () => import('./features/fleet/layout/user-main-layout.component').then(m => m.UserMainLayoutComponent) },
+
+      // Các trang chi tiết khi đã login (USER)
+      {
+        path: 'rental/:id',
+        loadComponent: () => import('./features/rental/rental-detail.component').then(m => m.RentalDetailComponent)
+      },
+    ]
   },
+
+
+  // ==================================================================
+  // 3. ADMIN ROUTES – Chỉ ADMIN mới được vào
+  // ==================================================================
   {
-    path: '**',
-    redirectTo: 'login'  // chưa login → login, đã login → search (do guard xử lý)
-  }
+    path: 'admin',
+    canActivate: [authGuard],
+    data: { expectedRole: 'ADMIN' },                    // ← Quan trọng!
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/fleet/layout/admin-main-layout.component').then(m => m.AdminMainLayoutComponent)
+      },
+      {
+        path: 'vehicle/:id',
+        loadComponent: () => import('./features/fleet/layout/vehicle-detail-layout.component').then(m => m.VehicleDetailLayoutComponent),
+        data: { mode: 'admin' }
+      },
+      {
+        path: 'rental/:id',
+        loadComponent: () => import('./features/rental/rental-detail.component').then(m => m.RentalDetailComponent)
+      },
+      // Thêm các trang admin khác ở đây sau này...
+    ]
+  },
+
+
+  // ==================================================================
+  // 4. FALLBACK
+  // ==================================================================
+  { path: 'login',    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) }, // đã có ở trên, giữ lại để chắc chắn
+  { path: '**',       redirectTo: '' } // sẽ bị guard đẩy về login nếu chưa đăng nhập
 ];
