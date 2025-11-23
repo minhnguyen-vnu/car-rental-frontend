@@ -1,19 +1,51 @@
 <!-- rental-card.component.html -->
 <div class="rental-card">
-  <div class="header">
-    <h3>{{ rental.transactionCode }}</h3>
-    <span class="status" [ngClass]="rental.status">
+  <div class="card-header">
+    <div class="code-block">
+      <p class="eyebrow">Mã giao dịch</p>
+      <h3 class="transaction-code">{{ rental.transactionCode }}</h3>
+    </div>
+
+    <span
+      class="status-pill"
+      [ngClass]="'status-' + (rental.status?.toLowerCase() || 'unknown')">
       {{ rental.status }}
     </span>
   </div>
 
-  <div class="info">
-    <p><strong>Xe:</strong> ID {{ rental.vehicleId }}</p>
-    <p><strong>Khách:</strong> ID {{ rental.userId }}</p>
-    <p><strong>Nhận xe:</strong> {{ rental.pickupTime | date:'dd/MM/yyyy HH:mm' }}</p>
-    <p><strong>Trả xe:</strong> {{ rental.returnTime | date:'dd/MM/yyyy HH:mm' }}</p>
-    <p><strong>Tổng tiền:</strong> {{ rental.totalAmount | number }} {{ rental.currency }}</p>
+  <div class="info-grid">
+    <div class="info-item">
+      <p class="info-label">Xe</p>
+      <p class="info-value">ID {{ rental.vehicleId }}</p>
+    </div>
+    <div class="info-item">
+      <p class="info-label">Khách</p>
+      <p class="info-value">ID {{ rental.userId }}</p>
+    </div>
+    <div class="info-item">
+      <p class="info-label">Nhận xe</p>
+      <p class="info-value">
+        {{ rental.pickupTime | date: 'dd/MM/yyyy HH:mm' }}
+      </p>
+    </div>
+    <div class="info-item">
+      <p class="info-label">Trả xe</p>
+      <p class="info-value">
+        {{ rental.returnTime | date: 'dd/MM/yyyy HH:mm' }}
+      </p>
+    </div>
   </div>
 
-  <button class="btn-detail" (click)="onViewDetail()">Xem chi tiết</button>
+  <div class="card-footer">
+    <div class="total-chip">
+      <p class="info-label">Tổng tiền</p>
+      <p class="total-value">
+        {{ rental.totalAmount | number }} {{ rental.currency }}
+      </p>
+    </div>
+
+    <button class="btn-detail" type="button" (click)="onViewDetail()">
+      Xem chi tiết
+    </button>
+  </div>
 </div>

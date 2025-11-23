@@ -2,34 +2,72 @@
 <div class="search-container">
   <h2>Tìm kiếm đơn thuê xe</h2>
 
-  <div class="filter-box">
-    <input [(ngModel)]="filter.transactionCode" placeholder="Mã giao dịch" />
-    <input 
-  [(ngModel)]="filter.userId" 
-  type="number" 
-  placeholder="ID khách hàng" 
-  [disabled]="isCustomerMode" 
-  [attr.readonly]="isCustomerMode ? true : null" />
-    <input [(ngModel)]="filter.vehicleId" type="number" placeholder="ID xe" />
+  <form class="search-form" (ngSubmit)="search()">
+    <div class="grid">
+      <div class="input-group">
+        <input
+          name="transactionCode"
+          [(ngModel)]="filter.transactionCode"
+          placeholder="Mã giao dịch" />
+      </div>
 
-    <select [(ngModel)]="filter.status">
-      <option value="">Tất cả trạng thái</option>
-      <option value="PENDING">PENDING</option>
-      <option value="CONFIRMED">CONFIRMED</option>
-      <option value="CANCELLED">CANCELLED</option>
-      <option value="COMPLETED">COMPLETED</option>
-    </select>
+      <div class="input-group">
+        <input
+          name="userId"
+          type="number"
+          [(ngModel)]="filter.userId"
+          placeholder="ID khách hàng"
+          [disabled]="isCustomerMode"
+          [attr.readonly]="isCustomerMode ? true : null" />
+      </div>
 
-    <button (click)="search()" [disabled]="loading">
-      {{ loading ? 'Đang tìm...' : 'Tìm kiếm' }}
+      <div class="input-group">
+        <input
+          name="vehicleId"
+          type="number"
+          [(ngModel)]="filter.vehicleId"
+          placeholder="ID xe" />
+      </div>
+
+      <div class="input-group">
+        <select
+          name="status"
+          class="select-input"
+          [(ngModel)]="filter.status">
+          <option value="">Tất cả trạng thái</option>
+          <option value="PENDING">PENDING</option>
+          <option value="CONFIRMED">CONFIRMED</option>
+          <option value="CANCELLED">CANCELLED</option>
+          <option value="COMPLETED">COMPLETED</option>
+        </select>
+      </div>
+    </div>
+
+    <button
+      class="search-btn"
+      type="submit"
+      [disabled]="loading">
+      <span *ngIf="!loading">🔍 Tìm kiếm</span>
+      <span *ngIf="loading">⏳ Đang tìm...</span>
     </button>
-  </div>
+  </form>
 
-  <div class="results">
+  <div class="results" [class.results--empty]="rentals.length === 0 && !loading">
     <app-rental-card
       *ngFor="let r of rentals"
       [rental]="r"
       (viewDetail)="onViewDetail($event)">
     </app-rental-card>
+
+    <div *ngIf="rentals.length === 0 && !loading" class="no-results">
+      <div class="no-results-icon">📝</div>
+      <p>Chưa có đơn thuê nào phù hợp.</p>
+      <small>Thay đổi bộ lọc để thử lại nhé!</small>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Đang tải dữ liệu...</p>
   </div>
 </div>

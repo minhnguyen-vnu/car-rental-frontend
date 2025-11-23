@@ -53,9 +53,9 @@
 }
 
 .user-content {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 1.5rem 0 0;
+  padding: 0 0 2.5rem;
 }
 
 .search-page,
