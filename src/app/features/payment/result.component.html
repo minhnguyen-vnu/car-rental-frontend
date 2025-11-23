@@ -1,20 +1,45 @@
-<div class="payment-result-container">
-  <!-- Nút quay lại -->
-  
+<div class="payment-result">
+  <div class="result-card">
+    <div
+      class="status-icon"
+      [ngClass]="{ 'status-icon--success': isSuccess, 'status-icon--failure': !isSuccess }">
+      <span *ngIf="isSuccess">✓</span>
+      <span *ngIf="!isSuccess">!</span>
+    </div>
 
-  <!-- Thông báo kết quả -->
-  <div class="result-message" [ngClass]="{'success': isSuccess, 'failure': !isSuccess}">
-    <h2 *ngIf="isSuccess">Thanh toán thành công!</h2>
-    <h2 *ngIf="!isSuccess">Thanh toán thất bại</h2>
-    
-    <p *ngIf="isSuccess">
-      Cảm ơn bạn đã thực hiện giao dịch. Đơn hàng đã được xử lý thành công.
+    <div
+      class="status-badge"
+      [ngClass]="{ 'status-badge--success': isSuccess, 'status-badge--failure': !isSuccess }">
+      {{ isSuccess ? 'Thanh toán thành công' : 'Thanh toán thất bại' }}
+    </div>
+
+    <h1>{{ isSuccess ? 'Cảm ơn bạn đã tin tưởng dịch vụ!' : 'Giao dịch chưa được hoàn tất' }}</h1>
+
+    <p class="lead" *ngIf="!isSuccess">
+      Hệ thống chưa thể xử lý giao dịch. Số tiền sẽ không bị trừ hoặc sẽ được hoàn lại trong 1-3
+      ngày làm việc. Vui lòng thử lại hoặc liên hệ đội ngũ hỗ trợ.
     </p>
-    <p *ngIf="!isSuccess">
-      Rất tiếc, giao dịch không thành công. Vui lòng thử lại hoặc liên hệ hỗ trợ.
-    </p>
+
+    <div class="result-highlights">
+      <div class="highlight">
+        <p class="highlight-label">Trạng thái</p>
+        <p
+          class="highlight-value"
+          [ngClass]="{ 'text-success': isSuccess, 'text-failure': !isSuccess }">
+          {{ isSuccess ? 'ĐÃ GHI NHẬN THANH TOÁN' : 'ĐANG CHỜ XỬ LÝ LẠI' }}
+        </p>
+      </div>
+    </div>
+
+    <ul class="tips" *ngIf="!isSuccess">
+      <li>Kiểm tra lại hạn mức hoặc số dư trước khi thử lại.</li>
+      <li>Liên hệ hotline nếu cần hỗ trợ khẩn cấp về giao dịch.</li>
+    </ul>
+
+    <div class="actions">
+      <button class="primary-action" type="button" (click)="goBack()">
+        Quay lại trang người dùng
+      </button>
+    </div>
   </div>
-  <button class="back-btn" (click)="goBack()">
-    Quay lại
-  </button>
 </div>
