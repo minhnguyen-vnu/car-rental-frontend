@@ -79,6 +79,7 @@ export class SearchComponent implements OnInit {
 
   private search() {
     this.loading = true;
+    this.request.isMeaningFull = true; // Chỉ có tìm kiếm bằng chatbot mới có thể có isMeaningFull=false, đây là tìm kiếm thủ công nên bằng true
     this.vehicleService.getVehicles(this.request).subscribe({
       next: (res) => {
         this.vehicles = res.data || [];

@@ -1,24 +1,74 @@
 <div class="chatbot-wrapper">
-      <button class="chatbot-toggle-btn" (click)="toggle()">
-        <span class="icon">💬</span>
-        <span class="badge" *ngIf="hasNewMessage">1</span>
-      </button>
+  
+  <!-- Nút Toggle -->
+  <button class="chatbot-toggle-btn" (click)="toggle()">
+    <span class="icon" *ngIf="!isOpen">💬</span>
+    <span class="icon" *ngIf="isOpen">▼</span>
+    <span class="badge" *ngIf="hasNewMessage && !isOpen">1</span>
+  </button>
 
-      <div class="chatbot-panel" [class.open]="isOpen">
-        <div class="chatbot-header">
-          <h3>Trợ lý ảo</h3>
-          <button (click)="toggle()" class="close-btn">✕</button>
-        </div>
-        <div class="chatbot-body">
-          <!-- Ở đây bạn sẽ tích hợp Zalo Chat Widget, Tawk.to, hoặc chatbot tự build -->
-          <iframe 
-            src="https://your-chatbot-domain.com/embed" 
-            width="100%" 
-            height="100%" 
-            frameborder="0">
-          </iframe>
-          <!-- Hoặc dùng Tawk.to script -->
-          <!-- <div id="tawk-chat"></div> -->
+  <!-- Panel Chat -->
+  <div class="chatbot-panel" [class.open]="isOpen">
+    
+    <!-- Header -->
+    <div class="chatbot-header">
+      <div class="header-info">
+        <span class="bot-avatar">🤖</span>
+        <h3>Trợ lý AI</h3>
+      </div>
+      <button (click)="toggle()" class="close-btn">✕</button>
+    </div>
+
+    <!-- Body: Danh sách tin nhắn -->
+    <div class="chatbot-body" #scrollContainer>
+      
+      <div *ngFor="let msg of messages" 
+           class="message-row" 
+           [ngClass]="msg.type === 'user' ? 'user-row' : 'bot-row'">
+        
+        <!-- Avatar Bot -->
+        <div class="avatar" *ngIf="msg.type === 'bot'">🤖</div>
+
+        <div class="message-content-wrapper">
+          <!-- Bong bóng chat text -->
+          <div class="message-bubble" [ngClass]="msg.type">
+            {{ msg.content }}
+          </div>
+
+          <!-- Nếu có danh sách xe (Mini Card) -->
+          <div class="vehicle-list" *ngIf="msg.vehicles && msg.vehicles.length > 0">
+              <app-mini-card 
+                *ngFor="let car of msg.vehicles" 
+                [vehicle]="car">
+              </app-mini-card>
+            </div>
+          
+          <span class="time">{{ msg.timestamp | date:'HH:mm' }}</span>
         </div>
       </div>
+
+      <!-- Loading Indicator -->
+      <div class="message-row bot-row" *ngIf="isLoading">
+        <div class="avatar">🤖</div>
+        <div class="message-bubble bot typing">
+          <span>.</span><span>.</span><span>.</span>
+        </div>
+      </div>
+
     </div>
+
+    <!-- Footer: Input -->
+    <div class="chatbot-footer">
+      <input 
+        type="text" 
+        [(ngModel)]="userInput" 
+        (keyup.enter)="sendMessage()"
+        placeholder="Nhập yêu cầu tìm xe..."
+        [disabled]="isLoading">
+      <button (click)="sendMessage()" [disabled]="!userInput.trim() || isLoading">
+        ➤
+      </button>
+    </div>
+
+  </div>
+</div>

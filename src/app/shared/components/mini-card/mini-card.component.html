@@ -1,0 +1,26 @@
+<div class="mini-card" (click)="navigateToDetail()">
+  <!-- Ảnh xe -->
+  <div class="card-image-wrapper">
+    <img [src]="'https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/' + vehicle.imageUrl"
+         onerror="this.src='assets/images/car-placeholder.png'"
+         alt="{{ vehicle.brand }} {{ vehicle.model }}">
+  </div>
+  
+  <!-- Thông tin chính -->
+  <div class="card-content">
+    <h4 class="card-title">{{ vehicle.brand }} {{ vehicle.model }}</h4>
+    
+    <!-- Specs: Sắp xếp thoáng hơn bằng Flexbox wrap -->
+    <div class="card-specs">
+      <span class="spec-tag">📅 {{ vehicle.year }}</span>
+      <span class="spec-tag">💺 {{ vehicle.seats }} chỗ</span>
+      <span class="spec-tag">⛽ {{ vehicle.fuelType }}</span>
+    </div>
+
+    <!-- Footer: Giá và Icon điều hướng -->
+    <div class="card-footer">
+      <span class="price">{{ formatPrice(vehicle.basePrice) }}/ngày</span>
+      <span class="action-icon">➔</span>
+    </div>
+  </div>
+</div>
