@@ -1,80 +1,176 @@
 <div class="search-container">
-  <h2>Tra cứu Xe</h2>
-
-  <form (ngSubmit)="search()" #searchForm="ngForm" class="search-form">
-    <div class="grid">
-      <div class="input-group" *ngIf="role !== 'USER'">
-        <input placeholder="ID" type="number" [(ngModel)]="request.id" name="id">
-      </div>
-      <div class="input-group" *ngIf="role !== 'USER'">
-        <input placeholder="Mã xe" [(ngModel)]="request.vehicleCode" name="vehicleCode" >
-      </div>
-      <div class="input-group" *ngIf="role !== 'USER'">
-        <input placeholder="Biển số" [(ngModel)]="request.licensePlate" name="licensePlate">
-      </div>
-      <div class="input-group">
-        <input placeholder="Hãng" [(ngModel)]="request.brand" name="brand">
-      </div>
-      <div class="input-group">
-        <input placeholder="Mẫu xe" [(ngModel)]="request.model" name="model">
-      </div>
-      <div class="input-group">
-        <select [(ngModel)]="request.vehicleType" name="vehicleType" class="select-input" >
-          <!-- default là all, hiện tất cả -->
-          <option value="">Tất cả loại xe</option>
-          <option *ngFor="let cat of vehicleCategories" [value]="cat">{{ cat }}</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <input placeholder="Số ghế" type="number" [(ngModel)]="request.seats" name="seats">
-      </div>
-      <div class="input-group" >
-        <select [(ngModel)]="request.transmission" name="transmission" class="select-input">
-          <option value="">Tất cả hộp số</option>
-          <option *ngFor="let type of vehicleTransmissionTypes" [value]="type">{{ type }}</option>
-        </select>
-      </div>
-      <div class="input-group" *ngIf="role !== 'USER'">
-        <input placeholder="Nhiên liệu" [(ngModel)]="request.fuelType" name="fuelType">
-      </div>
-      <div class="input-group">
-        <input placeholder="Màu sắc" [(ngModel)]="request.color" name="color">
-      </div>
-      <div class="input-group" *ngIf="role !== 'USER'">
-        <input placeholder="Năm sản xuất" type="number" [(ngModel)]="request.year" name="year">
-      </div>
-      <div class="input-group">
-        <input placeholder="Giá cơ bản" type="number" step="0.01" [(ngModel)]="request.basePrice" name="basePrice">
-      </div>
-      <div class="input-group" *ngIf="role !== 'USER'">
-        <input placeholder="Trạng thái" [(ngModel)]="request.status" name="status">
-      </div>
-      <div class="input-group" *ngIf="role !== 'USER'">
-        <input placeholder="Chi nhánh ID" type="number" [(ngModel)]="request.branchId" name="branchId">
-      </div>
-    </div>
-    <button type="submit" [disabled]="loading" class="search-btn">
-      <span *ngIf="!loading">🔍 Tìm kiếm</span>
-      <span *ngIf="loading">⏳ Đang tìm...</span>
-    </button>
-  </form>
-
-  <div class="vehicles-grid">
-    <app-vehicle-card
-      *ngFor="let vehicle of vehicles; trackBy: trackById"
-      [vehicle]="vehicle"
-      (viewDetail)="onViewDetail($event)">
-    </app-vehicle-card>
-
-    <div *ngIf="vehicles.length === 0 && !loading && searchForm.submitted" class="no-results">
-      <div class="no-results-icon">🚗</div>
-      <p>Không tìm thấy xe nào phù hợp.</p>
-      <small>Thử điều chỉnh bộ lọc tìm kiếm của bạn</small>
-    </div>
+  <div class="header-section">
+    <h2>Tra cứu Xe</h2>
+    <p class="subtitle">Tìm kiếm chiếc xe ưng ý nhất cho hành trình của bạn</p>
   </div>
 
-  <div *ngIf="loading" class="loading-spinner">
-    <div class="spinner"></div>
-    <p>Đang tải dữ liệu...</p>
+  <form (ngSubmit)="onSearch(searchForm)" #searchForm="ngForm" class="search-form" novalidate>
+    
+    <!-- ADMIN PANEL -->
+    <div class="admin-panel" *ngIf="role !== 'USER'">
+      <div class="panel-badge">🔧 Quản trị viên</div>
+      <div class="grid grid-4">
+        <div class="input-group">
+          <label>ID Xe</label>
+          <input placeholder="Nhập ID..." type="number" [(ngModel)]="request.id" name="id">
+        </div>
+        <div class="input-group">
+          <label>Mã xe</label>
+          <input placeholder="VD: CAR-001" [(ngModel)]="request.vehicleCode" name="vehicleCode">
+        </div>
+        <div class="input-group">
+          <label>Biển số</label>
+          <input placeholder="VD: 30A-123.45" [(ngModel)]="request.licensePlate" name="licensePlate">
+        </div>
+        <div class="input-group">
+          <label>Chi nhánh ID</label>
+          <input placeholder="Nhập ID CN..." type="number" [(ngModel)]="request.branchId" name="branchId">
+        </div>
+        <div class="input-group">
+          <label>Trạng thái</label>
+          <input placeholder="AVAILABLE..." [(ngModel)]="request.status" name="status">
+        </div>
+        <div class="input-group">
+          <label>Nhiên liệu</label>
+          <input placeholder="Xăng/Dầu" [(ngModel)]="request.fuelType" name="fuelType">
+        </div>
+        <div class="input-group">
+          <label>Năm SX</label>
+          <input placeholder="VD: 2023" type="number" [(ngModel)]="request.year" name="year">
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN SEARCH -->
+    <div class="main-search">
+      <!-- Hàng 1: Thời gian & Loại xe -->
+      <div class="grid grid-3">
+        
+        <!-- NGÀY NHẬN: Bắt buộc với USER -->
+        <!-- [required]="role === 'USER'" : Chỉ thêm thuộc tính required nếu là User -->
+        <div class="input-group">
+          <label [class.required-label]="role === 'USER'">Ngày nhận xe</label>
+          <input 
+            type="datetime-local" 
+            [(ngModel)]="request.pickupTime" 
+            name="pickupTime" 
+            [required]="role === 'USER'"
+            #pickupCtrl="ngModel"
+            [class.invalid]="pickupCtrl.invalid && (searchForm.submitted || pickupCtrl.touched)">
+          
+          <!-- Thông báo lỗi chỉ hiện khi invalid -->
+          <div *ngIf="pickupCtrl.invalid && (searchForm.submitted || pickupCtrl.touched)" class="error-msg">
+            Vui lòng chọn ngày nhận.
+          </div>
+        </div>
+
+        <!-- NGÀY TRẢ: Bắt buộc với USER -->
+        <div class="input-group">
+          <label [class.required-label]="role === 'USER'">Ngày trả xe</label>
+          <input 
+            type="datetime-local" 
+            [(ngModel)]="request.returnTime" 
+            name="returnTime" 
+            [required]="role === 'USER'"
+            #returnCtrl="ngModel"
+            [class.invalid]="returnCtrl.invalid && (searchForm.submitted || returnCtrl.touched)">
+            
+          <div *ngIf="returnCtrl.invalid && (searchForm.submitted || returnCtrl.touched)" class="error-msg">
+            Vui lòng chọn ngày trả.
+          </div>
+        </div>
+
+        <!-- LOẠI XE -->
+        <div class="input-group">
+          <label>Loại xe</label>
+          <select [(ngModel)]="request.vehicleType" name="vehicleType" class="select-input">
+            <option value="">Tất cả loại xe</option>
+            <option *ngFor="let cat of vehicleCategories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Hàng 2: Hãng & Mẫu -->
+      <div class="grid grid-2 mt-3">
+        <div class="input-group">
+          <label>Hãng xe</label>
+          <input placeholder="VD: Toyota, Mazda..." [(ngModel)]="request.brand" name="brand">
+        </div>
+        <div class="input-group">
+          <label>Mẫu xe</label>
+          <input placeholder="VD: Camry, CX-5..." [(ngModel)]="request.model" name="model">
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED SEARCH -->
+    <div class="advanced-search" [class.show]="showAdvanced">
+      <div class="divider">
+        <span>Bộ lọc chi tiết</span>
+      </div>
+      
+      <div class="grid grid-4">
+        <div class="input-group">
+          <label>Khoảng giá (cơ bản)</label>
+          <input placeholder="Nhập giá..." type="number" step="0.01" [(ngModel)]="request.basePrice" name="basePrice">
+        </div>
+        <div class="input-group">
+          <label>Số ghế</label>
+          <input placeholder="VD: 4, 7..." type="number" [(ngModel)]="request.seats" name="seats">
+        </div>
+        <div class="input-group">
+          <label>Hộp số</label>
+          <select [(ngModel)]="request.transmission" name="transmission" class="select-input">
+            <option value="">Tất cả</option>
+            <option *ngFor="let type of vehicleTransmissionTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Màu sắc</label>
+          <input placeholder="VD: Trắng, Đen..." [(ngModel)]="request.color" name="color">
+        </div>
+      </div>
+    </div>
+
+    <!-- HIỂN THỊ LỖI LOGIC -->
+    <div *ngIf="dateError" class="alert-error">
+      {{ dateError }}
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <button type="button" class="btn-toggle" (click)="toggleAdvanced()">
+        {{ showAdvanced ? 'Thu gọn bộ lọc ▲' : 'Bộ lọc nâng cao ▼' }}
+      </button>
+
+      <button type="submit" [disabled]="loading" class="search-btn">
+        <span *ngIf="!loading">🔍 Tìm kiếm ngay</span>
+        <span *ngIf="loading">⏳ Đang xử lý...</span>
+      </button>
+    </div>
+  </form>
+
+  <!-- KẾT QUẢ TÌM KIẾM -->
+  <div class="results-container">
+    <div class="vehicles-grid" *ngIf="vehicles.length > 0">
+      <app-vehicle-card
+        *ngFor="let vehicle of vehicles; trackBy: trackById"
+        [vehicle]="vehicle"
+        (viewDetail)="onViewDetail($event)">
+      </app-vehicle-card>
+    </div>
+
+    <!-- Hiển thị khi không có kết quả -->
+    <div *ngIf="vehicles.length === 0 && !loading && searchForm.submitted && !dateError" class="no-results">
+      <div class="no-results-icon">🚗</div>
+      <h3>Không tìm thấy xe nào</h3>
+      <p>Hãy thử điều chỉnh lại bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Đang tải dữ liệu...</p>
+    </div>
   </div>
 </div>

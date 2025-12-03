@@ -1,0 +1,71 @@
+/* Container chính: Cố định góc dưới phải */
+.chatbot-wrapper {
+  position: fixed; /* Bắt buộc để nổi lên trên */
+  bottom: 50px;
+  right: 50px;
+  z-index: 9999; /* Đảm bảo nằm trên mọi thứ khác */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* Nút mở chat */
+.chatbot-toggle-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  font-size: 24px;
+  position: relative;
+}
+
+/* Panel chat: Mặc định ẩn hoặc thu nhỏ */
+.chatbot-panel {
+  width: 350px;
+  height: 500px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  margin-bottom: 15px;
+  display: none; /* Ẩn mặc định */
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Khi có class .open thì hiện lên */
+.chatbot-panel.open {
+  display: flex;
+}
+
+.chatbot-header {
+  background: #007bff;
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatbot-body {
+  flex: 1;
+  background: #f1f1f1;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

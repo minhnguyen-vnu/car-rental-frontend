@@ -8,6 +8,8 @@ import { GeneralResponse } from '../../shared/models/general-response.model';
 import { environment } from '../../../environments/environment';
 
 export interface VehicleRequestDTO {
+  returnTime?: string;
+  pickupTime?: string;
   id?: number;
   vehicleCode?: string;
   licensePlate?: string;
@@ -28,6 +30,33 @@ export interface VehicleRequestDTO {
 
 export interface VehicleResponseDTO extends VehicleRequestDTO {
   id: number;
+}
+
+export interface VehiclePagingRequestDTO {
+  page?: number;          // trang hiện tại, mặc định 1
+  size?: number;          // số bản ghi mỗi trang, mặc định 10
+  search?: string;        // tìm kiếm theo biển số, mã xe...
+  status?: string;        // lọc theo trạng thái
+  branchId?: number;      // lọc theo chi nhánh
+  // Có thể thêm các filter khác ở đây
+}
+
+// Interface response phân trang
+export interface PagingResponse<T> {
+  content: T[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    offset: number;
+    sort: any;
+  };
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
 }
 
 @Injectable({
@@ -101,6 +130,85 @@ export class VehicleService {
 
   addVehicle(request: VehicleRequestDTO): Observable<GeneralResponse<VehicleResponseDTO>> {
     return this.http.post<GeneralResponse<VehicleResponseDTO>>(`${this.baseUrl}/add`, request);
+  }
+
+    /**
+   * Lấy danh sách xe theo phân trang
+   * @param req Đối tượng phân trang + filter
+   * @returns Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>>
+   */
+  getVehiclesPaging(
+    req: VehiclePagingRequestDTO = { page: 1, size: 10 }
+  ): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
+
+    // Đảm bảo page bắt đầu từ 1
+    const request = { ...req, page: req.page ?? 1, size: req.size ?? 10 };
+
+    return this.http.post<GeneralResponse<PagingResponse<VehicleResponseDTO>>>(
+      `${this.baseUrl}/paging`, request
+    ).pipe(
+      catchError((error: HttpErrorResponse) => {
+        // Khi backend chưa có API /paging → fallback mock phân trang
+        if (error.status === 404 || error.status === 0) {
+          console.warn('Backend chưa có API paging, trả về mock phân trang...');
+
+          // Lọc dữ liệu mock theo các điều kiện (nếu có)
+          let filtered = [...this.mockData];
+
+          if (request.search) {
+            const term = request.search.toLowerCase();
+            filtered = filtered.filter(v =>
+              (v.licensePlate?.toLowerCase().includes(term)) ||
+              (v.vehicleCode?.toLowerCase().includes(term)) ||
+              (v.brand?.toLowerCase().includes(term)) ||
+              (v.model?.toLowerCase().includes(term))
+            );
+          }
+
+          if (request.status) {
+            filtered = filtered.filter(v => v.status === request.status);
+          }
+
+          if (request.branchId) {
+            filtered = filtered.filter(v => v.branchId === request.branchId);
+          }
+
+          // Tính toán phân trang
+          const page = request.page! - 1; // chuyển về 0-based
+          const size = request.size!;
+          const start = page * size;
+          const end = start + size;
+          const content = filtered.slice(start, end);
+
+          const mockPagingResponse: PagingResponse<VehicleResponseDTO> = {
+            content,
+            pageable: {
+              pageNumber: page,
+              pageSize: size,
+              offset: start,
+              sort: { sorted: false, unsorted: true, empty: true }
+            },
+            totalElements: filtered.length,
+            totalPages: Math.ceil(filtered.length / size),
+            number: page,
+            size,
+            first: page === 0,
+            last: end >= filtered.length,
+            numberOfElements: content.length
+          };
+
+          const response: GeneralResponse<PagingResponse<VehicleResponseDTO>> = {
+            status: 'SUCCESS' as any,
+            data: mockPagingResponse,
+          };
+
+          return of(response).pipe(delay(600));
+        }
+
+        // Các lỗi khác thì vẫn ném ra ngoài để component bắt
+        throw error;
+      })
+    );
   }
 
 }

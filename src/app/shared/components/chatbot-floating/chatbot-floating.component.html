@@ -1,0 +1,24 @@
+<div class="chatbot-wrapper">
+      <button class="chatbot-toggle-btn" (click)="toggle()">
+        <span class="icon">💬</span>
+        <span class="badge" *ngIf="hasNewMessage">1</span>
+      </button>
+
+      <div class="chatbot-panel" [class.open]="isOpen">
+        <div class="chatbot-header">
+          <h3>Trợ lý ảo</h3>
+          <button (click)="toggle()" class="close-btn">✕</button>
+        </div>
+        <div class="chatbot-body">
+          <!-- Ở đây bạn sẽ tích hợp Zalo Chat Widget, Tawk.to, hoặc chatbot tự build -->
+          <iframe 
+            src="https://your-chatbot-domain.com/embed" 
+            width="100%" 
+            height="100%" 
+            frameborder="0">
+          </iframe>
+          <!-- Hoặc dùng Tawk.to script -->
+          <!-- <div id="tawk-chat"></div> -->
+        </div>
+      </div>
+    </div>
