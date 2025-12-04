@@ -52,6 +52,7 @@
       <app-info-form
         [vehicle]="vehicle"
         [mode]="editMode ? 'edit' : 'view'"
+        [role]="mode === 'admin' ? 'ADMIN' : 'USER'"
         (save)="onSaved($event)"
         (cancel)="onCancelEdit()">
       </app-info-form>

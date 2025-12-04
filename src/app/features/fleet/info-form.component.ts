@@ -1,30 +1,44 @@
-// src/app/features/fleet/info-form/info-form.component.ts
-
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { VehicleRequestDTO, VehicleResponseDTO, VehicleService } from '../../core/services/vehicle.service';
-import { NgIf } from '@angular/common';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { 
+  VehicleRequestDTO, 
+  VehicleResponseDTO, 
+  VehicleService, 
+  VEHICLE_FEATURES_LIST, 
+  VehicleFeature 
+} from '../../core/services/vehicle.service';
 
 type FormMode = 'view' | 'edit' | 'create';
+type Role = 'ADMIN' | 'USER';
 
 @Component({
   selector: 'app-info-form',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './info-form.component.html',
   styleUrl: './info-form.component.css'
 })
 export class InfoFormComponent implements OnInit, OnChanges {
-  @Input() vehicle?: VehicleResponseDTO;     // ← BỎ required: true → cho phép undefined
+  @Input() vehicle?: VehicleResponseDTO;
   @Input() mode: FormMode = 'view';
+  @Input() role: Role = 'USER'; // Nhận role từ cha để phân quyền hiển thị
+  
+  // Sửa Output thành VehicleResponseDTO để đảm bảo có ID
   @Output() save = new EventEmitter<VehicleResponseDTO>();
   @Output() cancel = new EventEmitter<void>();
+
+  private fb = inject(FormBuilder);
+  private vehicleService = inject(VehicleService);
 
   form!: FormGroup;
   isSubmitting = false;
 
-  private emptyVehicle: VehicleResponseDTO = {
-    id: 0,
+  // Dữ liệu Features dùng cho UI
+  featureGroups: { name: string; items: VehicleFeature[] }[] = [];
+  selectedFeatureIds: number[] = []; // Lưu các ID tính năng đang được chọn
+
+  private emptyVehicle: VehicleRequestDTO = {
     vehicleCode: '',
     licensePlate: '',
     brand: '',
@@ -38,15 +52,12 @@ export class InfoFormComponent implements OnInit, OnChanges {
     basePrice: 0,
     status: 'AVAILABLE',
     branchId: 1,
-    turnaroundMinutes: 30
+    turnaroundMinutes: 30,
+    featureMask: 0 // Mặc định không có tính năng nào
   };
 
-  constructor(
-    private fb: FormBuilder,
-    private vehicleService: VehicleService
-  ) {}
-
   ngOnInit(): void {
+    this.initFeatureGroups();
     this.createForm();
     this.applyModeAndData();
   }
@@ -57,64 +68,149 @@ export class InfoFormComponent implements OnInit, OnChanges {
     }
   }
 
+  // Phân nhóm feature để hiển thị cho đẹp
+  private initFeatureGroups() {
+    const groupsMapping: Record<string, string> = {
+      'SAFETY': 'An toàn & An ninh',
+      'INTERIOR': 'Nội thất & Tiện nghi',
+      'TECH': 'Công nghệ & Giải trí',
+      'ASSIST': 'Hỗ trợ lái xe'
+    };
+
+    const groupMap = new Map<string, VehicleFeature[]>();
+    Object.keys(groupsMapping).forEach(key => groupMap.set(key, []));
+
+    VEHICLE_FEATURES_LIST.forEach(f => {
+      const list = groupMap.get(f.group);
+      if (list) list.push(f);
+    });
+
+    this.featureGroups = Array.from(groupMap.entries()).map(([key, items]) => ({
+      name: groupsMapping[key],
+      items
+    }));
+  }
+
   private createForm(): void {
     this.form = this.fb.group({
-      imageUrl: [{ value: '', visible: false }],
-      id: [{ value: '', disabled: true }],
-      vehicleCode: ['', [Validators.required, Validators.minLength(3)]],
-      licensePlate: ['', [Validators.required, Validators.pattern(/^\d{2}[A-Z]-\d{5}$/)]],
+      id: [{ value: '', disabled: true }], // Chỉ hiển thị nếu có
+      imageUrl: [''],
+      
+      // Các trường thông tin cơ bản
       brand: ['', Validators.required],
       model: ['', Validators.required],
       vehicleType: ['Sedan', Validators.required],
+      year: [new Date().getFullYear(), [Validators.required, Validators.min(1900)]],
+      color: ['', Validators.required],
       seats: [5, [Validators.required, Validators.min(2)]],
       transmission: ['Tự động', Validators.required],
       fuelType: ['Xăng', Validators.required],
-      color: ['', Validators.required],
-      year: [new Date().getFullYear(), [Validators.required, Validators.min(2000)]],
-      basePrice: [0, [Validators.required, Validators.min(100000)]],
-      status: ['AVAILABLE', Validators.required],
-      branchId: [1, [Validators.required, Validators.min(1)]],
-      turnaroundMinutes: [30, [Validators.required, Validators.min(15)]]
+      basePrice: [0, [Validators.required, Validators.min(0)]],
+      
+      // Các trường dành riêng cho Admin (có thể validator required nếu là Admin)
+      vehicleCode: [''],
+      licensePlate: [''],
+      branchId: [1],
+      turnaroundMinutes: [30],
+      status: ['AVAILABLE']
     });
   }
 
-  private applyModeAndData(): void {
+  public applyModeAndData(): void {
     this.form.reset();
-
-    const dataToUse = this.mode === 'create' ? this.emptyVehicle : (this.vehicle || this.emptyVehicle);
-setTimeout(() => {
-    this.form.patchValue(dataToUse);
-    console.log('Patched form with data:', dataToUse);
-
-    if (this.mode === 'view') {
-      this.form.disable();
+    
+    // 1. Xác định dữ liệu nguồn
+    const data = this.mode === 'create' ? this.emptyVehicle : (this.vehicle || this.emptyVehicle);
+    
+    // 2. Patch dữ liệu vào form
+    // Lưu ý: data từ API có featureMask là số, ta cần decode nó ra mảng ID
+    if (data.featureMask) {
+      this.selectedFeatureIds = this.vehicleService.decodeFeatures(data.featureMask);
     } else {
-      this.form.enable();
-          // always disable id field
-      this.form.get('id')?.disable();
+      this.selectedFeatureIds = [];
     }
-}, 0);
+
+    // Set timeout để tránh lỗi ExpressionChangedAfterItHasBeenChecked
+    setTimeout(() => {
+      this.form.patchValue({
+        ...data,
+        id: (this.vehicle as any)?.id // ID thường chỉ có trong ResponseDTO
+      });
+
+      // 3. Xử lý logic Enable/Disable theo Mode và Role
+      if (this.mode === 'view') {
+        this.form.disable();
+      } else {
+        this.form.enable();
+        this.form.get('id')?.disable(); // ID luôn disable
+
+        // Nếu là USER mà lỡ lọt vào mode edit (logic frontend sai), ta vẫn nên khóa các trường Admin
+        if (this.role !== 'ADMIN') {
+          this.form.get('vehicleCode')?.disable();
+          this.form.get('licensePlate')?.disable();
+          this.form.get('branchId')?.disable();
+          this.form.get('turnaroundMinutes')?.disable();
+          // Status user có thể xem nhưng không sửa trực tiếp ở form info thường
+          this.form.get('status')?.disable(); 
+        }
+      }
+    });
+  }
+
+  // Checkbox toggle feature
+  toggleFeature(featureId: number) {
+    if (this.mode === 'view') return; // Không cho sửa khi view
+
+    const index = this.selectedFeatureIds.indexOf(featureId);
+    if (index > -1) {
+      this.selectedFeatureIds.splice(index, 1);
+    } else {
+      this.selectedFeatureIds.push(featureId);
+    }
+  }
+
+  isFeatureSelected(id: number): boolean {
+    return this.selectedFeatureIds.includes(id);
   }
 
   onSubmit(): void {
-    if (this.form.invalid || this.isSubmitting) return;
+    if (this.form.invalid || this.isSubmitting) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.isSubmitting = true;
-    const data: VehicleRequestDTO = this.form.getRawValue();
+    const formData = this.form.getRawValue();
 
+    // Tính toán lại Feature Mask từ mảng ID đã chọn
+    const calculatedMask = this.vehicleService.encodeFeatures(this.selectedFeatureIds);
+
+    // Chuẩn bị DTO gửi đi (RequestDTO - ID có thể undefined nếu create)
+    const requestData: VehicleRequestDTO = {
+      ...formData,
+      featureMask: calculatedMask
+    };
+
+    // Gọi API
     const action$ = this.mode === 'create'
-      ? this.vehicleService.addVehicle(data)
-      : this.vehicleService.updateVehicle(data);
+      ? this.vehicleService.addVehicle(requestData)
+      : this.vehicleService.updateVehicle(requestData);
 
     action$.subscribe({
       next: (res) => {
         alert(this.mode === 'create' ? 'Thêm xe thành công!' : 'Cập nhật thành công!');
-        this.save.emit(res.data!);
+        
+        // Emit res.data (VehicleResponseDTO) thay vì requestData
+        // res.data chắc chắn có ID từ backend trả về
+        if (res.data) {
+          this.save.emit(res.data);
+        }
+        
         this.isSubmitting = false;
       },
       error: (err) => {
         console.error(err);
-        alert('Thao tác thất bại!');
+        alert('Thao tác thất bại: ' + (err.error?.message || 'Lỗi hệ thống'));
         this.isSubmitting = false;
       }
     });
@@ -124,18 +220,11 @@ setTimeout(() => {
     this.cancel.emit();
   }
 
-  get title(): string {
-    return {
-      view: 'Chi tiết xe',
-      edit: 'Chỉnh sửa xe',
-      create: 'Thêm xe mới'
-    }[this.mode];
-  }
-
-  get showActions(): boolean {
-    return this.mode === 'edit' || this.mode === 'create';
-  }
-
+  // Getters cho template gọn hơn
+  get isAdmin(): boolean { return this.role === 'ADMIN'; }
+  get isViewMode(): boolean { return this.mode === 'view'; }
+  get imageUrl(): string { return this.form.get('imageUrl')?.value; }
+  
   hasError(controlName: string, errorName: string): boolean {
     const control = this.form.get(controlName);
     return control ? control.touched && control.hasError(errorName) : false;

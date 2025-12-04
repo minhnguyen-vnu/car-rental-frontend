@@ -42,10 +42,10 @@ export class StorageService {
     this.removeToken();
     this.removeUser();
   }
-  mockLoginForTesting(): void {
+  mockLoginForTesting(role: string): void {
     const mockUser: RequestContext = {
       userId: 66771508,
-      role: 'USER',
+      role: role,
       token: 'mock-token-for-testing'
     };
     this.saveUser(mockUser);

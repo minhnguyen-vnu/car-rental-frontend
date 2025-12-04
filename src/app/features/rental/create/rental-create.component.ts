@@ -74,14 +74,16 @@ export class RentalCreateComponent implements OnInit {
 
   private loadVehicle(): void {
     this.loading = true;
-  this.vehicleService.getVehicles({ id: this.vehicleId }).subscribe({
-    next: (res) => {
-      this.vehicle = res.data?.[0];
-      this.loading = false;
-      if (this.vehicle) {
-        this.updateCalculations(); // Tính tiền ngay khi có xe + pickupTime mặc định
-      }
-    },
+    this.vehicleService.getVehicles({ id: this.vehicleId }).subscribe({
+      next: (res) => {
+        // UPDATE: Truy cập vào mảng 'content' bên trong object phân trang
+        this.vehicle = res.data?.content?.[0];
+        
+        this.loading = false;
+        if (this.vehicle) {
+          this.updateCalculations(); // Tính tiền ngay khi có xe + pickupTime mặc định
+        }
+      },
       error: () => {
         this.loading = false;
         alert('Lỗi tải thông tin xe');
@@ -112,79 +114,79 @@ export class RentalCreateComponent implements OnInit {
   }
 
 
-onSubmit(): void {
-  if (this.rentalForm.invalid || this.submitting || !this.vehicle) return;
+  onSubmit(): void {
+    if (this.rentalForm.invalid || this.submitting || !this.vehicle) return;
 
-  let user = this.storageService.getUser();
-  if (!user) {
+    let user = this.storageService.getUser();
+    if (!user) {
 
-    user = {
+      user = {
 
-      userId: 66771508,
-      token: 'MOCK_TOKEN_FOR_TESTING_PURPOSES',
-      role: 'customer'
+        userId: 66771508,
+        token: 'MOCK_TOKEN_FOR_TESTING_PURPOSES',
+        role: 'customer'
+      };
+    }
+    if (!user || !user.userId) {
+      alert('Vui lòng đăng nhập lại!');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.submitting = true;
+
+    const formValue = this.rentalForm.value;
+
+    const createReq: RentalCreateRequestDTO = {
+      vehicleId: this.vehicle.id,
+      pickupTime: new Date(formValue.pickupTime).toISOString(),
+      returnTime: new Date(formValue.returnTime).toISOString(),
+      pickupBranchId: +formValue.pickupBranchId,
+      returnBranchId: formValue.returnBranchId,
+      durationDays: this.durationDays,
+      totalAmount: this.totalAmount
     };
-  }
-  if (!user || !user.userId) {
-    alert('Vui lòng đăng nhập lại!');
-    this.router.navigate(['/login']);
-    return;
-  }
 
-  this.submitting = true;
+    this.rentalService.createRental(createReq).subscribe({
+      next: (res) => {
+        const rentalId = res.data?.id;
+        const totalAmount = res.data?.totalAmount || this.totalAmount;
+        const transactionCode = res.data?.transactionCode || 'N/A';
 
-  const formValue = this.rentalForm.value;
+        alert(`Đặt xe thành công!\nMã đơn: ${transactionCode}`);
 
-  const createReq: RentalCreateRequestDTO = {
-    vehicleId: this.vehicle.id,
-    pickupTime: new Date(formValue.pickupTime).toISOString(),
-    returnTime: new Date(formValue.returnTime).toISOString(),
-    pickupBranchId: +formValue.pickupBranchId,
-    returnBranchId: formValue.returnBranchId,
-    durationDays: this.durationDays,
-    totalAmount: this.totalAmount
-  };
-
-  this.rentalService.createRental(createReq).subscribe({
-    next: (res) => {
-      const rentalId = res.data?.id;
-      const totalAmount = res.data?.totalAmount || this.totalAmount;
-      const transactionCode = res.data?.transactionCode || 'N/A';
-
-      alert(`Đặt xe thành công!\nMã đơn: ${transactionCode}`);
-
-      // Điều hướng ngay sang trang thanh toán
-      this.router.navigate(['/payment-charge'], {
-        queryParams: {
-          rentalId: rentalId,
-          amount: totalAmount
-        }
-      });
-    },
-    error: (err) => {
-      console.error('Lỗi tạo đơn thuê xe:', err);
-
-      // MOCK DATA nếu backend trả 404 (để test frontend khi backend chưa sẵn sàng)
-      if (err.status === 404 || err.status === 0) {
-        alert('Backend chưa sẵn sàng → Dùng mock data để test thanh toán!');
-
+        // Điều hướng ngay sang trang thanh toán
         this.router.navigate(['/payment-charge'], {
           queryParams: {
-            rentalId: 999999,
-            amount: this.totalAmount || 2500000
+            rentalId: rentalId,
+            amount: totalAmount
           }
         });
-        return;
-      }
+      },
+      error: (err) => {
+        console.error('Lỗi tạo đơn thuê xe:', err);
 
-      const msg = err.error?.message || 'Đặt xe thất bại. Vui lòng thử lại.';
-      alert(msg);
-      this.submitting = false;
-    }
-  });
-}
-/**durationDays là return - pickup và làm tròn
-ví dụ 4.2 ngày thành 4.5, 3.1 ngày thành 3.5 ngày, 4.7 ngày thành 5 ngày */
+        // MOCK DATA nếu backend trả 404 (để test frontend khi backend chưa sẵn sàng)
+        if (err.status === 404 || err.status === 0) {
+          alert('Backend chưa sẵn sàng → Dùng mock data để test thanh toán!');
+
+          this.router.navigate(['/payment-charge'], {
+            queryParams: {
+              rentalId: 999999,
+              amount: this.totalAmount || 2500000
+            }
+          });
+          return;
+        }
+
+        const msg = err.error?.message || 'Đặt xe thất bại. Vui lòng thử lại.';
+        alert(msg);
+        this.submitting = false;
+      }
+    });
+  }
+  /**durationDays là return - pickup và làm tròn
+  ví dụ 4.2 ngày thành 4.5, 3.1 ngày thành 3.5 ngày, 4.7 ngày thành 5 ngày */
 
 
   calculateDays() {
@@ -213,12 +215,12 @@ ví dụ 4.2 ngày thành 4.5, 3.1 ngày thành 3.5 ngày, 4.7 ngày thành 5 ng
     this.router.navigate(['/user']);
   }
   get durationDays(): number {
-  return this.rentalForm.get('durationDays')?.value || 0;
-}
+    return this.rentalForm.get('durationDays')?.value || 0;
+  }
 
-get totalAmount(): number {
-  return this.rentalForm.get('totalAmount')?.value || 0;
-}
+  get totalAmount(): number {
+    return this.rentalForm.get('totalAmount')?.value || 0;
+  }
 
   minReturnDate(): string {
     return this.rentalForm.get('pickupDate')?.value || this.minPickupDate;

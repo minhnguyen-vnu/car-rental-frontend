@@ -84,14 +84,17 @@ export class ChatbotFloatingComponent implements AfterViewChecked {
       next: (res) => {
         this.isLoading = false; // Tắt loading
         
-        if (!res.data || res.data.length === 0) {
+        // UPDATE: Lấy dữ liệu từ content vì response giờ là PagingResponse
+        const vehicles = res.data?.content || [];
+
+        if (vehicles.length === 0) {
           this.pushBotMessage('Xin lỗi, tôi không tìm thấy xe nào phù hợp với yêu cầu của bạn.');
         } else {
-          console.log('Chatbot found vehicles:', res.data);
+          console.log('Chatbot found vehicles:', vehicles);
           this.messages.push({
             type: 'bot',
-            content: `Tôi tìm thấy ${res.data.length} xe phù hợp:`,
-            vehicles: res.data,
+            content: `Tôi tìm thấy ${vehicles.length} xe phù hợp:`,
+            vehicles: vehicles,
             timestamp: new Date()
           });
           this.hasNewMessage = true;

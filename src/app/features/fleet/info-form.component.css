@@ -1,79 +1,279 @@
-/* src/app/features/fleet/info-form/info-form.component.css */
-.info-form {
+/* Container chính */
+.info-card {
   background: white;
-  padding: 30px;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  max-width: 1000px;
+  margin: 0 auto;
+  border: 1px solid #e2e8f0;
+}
+
+/* Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.status-badge.AVAILABLE { background: #dcfce7; color: #166534; }
+.status-badge.MAINTENANCE { background: #ffedd5; color: #9a3412; }
+.status-badge.RENTED { background: #dbeafe; color: #1e40af; }
+
+/* --- Top Section (Image + Main Info) --- */
+.top-section {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .top-section { flex-direction: column; }
+}
+
+.image-column {
+  flex: 1;
+  max-width: 400px;
+}
+
+.image-wrapper {
+  width: 100%;
+  aspect-ratio: 16/9;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1rem;
 }
 
-.form-grid {
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.url-input-group label {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.main-info-column {
+  flex: 1.5;
+}
+
+.grid-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 }
 
+/* --- Fields Common --- */
 .field {
   display: flex;
   flex-direction: column;
 }
 
 .field label {
-  margin-bottom: 6px;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #333;
+  color: #475569;
+  margin-bottom: 0.5rem;
 }
 
-.req { color: #e74c3c; }
+.req { color: #ef4444; }
 
-.field input,
-.field select {
-  padding: 12px;
-  border: 1px solid #ddd;
+.field input, .field select {
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 0.95rem;
+  transition: all 0.2s;
 }
 
-.field input:disabled,
-.field select:disabled {
-  background: #f8f9fa;
-  color: #6c757d;
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.field input:disabled, .field select:disabled, .readonly-select {
+  background: #f8fafc;
+  color: #64748b;
   cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+.highlight-field input {
+  font-weight: 700;
+  color: #6366f1;
+  background: #eff6ff;
+  border-color: #c7d2fe;
 }
 
 .error {
-  color: #e74c3c;
-  font-size: 13px;
+  color: #ef4444;
+  font-size: 0.8rem;
   margin-top: 4px;
 }
 
-.form-actions {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 20px;
+/* Divider & Titles */
+.divider {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 2rem 0;
 }
 
-.btn-cancel, .btn-save {
-  padding: 12px 32px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+.section-title {
+  font-size: 1.2rem;
+  color: #334155;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* --- Specs Grid --- */
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+/* --- Admin Section --- */
+.admin-section {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px dashed #94a3b8;
+  margin-top: 2rem;
+}
+
+.admin-title {
+  font-size: 1rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Features Section --- */
+.features-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.feature-group {
+  background: #fff;
+}
+
+.group-name {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.feature-item:hover:not(.disabled) {
+  background: #f8fafc;
+}
+
+.checkbox-mock {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.checkbox-mock.checked {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
+.feature-item.selected span {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.feature-item.disabled {
+  cursor: default;
+}
+
+/* Actions */
+.form-actions {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-cancel, .btn-save, .btn-primary {
+  padding: 0.85rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s;
 }
 
 .btn-cancel {
-  background: #6c757d;
-  color: white;
+  background: #f1f5f9;
+  color: #64748b;
 }
 
-.btn-save {
-  background: #28a745;
+.btn-save, .btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: white;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
 .btn-save:disabled {
-  background: #aaa;
+  opacity: 0.7;
   cursor: not-allowed;
+}
+
+.btn-save:hover:not(:disabled), .btn-primary:hover {
+  transform: translateY(-2px);
 }

@@ -132,7 +132,8 @@ export class AuthService {
     return this.hasRole('ADMIN');
   }
 
-  mockLoginForTesting(): void {
-    this.storageService.mockLoginForTesting();
+  mockLoginForTesting(role: string): void {
+
+    this.storageService.mockLoginForTesting(role);
   }
 }

@@ -57,8 +57,12 @@ export class LoginComponent {
       },
       error: (error) => {
         // nếu 404 not found thì tạo mock user để test
-        
-          this.authService.mockLoginForTesting();
+          if (this.username === 'admin') {
+          this.authService.mockLoginForTesting('ADMIN');
+          this.router.navigate(['/admin']);
+          return;
+        }
+          this.authService.mockLoginForTesting('USER');
           this.router.navigate(['/user']);
           return;
         this.loading = false;

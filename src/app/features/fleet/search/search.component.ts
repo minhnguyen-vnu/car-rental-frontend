@@ -3,9 +3,25 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { VehicleCardComponent } from '../vehicle-card.component';
-import { VehicleService, VehicleRequestDTO, VehicleResponseDTO } from '../../../core/services/vehicle.service';
+import { 
+  VehicleService, 
+  VehicleRequestDTO, 
+  VehicleResponseDTO, 
+  VEHICLE_FEATURES_LIST,
+  VehicleFeature 
+} from '../../../core/services/vehicle.service';
 
 type Role = 'ADMIN' | 'USER';
+
+// Interface cho UI Group
+interface FeatureGroupUI {
+  name: string;
+  items: { 
+    id: number; 
+    name: string; 
+    selected: boolean 
+  }[];
+}
 
 @Component({
   selector: 'app-search',
@@ -17,14 +33,28 @@ type Role = 'ADMIN' | 'USER';
 export class SearchComponent implements OnInit {
   @Input() role: Role = 'USER';
 
-  request: VehicleRequestDTO = {};
+  request: VehicleRequestDTO = {
+    page: 0,
+  };
+  
   vehicles: VehicleResponseDTO[] = [];
   loading = false;
-  showAdvanced = false;
-  dateError: string = '';
+  
+  // Pagination State
+  currentPage = 0;
+  totalPages = 0;
+  totalElements = 0;
 
+  // Advanced Search Logic
+  showAdvanced = false;
+  showFeatureModal = false;
+  selectedFeatureCount = 0;
+  
+  featureGroups: FeatureGroupUI[] = [];
   vehicleCategories: string[] = ['SUV', 'SEDAN', 'HATCHBACK', 'TRUCK', 'MPV', 'COUPE'];
   vehicleTransmissionTypes: string[] = ['MANUAL', 'AUTOMATIC'];
+  
+  dateError: string = '';
 
   constructor(
     private vehicleService: VehicleService,
@@ -32,57 +62,114 @@ export class SearchComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Nếu là ADMIN: Tự động tìm kiếm ngay khi vào trang (vì không bắt buộc nhập ngày)
-    // Nếu là USER: Chờ người dùng nhập ngày rồi mới bấm tìm
+    this.initFeatureGroups();
+    // Admin auto search, User chờ nhập ngày
     if (this.role === 'ADMIN') {
       this.search();
     }
+  }
+
+  // ... (Giữ nguyên initFeatureGroups, toggleAdvanced, toggleFeatureModal, updateSelectedFeatures, clearFeatures) ...
+  private initFeatureGroups() {
+    const groupsMapping: Record<string, string> = {
+      'SAFETY': '🛡️ An toàn & An ninh',
+      'INTERIOR': '🛋️ Nội thất & Tiện nghi',
+      'TECH': '🎵 Công nghệ & Giải trí',
+      'ASSIST': '🚙 Hỗ trợ lái xe'
+    };
+    const groupMap = new Map<string, FeatureGroupUI>();
+    Object.keys(groupsMapping).forEach(key => {
+      groupMap.set(key, { name: groupsMapping[key], items: [] });
+    });
+    VEHICLE_FEATURES_LIST.forEach(f => {
+      const group = groupMap.get(f.group);
+      if (group) {
+        group.items.push({ id: f.id, name: f.name, selected: false });
+      }
+    });
+    this.featureGroups = Array.from(groupMap.values());
+  }
+
+  toggleAdvanced() { this.showAdvanced = !this.showAdvanced; }
+  toggleFeatureModal() { this.showFeatureModal = !this.showFeatureModal; }
+
+  updateSelectedFeatures() {
+    let count = 0;
+    const selectedIds: number[] = [];
+    this.featureGroups.forEach(group => {
+      group.items.forEach(item => {
+        if (item.selected) {
+          count++;
+          selectedIds.push(item.id);
+        }
+      });
+    });
+    this.selectedFeatureCount = count;
+    if (selectedIds.length > 0) {
+      this.request.featureMask = this.vehicleService.encodeFeatures(selectedIds);
+    } else {
+      this.request.featureMask = undefined;
+    }
+  }
+  
+  clearFeatures() {
+      this.featureGroups.forEach(g => g.items.forEach(i => i.selected = false));
+      this.updateSelectedFeatures();
   }
 
   trackById(index: number, vehicle: VehicleResponseDTO): number {
     return vehicle.id;
   }
 
-  toggleAdvanced() {
-    this.showAdvanced = !this.showAdvanced;
+  onViewDetail(id: number) {
+    const vehicle = this.vehicles.find(v => v.id === id);
+    if (!vehicle) return;
+    const url = this.role === 'ADMIN' ? `/admin/vehicle/${id}` : `/vehicle/${id}`;
+    this.router.navigate([url], { state: { vehicle } });
   }
 
-  // Xử lý sự kiện khi bấm nút Tìm kiếm
   onSearch(form: NgForm) {
     this.dateError = ''; 
-
-    // 1. Kiểm tra Validate HTML (Required) - CHỈ ÁP DỤNG VỚI USER
-    // Nếu là Admin thì form.invalid do thiếu ngày sẽ bị bỏ qua
     if (this.role === 'USER' && form.invalid) {
-      // Đánh dấu tất cả input là 'touched' để hiện lỗi đỏ
-      Object.keys(form.controls).forEach(key => {
-        form.controls[key].markAsTouched();
-      });
-      return; // Dừng lại, không gọi API
+      Object.keys(form.controls).forEach(key => form.controls[key].markAsTouched());
+      return; 
     }
-
-    // 2. Kiểm tra Logic Ngày (Ngày trả < Ngày nhận)
-    // Chỉ kiểm tra khi CÓ nhập cả 2 trường (Admin nhập 1 trường thì kệ, User bắt buộc nhập đủ ở bước 1 rồi)
     if (this.request.pickupTime && this.request.returnTime) {
       const start = new Date(this.request.pickupTime);
       const end = new Date(this.request.returnTime);
-      
       if (start >= end) {
         this.dateError = 'Ngày trả xe phải lớn hơn ngày nhận xe!';
         return;
       }
     }
-
-    // 3. Gọi API
+    
+    // Reset về trang 0 khi bấm tìm kiếm mới
+    this.request.page = 0;
     this.search();
+  }
+
+  // UPDATE: Logic xử lý phân trang
+  changePage(newPage: number) {
+    if (newPage >= 0 && newPage < this.totalPages) {
+      this.request.page = newPage;
+      this.search();
+    }
   }
 
   private search() {
     this.loading = true;
-    this.request.isMeaningFull = true; // Chỉ có tìm kiếm bằng chatbot mới có thể có isMeaningFull=false, đây là tìm kiếm thủ công nên bằng true
     this.vehicleService.getVehicles(this.request).subscribe({
       next: (res) => {
-        this.vehicles = res.data || [];
+        // CẬP NHẬT ĐỂ ĐỌC DỮ LIỆU TỪ PAGING RESPONSE
+        if (res.data) {
+          this.vehicles = res.data.content || [];
+          this.totalPages = res.data.totalPages;
+          this.totalElements = res.data.totalElements;
+          this.currentPage = res.data.number;
+        } else {
+          this.vehicles = [];
+          this.totalPages = 0;
+        }
         this.loading = false;
       },
       error: (err) => {
@@ -91,16 +178,5 @@ export class SearchComponent implements OnInit {
         this.loading = false;
       }
     });
-  }
-
-  onViewDetail(id: number) {
-    const vehicle = this.vehicles.find(v => v.id === id);
-    if (!vehicle) return;
-    
-    const url = this.role === 'ADMIN' 
-      ? `/admin/vehicle/${id}` 
-      : `/vehicle/${id}`;
-
-    this.router.navigate([url], { state: { vehicle } });
   }
 }

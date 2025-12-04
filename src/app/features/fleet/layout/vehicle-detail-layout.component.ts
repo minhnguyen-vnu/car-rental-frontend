@@ -1,9 +1,7 @@
-// src/app/features/fleet/layouts/vehicle-detail-layout/vehicle-detail-layout.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VehicleResponseDTO, VehicleService } from '../../../core/services/vehicle.service';
-import { InfoFormComponent } from '../info-form.component';
+import { InfoFormComponent } from '../info-form.component'; // Điều chỉnh path import nếu cần
 import { NgIf } from '@angular/common';
 
 type DetailMode = 'admin' | 'customer';
@@ -19,7 +17,7 @@ export class VehicleDetailLayoutComponent implements OnInit {
   mode: DetailMode = 'customer';
   vehicle?: VehicleResponseDTO;
   editMode = false;
-  loading = false; // ← Không cần loading nữa!
+  loading = false;
 
   constructor(
     private vehicleService: VehicleService,
@@ -28,30 +26,32 @@ export class VehicleDetailLayoutComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-  // 1. Lấy mode từ route data
-  this.route.data.subscribe(data => {
-    this.mode = (data['mode'] as DetailMode) || 'customer';
-  });
+    // 1. Lấy mode từ route data
+    this.route.data.subscribe(data => {
+      this.mode = (data['mode'] as DetailMode) || 'customer';
+    });
 
-  // 2. ĐỌC TRỰC TIẾP TỪ history.state – CHẠY MƯỢT DÙ F5 HAY BACK/FORWARD
-  const state = history.state;
-  if (state?.vehicle) {
-    this.vehicle = state.vehicle;
-    this.loading = false;
-    return;
-  }
+    // 2. ĐỌC TRỰC TIẾP TỪ history.state – CHẠY MƯỢT DÙ F5 HAY BACK/FORWARD
+    const state = history.state;
+    if (state?.vehicle) {
+      this.vehicle = state.vehicle;
+      this.loading = false;
+      return;
+    }
 
-  // 3. Fallback: nếu không có state (vào trực tiếp URL) → lấy ID từ param và gọi API
-  const id = this.route.snapshot.paramMap.get('id');
-  if (id) {
-    this.loadVehicleFromApi(+id);
+    // 3. Fallback: nếu không có state (vào trực tiếp URL) → lấy ID từ param và gọi API
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.loadVehicleFromApi(+id);
+    }
   }
-}
 
   private loadVehicleFromApi(id: number): void {
     this.vehicleService.getVehicles({ id }).subscribe({
       next: (res) => {
-        this.vehicle = res.data?.[0];
+        // CẬP NHẬT: Truy cập vào mảng 'content' bên trong object phân trang
+        this.vehicle = res.data?.content?.[0];
+        
         this.loading = false;
         if (!this.vehicle) {
           alert('Xe không tồn tại');
@@ -90,13 +90,13 @@ export class VehicleDetailLayoutComponent implements OnInit {
     }
   }
 
-  // Người dùng: thuê xe (tạm để trống)
+  // Người dùng: thuê xe
   onRent(): void {
-  if (!this.vehicle?.id) return;
+    if (!this.vehicle?.id) return;
 
-  // Điều hướng đến trang tạo đơn thuê, truyền vehicleId qua param
-  this.router.navigate(['/rental/create', this.vehicle.id]);
-}
+    // Điều hướng đến trang tạo đơn thuê, truyền vehicleId qua param
+    this.router.navigate(['/rental/create', this.vehicle.id]);
+  }
 
   // Hủy sửa
   onCancelEdit(): void {

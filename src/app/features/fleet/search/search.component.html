@@ -110,6 +110,49 @@
       </div>
       
       <div class="grid grid-4">
+        <div class="input-group" style="grid-column: span 2;"> <!-- Cho nó rộng ra -->
+          <label>Tiện nghi & Tính năng</label>
+          <div class="feature-select-trigger" (click)="toggleFeatureModal()">
+            <span>
+              {{ selectedFeatureCount > 0 
+                ? 'Đã chọn ' + selectedFeatureCount + ' tính năng' 
+                : 'Chọn tiện nghi (Camera 360, Cửa sổ trời...)' 
+              }}
+            </span>
+            <span class="arrow">▼</span>
+          </div>
+        </div>
+
+        <div class="modal-overlay" *ngIf="showFeatureModal" (click)="toggleFeatureModal()">
+  <!-- Stop propagation để click vào modal không bị đóng -->
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        
+        <div class="modal-header">
+          <h3>Chọn tiện nghi xe</h3>
+          <button class="close-btn" (click)="toggleFeatureModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Loop qua từng nhóm -->
+          <div class="feature-group" *ngFor="let group of featureGroups">
+            <h4 class="group-title">{{ group.name }}</h4>
+            <div class="feature-grid">
+              <label class="checkbox-item" *ngFor="let item of group.items">
+                <input type="checkbox" [(ngModel)]="item.selected" (change)="updateSelectedFeatures()" [ngModelOptions]="{standalone: true}">
+                <span class="checkmark"></span>
+                <span class="label-text">{{ item.name }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-text" (click)="clearFeatures()">Xóa tất cả</button>
+          <button type="button" class="btn-primary" (click)="toggleFeatureModal()">Áp dụng</button>
+        </div>
+      </div>
+    </div>
+
         <div class="input-group">
           <label>Khoảng giá (cơ bản)</label>
           <input placeholder="Nhập giá..." type="number" step="0.01" [(ngModel)]="request.basePrice" name="basePrice">
@@ -150,8 +193,7 @@
     </div>
   </form>
 
-  <!-- KẾT QUẢ TÌM KIẾM -->
-  <div class="results-container">
+ <div class="results-container">
     <div class="vehicles-grid" *ngIf="vehicles.length > 0">
       <app-vehicle-card
         *ngFor="let vehicle of vehicles; trackBy: trackById"
@@ -160,7 +202,28 @@
       </app-vehicle-card>
     </div>
 
-    <!-- Hiển thị khi không có kết quả -->
+    <!-- UPDATE: Thêm thanh phân trang -->
+    <div class="pagination-controls" *ngIf="totalPages > 0 && !loading">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 0" 
+        (click)="changePage(currentPage - 1)">
+        &laquo; Trước
+      </button>
+      
+      <span class="page-info">
+        Trang {{ currentPage + 1 }} / {{ totalPages }}
+      </span>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === totalPages - 1" 
+        (click)="changePage(currentPage + 1)">
+        Sau &raquo;
+      </button>
+    </div>
+
+    <!-- Trạng thái không tìm thấy -->
     <div *ngIf="vehicles.length === 0 && !loading && searchForm.submitted && !dateError" class="no-results">
       <div class="no-results-icon">🚗</div>
       <h3>Không tìm thấy xe nào</h3>
