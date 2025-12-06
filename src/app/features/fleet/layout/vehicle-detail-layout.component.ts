@@ -113,4 +113,6 @@ export class VehicleDetailLayoutComponent implements OnInit {
   onCancelEdit(): void {
     this.editMode = false;
   }
+
+ 
 }
