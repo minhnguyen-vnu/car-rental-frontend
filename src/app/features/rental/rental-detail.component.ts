@@ -18,6 +18,17 @@ type DetailMode = 'view' | 'edit';
   styleUrls: ['./rental-detail.component.css']
 })
 export class RentalDetailComponent implements OnInit {
+  filter: RentalRequestDTO = {
+    page: 0
+  };
+  rentals: RentalResponseDTO[] = [];
+  loading = false;
+
+  // Pagination state
+  currentPage = 0;
+  totalPages = 0;
+  totalElements = 0;
+
   rental!: RentalResponseDTO;
   mode: DetailMode = 'view';
   form!: FormGroup;
@@ -78,16 +89,23 @@ export class RentalDetailComponent implements OnInit {
   }
 
   private loadRental(id: number): void {
-    this.rentalService.getRentals({ id }).subscribe({
+    this.loading = true;
+    this.rentalService.getRentals(this.filter).subscribe({
       next: (res) => {
-        if (res.data && res.data.length > 0) {
-          this.rental = res.data[0];
-          this.applyDataToForm();
+        if (res.data) {
+          this.rentals = res.data.content || [];
+          this.totalPages = res.data.totalPages;
+          this.totalElements = res.data.totalElements;
+          this.currentPage = res.data.number;
+        } else {
+          this.rentals = [];
+          this.totalPages = 0;
         }
+        this.loading = false;
       },
       error: () => {
-        alert('Không tải được thông tin đơn thuê');
-        this.location.back();
+        this.loading = false;
+        this.rentals = [];
       }
     });
   }

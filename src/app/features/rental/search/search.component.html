@@ -66,6 +66,26 @@
     </div>
   </div>
 
+  <div class="pagination-controls" *ngIf="totalPages > 0 && !loading">
+    <button 
+      class="page-btn" 
+      [disabled]="currentPage === 0" 
+      (click)="changePage(currentPage - 1)">
+      &laquo; Trước
+    </button>
+    
+    <span class="page-info">
+      Trang {{ currentPage + 1 }} / {{ totalPages }}
+    </span>
+    
+    <button 
+      class="page-btn" 
+      [disabled]="currentPage === totalPages - 1" 
+      (click)="changePage(currentPage + 1)">
+      Sau &raquo;
+    </button>
+  </div>
+
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>Đang tải dữ liệu...</p>

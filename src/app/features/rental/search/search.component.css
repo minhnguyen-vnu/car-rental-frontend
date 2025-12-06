@@ -159,3 +159,43 @@
     transform: rotate(360deg);
   }
 }
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  width: 100%;
+  grid-column: 1 / -1; /* Chiếm full dòng nếu nằm trong grid */
+}
+
+.page-btn {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #2d3748;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f7fafc;
+}
+
+.page-info {
+  font-size: 0.95rem;
+  color: #718096;
+  font-weight: 500;
+}

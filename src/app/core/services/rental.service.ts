@@ -32,6 +32,36 @@ export interface RentalRequestDTO {
   totalAmount?: number;
   currency?: string;
   status?: string;
+    page?: number;
+}
+
+export interface PagingResponse<T> {
+  content: T[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+    sort: {
+        sorted: boolean;
+        unsorted: boolean;
+        empty: boolean;
+    };
+  };
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  first: boolean;
+  size: number;
+  number: number;
+  numberOfElements: number;
+  empty: boolean;
+  sort: {
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+  };
 }
 
 export interface RentalResponseDTO {
@@ -55,6 +85,20 @@ export interface RentalResponseDTO {
 })
 export class RentalService {
 
+   private mockPagingData: PagingResponse<RentalResponseDTO> = {
+    content: MOCK_RENTALS,
+    pageable: { pageNumber: 0, pageSize: 15, offset: 0, paged: true, unpaged: false, sort: { sorted: false, unsorted: true, empty: true } },
+    totalPages: 1,
+    totalElements: MOCK_RENTALS.length,
+    last: true,
+    first: true,
+    size: 15,
+    number: 0,
+    numberOfElements: MOCK_RENTALS.length,
+    empty: false,
+    sort: { sorted: false, unsorted: true, empty: true }
+  };
+
   private readonly baseUrl = `${environment.apiUrl}/rental`;
 
   constructor(private http: HttpClient) { }
@@ -69,26 +113,24 @@ export class RentalService {
     return this.http.put<GeneralResponse<RentalResponseDTO>>(`${this.baseUrl}/update`, request);
   }
 
-  /** Lấy danh sách / tìm kiếm đơn thuê xe (body filter) */
-  getRentals(filter: RentalRequestDTO = {}): Observable<GeneralResponse<RentalResponseDTO[]>> {
-    return this.http.post<GeneralResponse<RentalResponseDTO[]>>(`${this.baseUrl}/get`, filter).pipe(
+  /** Lấy danh sách / tìm kiếm đơn thuê xe (body filter) - Có phân trang */
+  getRentals(filter: RentalRequestDTO = {}): Observable<GeneralResponse<PagingResponse<RentalResponseDTO>>> {
+    // Default page 0 if undefined
+    if (filter.page === undefined) filter.page = 0;
+
+    return this.http.post<GeneralResponse<PagingResponse<RentalResponseDTO>>>(`${this.baseUrl}/get`, filter).pipe(
       catchError((error) => {
         console.warn('API Rental lỗi → dùng mock data', error);
 
         // Giả lập delay 500ms để giống thật
-        const mockResponse: GeneralResponse<RentalResponseDTO[]> = {
-          status: 200 as any,
-          data: MOCK_RENTALS
+        const mockResponse: GeneralResponse<PagingResponse<RentalResponseDTO>> = {
+          status: 'SUCCESS' as any,
+          data: this.mockPagingData
         };
 
         return of(mockResponse).pipe(delay(500));
       })
     );
-  }
-
-  /** Lấy tất cả (không filter) – tiện dùng */
-  getAllRentals(): Observable<GeneralResponse<RentalResponseDTO[]>> {
-    return this.getRentals();
   }
 
   /** Lấy chi tiết 1 rental theo id (nếu backend hỗ trợ thêm sau này) */
