@@ -1,80 +1,73 @@
 /* user-main-layout.component.css */
 
-/* 1. Thay đổi nền tổng thể sang màu sáng, sạch sẽ */
 .user-layout {
   min-height: 100vh;
-  background-color: #f3f6fd; /* Màu nền xám xanh nhạt hiện đại */
-  /* Loại bỏ background gradient cũ */
+  background-color: #f3f6fd;
 }
 
 .user-header {
-  background: rgba(255, 255, 255, 0.8); /* Tăng độ trong suốt */
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   color: #2d3748;
-  padding: 1.5rem 2rem;
-  /* Đổi shadow nhẹ hơn và chuyển thành border dưới */
+  padding: 1rem 3vw;
   box-shadow: none;
   border-bottom: 1px solid rgba(237, 242, 247, 0.8);
-
-  h2 {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.75rem; /* Giảm size một chút cho tinh tế */
-    font-weight: 800;
-    color: #1a202c; /* Dùng màu trơn đậm thay vì gradient text */
-    letter-spacing: -0.5px;
-  }
 }
 
-/* 2. Thiết kế lại khu vực Tabs theo phong cách Segmented Control */
+.user-header h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a202c;
+  letter-spacing: -0.5px;
+}
+
 .user-tabs {
-  display: inline-flex; /* Chỉ chiếm chiều rộng cần thiết */
-  background: rgba(226, 232, 240, 0.6); /* Nền xám nhạt cho cả thanh tab */
+  display: inline-flex;
+  background: rgba(226, 232, 240, 0.6);
   padding: 4px;
-  border-radius: 12px; /* Bo tròn cả thanh */
-  gap: 0; /* Loại bỏ gap cũ */
+  border-radius: 12px;
+  gap: 0;
 }
 
 .tab-btn {
   background: transparent;
   border: none;
-  color: #64748b; /* Màu text xám trung tính */
-  padding: 0.6rem 1.5rem;
-  font-size: 0.95rem;
+  color: #64748b;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  border-radius: 10px !important; /* Bo tròn 4 góc của nút */
+  border-radius: 10px !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 600;
   position: relative;
-
-  /* Style cho tab đang active */
-  &.active {
-    background: white; /* Nền trắng nổi lên */
-    color: #667eea; /* Chữ màu thương hiệu */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Bóng đổ nhẹ tạo độ nổi */
-  }
-
-  &:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.5);
-    color: #475569;
-  }
 }
 
+.tab-btn.active {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+  color: #475569;
+}
+
+/* THU NHỎ LẠI - 85vw thay vì 94vw */
 .user-content {
   width: 100%;
-  margin: 2rem 0 0; /* Tăng margin top */
-  padding: 0 2rem 3rem; /* Thêm padding 2 bên cho content không dính lề */
-  max-width: 1200px; /* Giới hạn chiều rộng tối đa để dễ nhìn trên màn hình lớn */
-  margin-left: auto;
-  margin-right: auto;
+  margin: 1.5rem auto 0;
+  padding: 0 2vw 2rem;
+  max-width: 70vw;
 }
 
-/* 3. Làm mềm lại các khối nội dung */
 .search-page,
 .rental-history-page {
   background: white;
-  border-radius: 20px;
-  padding: 2.5rem;
-  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.08);
+  border-radius: 1.25rem;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.6);
   animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -90,15 +83,13 @@
   }
 }
 
-/* Style lại tiêu đề H3 cho hiện đại hơn */
 .rental-history-page h3 {
   margin-top: 0;
   color: #2d3748;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   position: relative;
-  padding-bottom: 1rem;
-  /* Dùng gạch chân ngắn làm điểm nhấn thay vì gạch hết dòng */
+  padding-bottom: 0.75rem;
 }
 
 .rental-history-page h3::after {
@@ -106,15 +97,13 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 60px; /* Chỉ gạch một đoạn ngắn */
+  width: 60px;
   height: 4px;
   background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
   border-radius: 2px;
 }
 
 app-search {
-  display: block !important; /* Bắt buộc nó phải là khối block */
-  width: 100% !important;    /* Chiếm 100% chiều ngang */
+  display: block !important;
+  width: 100% !important;
 }
-
-
