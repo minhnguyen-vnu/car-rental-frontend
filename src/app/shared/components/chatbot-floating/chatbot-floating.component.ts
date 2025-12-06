@@ -77,7 +77,7 @@ export class ChatbotFloatingComponent implements AfterViewChecked {
       freeText: text,
       pickupTime: new Date().toISOString(),
       returnTime: new Date().toISOString(),
-      isMeaningFull: true
+      isMeaningFull: false
     };
 
     this.vehicleService.getVehicles(request).subscribe({
