@@ -66,10 +66,7 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.initFeatureGroups();
-    // Admin auto search, User chờ nhập ngày
-    if (this.role === 'ADMIN') {
       this.search();
-    }
   }
 
   // ... (Giữ nguyên initFeatureGroups, toggleAdvanced, toggleFeatureModal, updateSelectedFeatures, clearFeatures) ...
@@ -160,6 +157,7 @@ export class SearchComponent implements OnInit {
   }
 
   private search() {
+ 
     this.loading = true;
     this.vehicleService.getVehicles(this.request).subscribe({
       next: (res) => {

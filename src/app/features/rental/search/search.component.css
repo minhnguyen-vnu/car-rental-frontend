@@ -22,6 +22,14 @@
   margin-bottom: 2rem;
 }
 
+/* Form container */
+.search-form {
+  padding: clamp(1rem, 2vw, 2rem);
+  width: 80%;
+  margin: 0 auto 2rem;
+}
+
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -93,8 +101,10 @@
 
 .results {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(1, 0.8fr);
   gap: 1.5rem;
+  margin: 2vw auto;
+  justify-content: center;
 }
 
 .results--empty {
@@ -129,10 +139,7 @@
 .loading-state {
   margin-top: 2rem;
   padding: 3rem 2rem;
-  border-radius: 12px;
-  background: #ffffff;
   text-align: center;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
 .spinner {

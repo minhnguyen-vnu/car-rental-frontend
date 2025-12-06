@@ -65,18 +65,10 @@
   width: 100%;
   margin: 1.5rem auto 0;
   padding: 0 2vw 2rem;
-  max-width: 70vw;
+  max-width: 95vw;
 }
 
-.search-page,
-.rental-history-page {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 1.5rem 2rem;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
+
 
 @keyframes fadeIn {
   from {
@@ -110,6 +102,6 @@
 }
 
 app-search {
-  display: block !important;
-  width: 100% !important;
+  display: block ;
+  width: 100%;
 }

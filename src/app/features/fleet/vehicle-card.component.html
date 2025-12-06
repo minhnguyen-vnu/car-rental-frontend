@@ -4,7 +4,8 @@
     <img
       src="https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/{{ vehicle.imageUrl }}"
       alt="{{ vehicle.brand }} {{ vehicle.model }}"
-      loading="lazy" />
+      loading="lazy" 
+      (error)="$event.target.src = '/logo.png'"/>
 
     <span
       class="status-pill"
@@ -41,12 +42,13 @@
         <p class="label">Màu sắc</p>
         <p class="value">{{ vehicle.color || 'Đang cập nhật' }}</p>
       </div>
-    </div>
-
-    <div class="car-actions">
+      <div class="car-actions">
       <button class="btn-detail" type="button" (click)="onViewDetail()">
         Xem chi tiết
       </button>
     </div>
+    </div>
+
+    
   </div>
 </div>

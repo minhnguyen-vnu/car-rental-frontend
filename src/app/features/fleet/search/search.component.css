@@ -8,6 +8,14 @@
   --error-color: #ef4444;
   --error-bg: #fef2f2;
 }
+.search-form {
+  background: white;
+  border-radius: 1.25rem;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* CONTAINER - MỞ RỘNG THEO MÀN HÌNH */
 .search-container {
@@ -47,16 +55,12 @@
 
 /* Form container */
 .search-form {
-  background: white;
   padding: clamp(1rem, 2vw, 2rem);
-  border-radius: 1rem;
-  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #e2e8f0;
+  width: 80%;
+  margin: 0 auto 2rem;
 }
 
-/* --- GRID --- */
+/* --- GRID SYSTEM (General) --- */
 .grid {
   display: grid;
   gap: 1rem;
@@ -272,27 +276,89 @@
   cursor: not-allowed;
 }
 
+/* =========================================
+   UPDATED SECTION: VEHICLES GRID & CARD
+   ========================================= */
+
+/* 
+   Logic chia 5 phần, lấy 3 phần giữa:
+   - Width 60% (3/5)
+   - Margin auto để tạo khoảng trống 2 bên (2/5 còn lại chia đều)
+*/
 .vehicles-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(3, 20vw); /* 3 cột bên trong vùng 60% */
+  gap: 8vh;
   width: 100%;
+  margin: 5vh auto;
+
+  justify-content: center;
+}
+
+/* Responsive cho Grid */
+@media (max-width: 1600px) {
+  .vehicles-grid {
+    width: 70%; /* Mở rộng một chút khi màn hình nhỏ hơn */
+  }
 }
 
 @media (max-width: 1200px) {
   .vehicles-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+    width: 85%; /* Mở rộng thêm */
+    grid-template-columns: repeat(2, 1fr); /* Giảm còn 2 cột */
   }
 }
 
 @media (max-width: 768px) {
   .vehicles-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    width: 100%; /* Full màn hình */
+    grid-template-columns: 1fr; /* 1 cột */
+    padding: 0 1rem; /* Thêm padding vì width đã là 100% */
   }
 }
+
+/* CARD STYLE */
+.vehicle-card {
+  border-radius: 0 !important; /* Vuông góc, không bo */
+  background: white;
+  border: 1px solid var(--border-color);
+  
+  /* Đổ bóng nhẹ */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 
+              0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.vehicle-card:hover {
+  /* Hiệu ứng hover nhẹ */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-color: var(--primary-color);
+}
+
+/* Style cho ảnh bên trong card (để đảm bảo đẹp với 40vh) */
+.vehicle-card img {
+  width: 100%;
+  height: 60%; /* Chiếm 60% chiều cao card */
+  object-fit: cover;
+}
+
+/* Style cho nội dung bên trong card */
+.vehicle-card .card-content {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* =========================================
+   END UPDATED SECTION
+   ========================================= */
 
 .no-results {
   text-align: center;
