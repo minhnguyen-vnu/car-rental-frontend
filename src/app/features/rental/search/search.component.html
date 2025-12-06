@@ -30,17 +30,20 @@
       </div>
 
       <div class="input-group">
-        <select
-          name="status"
-          class="select-input"
-          [(ngModel)]="filter.status">
-          <option value="">Tất cả trạng thái</option>
-          <option value="PENDING">PENDING</option>
-          <option value="CONFIRMED">CONFIRMED</option>
-          <option value="CANCELLED">CANCELLED</option>
-          <option value="COMPLETED">COMPLETED</option>
-        </select>
-      </div>
+  <select
+    name="status"
+    class="select-input"
+    [value]="filter.status || ''"
+    (change)="onSelectChange('status', $event)">
+    
+    <option value="">Tất cả trạng thái</option>
+    
+    <option *ngFor="let s of statusList" [value]="s.value">
+      {{ s.label }}
+    </option>
+
+  </select>
+</div>
     </div>
 
     <button

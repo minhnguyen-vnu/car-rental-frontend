@@ -6,7 +6,6 @@
 
   <form (ngSubmit)="onSearch(searchForm)" #searchForm="ngForm" class="search-form" novalidate>
     
-    <!-- ADMIN PANEL -->
     <div class="admin-panel" *ngIf="role !== 'USER'">
       <div class="panel-badge">🔧 Quản trị viên</div>
       <div class="grid grid-4">
@@ -26,14 +25,27 @@
           <label>Chi nhánh ID</label>
           <input placeholder="Nhập ID CN..." type="number" [(ngModel)]="request.branchId" name="branchId">
         </div>
+
         <div class="input-group">
           <label>Trạng thái</label>
           <input placeholder="AVAILABLE..." [(ngModel)]="request.status" name="status">
         </div>
+        
         <div class="input-group">
-          <label>Nhiên liệu</label>
-          <input placeholder="Xăng/Dầu" [(ngModel)]="request.fuelType" name="fuelType">
-        </div>
+  <label>Nhiên liệu</label>
+  <select 
+    name="fuelType" 
+    class="select-input"
+    [value]="request.fuelType || ''" 
+    (change)="onSelectChange('fuelType', $event)">
+    
+    <option value="">Tất cả</option>
+    <option *ngFor="let item of fuelTypesList" [value]="item.value">
+      {{ item.label }}
+    </option>
+  </select>
+</div>
+
         <div class="input-group">
           <label>Năm SX</label>
           <input placeholder="VD: 2023" type="number" [(ngModel)]="request.year" name="year">
@@ -41,13 +53,8 @@
       </div>
     </div>
 
-    <!-- MAIN SEARCH -->
     <div class="main-search">
-      <!-- Hàng 1: Thời gian & Loại xe -->
       <div class="grid grid-3">
-        
-        <!-- NGÀY NHẬN: Bắt buộc với USER -->
-        <!-- [required]="role === 'USER'" : Chỉ thêm thuộc tính required nếu là User -->
         <div class="input-group">
           <label [class.required-label]="role === 'USER'">Ngày nhận xe</label>
           <input 
@@ -58,13 +65,11 @@
             #pickupCtrl="ngModel"
             [class.invalid]="pickupCtrl.invalid && (searchForm.submitted || pickupCtrl.touched)">
           
-          <!-- Thông báo lỗi chỉ hiện khi invalid -->
           <div *ngIf="pickupCtrl.invalid && (searchForm.submitted || pickupCtrl.touched)" class="error-msg">
             Vui lòng chọn ngày nhận.
           </div>
         </div>
 
-        <!-- NGÀY TRẢ: Bắt buộc với USER -->
         <div class="input-group">
           <label [class.required-label]="role === 'USER'">Ngày trả xe</label>
           <input 
@@ -80,17 +85,22 @@
           </div>
         </div>
 
-        <!-- LOẠI XE -->
         <div class="input-group">
-          <label>Loại xe</label>
-          <select [(ngModel)]="request.vehicleType" name="vehicleType" class="select-input">
-            <option value="">Tất cả loại xe</option>
-            <option *ngFor="let cat of vehicleCategories" [value]="cat">{{ cat }}</option>
-          </select>
-        </div>
-      </div>
+  <label>Loại xe</label>
+  <select 
+    name="vehicleType" 
+    class="select-input"
+    [value]="request.vehicleType || ''"
+    (change)="onSelectChange('vehicleType', $event)">
+    
+    <option value="">Tất cả loại xe</option>
+    <option *ngFor="let item of vehicleTypesList" [value]="item.value">
+      {{ item.label }}
+    </option>
+  </select>
+</div>
+</div>
 
-      <!-- Hàng 2: Hãng & Mẫu -->
       <div class="grid grid-2 mt-3">
         <div class="input-group">
           <label>Hãng xe</label>
@@ -103,14 +113,13 @@
       </div>
     </div>
 
-    <!-- ADVANCED SEARCH -->
     <div class="advanced-search" [class.show]="showAdvanced">
       <div class="divider">
         <span>Bộ lọc chi tiết</span>
       </div>
       
       <div class="grid grid-4">
-        <div class="input-group" style="grid-column: span 2;"> <!-- Cho nó rộng ra -->
+        <div class="input-group" style="grid-column: span 2;">
           <label>Tiện nghi & Tính năng</label>
           <div class="feature-select-trigger" (click)="toggleFeatureModal()">
             <span>
@@ -124,34 +133,29 @@
         </div>
 
         <div class="modal-overlay" *ngIf="showFeatureModal" (click)="toggleFeatureModal()">
-  <!-- Stop propagation để click vào modal không bị đóng -->
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        
-        <div class="modal-header">
-          <h3>Chọn tiện nghi xe</h3>
-          <button class="close-btn" (click)="toggleFeatureModal()">✕</button>
-        </div>
-
-        <div class="modal-body">
-          <!-- Loop qua từng nhóm -->
-          <div class="feature-group" *ngFor="let group of featureGroups">
-            <h4 class="group-title">{{ group.name }}</h4>
-            <div class="feature-grid">
-              <label class="checkbox-item" *ngFor="let item of group.items">
-                <input type="checkbox" [(ngModel)]="item.selected" (change)="updateSelectedFeatures()" [ngModelOptions]="{standalone: true}">
-                <span class="checkmark"></span>
-                <span class="label-text">{{ item.name }}</span>
-              </label>
+          <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h3>Chọn tiện nghi xe</h3>
+              <button class="close-btn" (click)="toggleFeatureModal()">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="feature-group" *ngFor="let group of featureGroups">
+                <h4 class="group-title">{{ group.name }}</h4>
+                <div class="feature-grid">
+                  <label class="checkbox-item" *ngFor="let item of group.items">
+                    <input type="checkbox" [(ngModel)]="item.selected" (change)="updateSelectedFeatures()" [ngModelOptions]="{standalone: true}">
+                    <span class="checkmark"></span>
+                    <span class="label-text">{{ item.name }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn-text" (click)="clearFeatures()">Xóa tất cả</button>
+              <button type="button" class="btn-primary" (click)="toggleFeatureModal()">Áp dụng</button>
             </div>
           </div>
         </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn-text" (click)="clearFeatures()">Xóa tất cả</button>
-          <button type="button" class="btn-primary" (click)="toggleFeatureModal()">Áp dụng</button>
-        </div>
-      </div>
-    </div>
 
         <div class="input-group">
           <label>Khoảng giá (cơ bản)</label>
@@ -161,13 +165,22 @@
           <label>Số ghế</label>
           <input placeholder="VD: 4, 7..." type="number" [(ngModel)]="request.seats" name="seats">
         </div>
+        
         <div class="input-group">
-          <label>Hộp số</label>
-          <select [(ngModel)]="request.transmission" name="transmission" class="select-input">
-            <option value="">Tất cả</option>
-            <option *ngFor="let type of vehicleTransmissionTypes" [value]="type">{{ type }}</option>
-          </select>
-        </div>
+  <label>Hộp số</label>
+  <select 
+    name="transmission" 
+    class="select-input"
+    [value]="request.transmission || ''"
+    (change)="onSelectChange('transmission', $event)">
+    
+    <option value="">Tất cả</option>
+    <option *ngFor="let item of transmissionTypesList" [value]="item.value">
+      {{ item.label }}
+    </option>
+  </select>
+</div>
+        
         <div class="input-group">
           <label>Màu sắc</label>
           <input placeholder="VD: Trắng, Đen..." [(ngModel)]="request.color" name="color">
@@ -175,17 +188,11 @@
       </div>
     </div>
 
-    <!-- HIỂN THỊ LỖI LOGIC -->
-    <div *ngIf="dateError" class="alert-error">
-      {{ dateError }}
-    </div>
-
-    <!-- ACTIONS -->
+    <div *ngIf="dateError" class="alert-error">{{ dateError }}</div>
     <div class="form-actions">
       <button type="button" class="btn-toggle" (click)="toggleAdvanced()">
         {{ showAdvanced ? 'Thu gọn bộ lọc ▲' : 'Bộ lọc nâng cao ▼' }}
       </button>
-
       <button type="submit" [disabled]="loading" class="search-btn">
         <span *ngIf="!loading">🔍 Tìm kiếm ngay</span>
         <span *ngIf="loading">⏳ Đang xử lý...</span>
@@ -193,7 +200,7 @@
     </div>
   </form>
 
- <div class="results-container">
+  <div class="results-container">
     <div class="vehicles-grid" *ngIf="vehicles.length > 0">
       <app-vehicle-card
         *ngFor="let vehicle of vehicles; trackBy: trackById"
@@ -202,35 +209,22 @@
       </app-vehicle-card>
     </div>
 
-    <!-- UPDATE: Thêm thanh phân trang -->
     <div class="pagination-controls" *ngIf="totalPages > 0 && !loading">
-      <button 
-        class="page-btn" 
-        [disabled]="currentPage === 0" 
-        (click)="changePage(currentPage - 1)">
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="changePage(currentPage - 1)">
         &laquo; Trước
       </button>
-      
-      <span class="page-info">
-        Trang {{ currentPage + 1 }} / {{ totalPages }}
-      </span>
-      
-      <button 
-        class="page-btn" 
-        [disabled]="currentPage === totalPages - 1" 
-        (click)="changePage(currentPage + 1)">
+      <span class="page-info">Trang {{ currentPage + 1 }} / {{ totalPages }}</span>
+      <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="changePage(currentPage + 1)">
         Sau &raquo;
       </button>
     </div>
 
-    <!-- Trạng thái không tìm thấy -->
     <div *ngIf="vehicles.length === 0 && !loading && searchForm.submitted && !dateError" class="no-results">
       <div class="no-results-icon">🚗</div>
       <h3>Không tìm thấy xe nào</h3>
       <p>Hãy thử điều chỉnh lại bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
     </div>
 
-    <!-- Loading -->
     <div *ngIf="loading" class="loading-overlay">
       <div class="spinner"></div>
       <p>Đang tải dữ liệu...</p>

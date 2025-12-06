@@ -63,4 +63,8 @@ export class PaymentChargeComponent implements OnInit {
   onPaymentSuccess(url: string) {
     window.location.href = url;
   }
+
+  onBack() {
+    this.router.navigate(['/user']);
+  }
 }

@@ -80,6 +80,14 @@ export interface RentalResponseDTO {
   status: string;
 }
 
+export const RENTAL_STATUS = [
+  {value:'PENDING', label:'PENDING'},
+  {value:'CANCELLED', label:'CANCELLED'},
+  {value:'COMPLETED', label:'COMPLETED'},
+  {value:'RENTING', label:'RENTING'},
+  {value:'HOLD', label:'HOLD'},
+];
+
 @Injectable({
   providedIn: 'root'
 })

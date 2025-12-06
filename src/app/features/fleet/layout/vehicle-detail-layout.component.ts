@@ -69,6 +69,7 @@ export class VehicleDetailLayoutComponent implements OnInit {
           alert('Xe không tồn tại');
           this.router.navigate(['/']);
         }
+        console.log('Loaded vehicle:', this.vehicle);
       },
       error: () => {
         this.loading = false;

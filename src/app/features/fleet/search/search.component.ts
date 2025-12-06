@@ -8,12 +8,14 @@ import {
   VehicleRequestDTO, 
   VehicleResponseDTO, 
   VEHICLE_FEATURES_LIST,
-  VehicleFeature 
+  // IMPORT THÊM CÁC LIST CHUẨN
+  VEHICLE_TYPES,
+  TRANSMISSION_TYPES,
+  FUEL_TYPES
 } from '../../../core/services/vehicle.service';
 
 type Role = 'ADMIN' | 'USER';
 
-// Interface cho UI Group
 interface FeatureGroupUI {
   name: string;
   items: { 
@@ -35,7 +37,7 @@ export class SearchComponent implements OnInit {
 
   request: VehicleRequestDTO = {
     pickupTime: new Date().toISOString(),
-    returnTime: new Date(new Date().getTime() + 1 * 60000).toISOString(), // +1 minute
+    returnTime: new Date(new Date().getTime() + 1 * 60000).toISOString(),
     isMeaningful: true,
     page: 0,
   };
@@ -54,8 +56,11 @@ export class SearchComponent implements OnInit {
   selectedFeatureCount = 0;
   
   featureGroups: FeatureGroupUI[] = [];
-  vehicleCategories: string[] = ['SUV', 'SEDAN', 'HATCHBACK', 'TRUCK', 'MPV', 'COUPE'];
-  vehicleTransmissionTypes: string[] = ['MANUAL', 'AUTOMATIC'];
+
+  // KHAI BÁO BIẾN DÙNG TRONG HTML (Lấy từ Service)
+  readonly vehicleTypesList = VEHICLE_TYPES;
+  readonly transmissionTypesList = TRANSMISSION_TYPES;
+  readonly fuelTypesList = FUEL_TYPES;
   
   dateError: string = '';
 
@@ -66,10 +71,11 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.initFeatureGroups();
-      this.search();
+    this.search();
   }
 
-  // ... (Giữ nguyên initFeatureGroups, toggleAdvanced, toggleFeatureModal, updateSelectedFeatures, clearFeatures) ...
+  // ... (Giữ nguyên các hàm initFeatureGroups, toggleAdvanced, v.v...)
+
   private initFeatureGroups() {
     const groupsMapping: Record<string, string> = {
       'SAFETY': '🛡️ An toàn & An ninh',
@@ -143,12 +149,10 @@ export class SearchComponent implements OnInit {
       }
     }
     
-    // Reset về trang 0 khi bấm tìm kiếm mới
     this.request.page = 0;
     this.search();
   }
 
-  // UPDATE: Logic xử lý phân trang
   changePage(newPage: number) {
     if (newPage >= 0 && newPage < this.totalPages) {
       this.request.page = newPage;
@@ -157,11 +161,9 @@ export class SearchComponent implements OnInit {
   }
 
   private search() {
- 
     this.loading = true;
     this.vehicleService.getVehicles(this.request).subscribe({
       next: (res) => {
-        // CẬP NHẬT ĐỂ ĐỌC DỮ LIỆU TỪ PAGING RESPONSE
         if (res.data) {
           this.vehicles = res.data.content || [];
           this.totalPages = res.data.totalPages;
@@ -180,4 +182,13 @@ export class SearchComponent implements OnInit {
       }
     });
   }
+  // search.component.ts
+
+// Hàm này dùng để cập nhật giá trị cho request khi select thay đổi
+onSelectChange(field: keyof VehicleRequestDTO, event: Event) {
+  const selectElement = event.target as HTMLSelectElement;
+  // Cập nhật giá trị vào object request
+  // Sử dụng 'any' nếu TS báo lỗi type không khớp, hoặc ép kiểu cụ thể
+  (this.request as any)[field] = selectElement.value === "" ? null : selectElement.value;
+}
 }

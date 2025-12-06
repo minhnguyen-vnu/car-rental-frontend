@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -16,7 +15,6 @@ export interface VehicleFeature {
 
 /**
  * Danh sách Feature chuẩn (ID 0 - 52).
- * Tổng cộng 53 features, nằm trong giới hạn Safe Integer của JS (2^53 - 1).
  */
 export const VEHICLE_FEATURES_LIST: VehicleFeature[] = [
   // --- SAFETY (An toàn) ---
@@ -81,6 +79,29 @@ export const VEHICLE_FEATURES_LIST: VehicleFeature[] = [
   { id: 51, name: 'Cảm biến ánh sáng', group: 'ASSIST' },
 ];
 
+// --- CÁC DANH SÁCH TÙY CHỌN (Khớp với SQL ENUM) ---
+
+export const VEHICLE_TYPES = [
+  { value: 'SEDAN', label: 'Sedan' },
+  { value: 'SUV', label: 'SUV' },
+  { value: 'HATCHBACK', label: 'Hatchback' },
+  { value: 'TRUCK', label: 'Bán tải (Truck)' },
+  { value: 'VAN', label: 'Van' },
+  { value: 'COUPE', label: 'Coupe' }
+];
+
+export const TRANSMISSION_TYPES = [
+  { value: 'AUTOMATIC', label: 'Tự động (Automatic)' },
+  { value: 'MANUAL', label: 'Số sàn (Manual)' }
+];
+
+export const FUEL_TYPES = [
+  { value: 'GASOLINE', label: 'Xăng (Gasoline)' },
+  { value: 'DIESEL', label: 'Dầu (Diesel)' },
+  { value: 'ELECTRIC', label: 'Điện (Electric)' },
+  { value: 'HYBRID', label: 'Hybrid' }
+];
+
 export interface VehicleRequestDTO {
   returnTime: string;
   pickupTime: string;
@@ -98,23 +119,20 @@ export interface VehicleRequestDTO {
   basePrice?: number;
   status?: string;
   branchId?: number;
-  featureMask?: number; 
+  featureMask?: number;
   turnaroundMinutes?: number;
   freeText?: string;
   isMeaningful: boolean;
-  
-  // ADD: Thêm tham số phân trang vào Request DTO (size đã được bỏ)
-  page?: number; 
+  page?: number;
 }
 
 export interface VehicleResponseDTO extends VehicleRequestDTO {
   id: number;
-  imageUrl?: string; // Đảm bảo có field này khớp với JSON
+  imageUrl?: string;
 }
 
-// Interface khớp với JSON Backend trả về
 export interface PagingResponse<T> {
-  content: T[]; // Đây mới là mảng xe thực sự
+  content: T[];
   pageable: {
     pageNumber: number;
     pageSize: number;
@@ -122,9 +140,9 @@ export interface PagingResponse<T> {
     paged: boolean;
     unpaged: boolean;
     sort: {
-        sorted: boolean;
-        unsorted: boolean;
-        empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
     };
   };
   totalPages: number;
@@ -132,13 +150,13 @@ export interface PagingResponse<T> {
   last: boolean;
   first: boolean;
   size: number;
-  number: number; // Current Page Index
+  number: number;
   numberOfElements: number;
   empty: boolean;
   sort: {
-      sorted: boolean;
-      unsorted: boolean;
-      empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
   };
 }
 
@@ -147,34 +165,49 @@ export interface PagingResponse<T> {
 })
 export class VehicleService {
   private readonly baseUrl = `${environment.apiUrl}/vehicle`;
-  
-  // Mock data update theo cấu trúc Paging mới (size mặc định 15)
-  private mockPagingData: PagingResponse<VehicleResponseDTO> = {
-      content: [
-        { id: 1, vehicleCode: 'V002', brand: 'Toyota1', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 11000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO,
-        { id: 2, vehicleCode: 'V003', brand: 'Toyota2', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 12000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO,
-        { id: 3, vehicleCode: 'V004', brand: 'Toyota3', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 10300, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
-,
-        { id: 4, vehicleCode: 'V005', brand: 'Toyota4', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 10400, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
-,
-        { id: 5, vehicleCode: 'V006', brand: 'Toyota5', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 10050, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
 
-      ],
-      pageable: { pageNumber: 0, pageSize: 15, offset: 0, paged: true, unpaged: false, sort: { sorted: false, unsorted: true, empty: true } },
-      totalPages: 1,
-      totalElements: 5,
-      last: true,
-      first: true,
-      size: 15,
-      number: 0,
-      numberOfElements: 1,
-      empty: false,
-      sort: { sorted: false, unsorted: true, empty: true }
+  // Mock data cập nhật theo cấu trúc mới
+  private mockPagingData: PagingResponse<VehicleResponseDTO> = {
+    content: [
+      {
+        id: 5, vehicleCode: 'VH00005', licensePlate: '29A-22920', brand: 'Nissan', model: 'Navara', 
+        vehicleType: 'TRUCK', // Khớp ENUM
+        seats: 5,
+        transmission: 'MANUAL', // Khớp ENUM
+        fuelType: 'GASOLINE',   // Khớp ENUM
+        color: 'Red',
+        year: 2021,
+        basePrice: 1079000.0,
+        status: 'AVAILABLE',
+        branchId: 15,
+        turnaroundMinutes: 120,
+        imageUrl: "navara_red.png",
+        featureMask: 393343,
+        pickupTime: new Date().toISOString(),
+        returnTime: new Date().toISOString(),
+        isMeaningful: true
+      } as VehicleResponseDTO,
+      { 
+        id: 1, vehicleCode: 'V002', brand: 'Toyota1', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png', 
+        basePrice: 11000, status: 'AVAILABLE', year: 2023, color: 'Gray', turnaroundMinutes: 60,
+        vehicleType: 'SEDAN', transmission: 'AUTOMATIC', fuelType: 'GASOLINE',
+        pickupTime: new Date().toISOString(), returnTime: new Date().toISOString(), isMeaningful: true
+      } as VehicleResponseDTO,
+    ],
+    pageable: { pageNumber: 0, pageSize: 15, offset: 0, paged: true, unpaged: false, sort: { sorted: false, unsorted: true, empty: true } },
+    totalPages: 1,
+    totalElements: 5,
+    last: true,
+    first: true,
+    size: 15,
+    number: 0,
+    numberOfElements: 1,
+    empty: false,
+    sort: { sorted: false, unsorted: true, empty: true }
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  // ... (Giữ nguyên encodeFeatures và decodeFeatures) ...
   encodeFeatures(ids: number[]): number {
     let mask = 0;
     const uniqueIds = Array.from(new Set(ids));
@@ -189,9 +222,8 @@ export class VehicleService {
   }
 
   decodeFeatures(mask: number | undefined): number[] {
-    
     if (mask === undefined || mask === null || mask === 0) return [];
-    
+
     const ids: number[] = [];
     let currentMask = mask;
     let currentId = 0;
@@ -199,38 +231,33 @@ export class VehicleService {
     while (currentMask > 0) {
       if (currentMask % 2 !== 0) {
         if (VEHICLE_FEATURES_LIST.some(f => f.id === currentId)) {
-            ids.push(currentId);
+          ids.push(currentId);
         }
       }
       currentMask = Math.floor(currentMask / 2);
       currentId++;
       if (currentId > 53) break;
     }
-    
+
     return ids;
   }
 
-  // UPDATE: getVehicles trả về PagingResponse, bỏ tham số size, phải có pickupTime và returnTime = now + 1 minute
-  getVehicles(request: VehicleRequestDTO = {isMeaningful: true, pickupTime: new Date().toISOString(), returnTime: new Date(new Date().getTime() + 60000).toISOString()}): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
-    // Set default page nếu thiếu
+  getVehicles(request: VehicleRequestDTO = { isMeaningful: true, pickupTime: new Date().toISOString(), returnTime: new Date(new Date().getTime() + 60000).toISOString() }): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
     if (request.page === undefined) request.page = 0;
-    
-    // Không cần gửi size vì backend mặc định 15
 
     return this.http.post<GeneralResponse<PagingResponse<VehicleResponseDTO>>>(`${this.baseUrl}/get`, request).pipe(
       catchError((error: HttpErrorResponse) => {
-         if (error.status === 404 || error.status === 0) {
-             return of({
-                 status: 'SUCCESS' as any,
-                 data: this.mockPagingData
-             }).pipe(delay(500));
-         }
-         throw error;
+        if (error.status === 404 || error.status === 0) {
+          return of({
+            status: 'SUCCESS' as any,
+            data: this.mockPagingData
+          }).pipe(delay(500));
+        }
+        throw error;
       })
     );
   }
 
-  // ... (Các hàm update, remove, add giữ nguyên) ...
   updateVehicle(request: VehicleRequestDTO): Observable<GeneralResponse<VehicleResponseDTO>> {
     return this.http.put<GeneralResponse<VehicleResponseDTO>>(`${this.baseUrl}/update`, request);
   }

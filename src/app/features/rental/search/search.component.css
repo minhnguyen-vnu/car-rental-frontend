@@ -5,6 +5,8 @@
 }
 
 .search-container h2 {
+  text-align: center;
+
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
@@ -101,7 +103,8 @@
 
 .results {
   display: grid;
-  grid-template-columns: repeat(1, 0.8fr);
+  width: 80%;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   margin: 2vw auto;
   justify-content: center;

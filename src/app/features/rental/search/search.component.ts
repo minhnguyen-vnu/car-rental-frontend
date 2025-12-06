@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RentalService, RentalRequestDTO, RentalResponseDTO } from '../../../core/services/rental.service';
+import { RentalService, RentalRequestDTO, RentalResponseDTO, RENTAL_STATUS } from '../../../core/services/rental.service';
 import { RentalCardComponent } from '../rental-card.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -28,6 +28,8 @@ export class RentalSearchComponent implements OnInit {
 
   isCustomerMode = false;
   currentUser: RequestContext | null = null;
+
+  readonly statusList = RENTAL_STATUS;
 
   constructor(
     private rentalService: RentalService,
@@ -99,5 +101,11 @@ export class RentalSearchComponent implements OnInit {
       return;
     }
     this.router.navigate(['/admin/rental', id]);
+  }
+
+  onSelectChange(field: keyof RentalRequestDTO, event: Event) {
+    const element = event.target as HTMLSelectElement;
+    // Cập nhật giá trị vào filter. Nếu value rỗng thì gán null (hoặc undefined tùy DTO của bạn)
+    (this.filter as any)[field] = element.value || null; 
   }
 }

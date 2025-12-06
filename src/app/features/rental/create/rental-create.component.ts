@@ -74,6 +74,10 @@ export class RentalCreateComponent implements OnInit {
 
   private loadVehicle(): void {
     this.loading = true;
+    this.rentalForm.patchValue({
+      pickupTime: new Date().toISOString(),
+      returnTime: new Date(new Date().getTime() + 1 * 60000).toISOString()
+    }, { emitEvent: false });
     this.vehicleService.getVehicles({ id: this.vehicleId, isMeaningful: true, pickupTime: this.rentalForm.get('pickupTime')?.value, returnTime: this.rentalForm.get('returnTime')?.value }).subscribe({
       next: (res) => {
         // UPDATE: Truy cập vào mảng 'content' bên trong object phân trang

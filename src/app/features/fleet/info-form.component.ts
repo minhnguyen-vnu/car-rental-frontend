@@ -6,7 +6,10 @@ import {
   VehicleResponseDTO, 
   VehicleService, 
   VEHICLE_FEATURES_LIST, 
-  VehicleFeature 
+  VehicleFeature ,
+  VEHICLE_TYPES,
+  TRANSMISSION_TYPES,
+  FUEL_TYPES
 } from '../../core/services/vehicle.service';
 
 type FormMode = 'view' | 'edit' | 'create';
@@ -31,6 +34,11 @@ export class InfoFormComponent implements OnInit, OnChanges {
   private fb = inject(FormBuilder);
   private vehicleService = inject(VehicleService);
 
+  readonly vehicleTypes = VEHICLE_TYPES;
+  readonly transmissionTypes = TRANSMISSION_TYPES;
+  readonly fuelTypes = FUEL_TYPES;
+
+
   form!: FormGroup;
   isSubmitting = false;
 
@@ -46,10 +54,10 @@ export class InfoFormComponent implements OnInit, OnChanges {
     licensePlate: '',
     brand: '',
     model: '',
-    vehicleType: 'Sedan',
+    vehicleType: 'SEDAN',
     seats: 5,
-    transmission: 'Tự động',
-    fuelType: 'Xăng',
+    transmission: 'AUTOMATIC',
+    fuelType: 'GASOLINE',
     color: '',
     year: new Date().getFullYear(),
     basePrice: 0,
@@ -102,12 +110,12 @@ export class InfoFormComponent implements OnInit, OnChanges {
       // Các trường thông tin cơ bản
       brand: ['', Validators.required],
       model: ['', Validators.required],
-      vehicleType: ['Sedan', Validators.required],
+      vehicleType: ['SEDAN', Validators.required],
       year: [new Date().getFullYear(), [Validators.required, Validators.min(1900)]],
       color: ['', Validators.required],
       seats: [5, [Validators.required, Validators.min(2)]],
-      transmission: ['Tự động', Validators.required],
-      fuelType: ['Xăng', Validators.required],
+      transmission: ['AUTOMATIC', Validators.required],
+      fuelType: ['GASOLINE', Validators.required],
       basePrice: [0, [Validators.required, Validators.min(0)]],
       
       // Các trường dành riêng cho Admin (có thể validator required nếu là Admin)
