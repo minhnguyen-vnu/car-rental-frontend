@@ -45,14 +45,14 @@ export class VehicleDetailLayoutComponent implements OnInit {
 
         // Kiểm tra State (nếu truyền từ trang danh sách sang)
         // Cần kiểm tra thêm: state.vehicle.id phải khớp với id trên URL
-        const state = history.state;
-        if (state?.vehicle && state.vehicle.id === id) {
-          this.vehicle = state.vehicle;
-          this.loading = false;
-        } else {
+        // const state = history.state;
+        // if (state?.vehicle && state.vehicle.id === id) {
+        //   this.vehicle = state.vehicle;
+        //   this.loading = false;
+        // } else {
           // Nếu không có state hoặc ID không khớp, gọi API tải mới
           this.loadVehicleFromApi(id);
-        }
+        // }
       }
     });
   }
