@@ -118,12 +118,10 @@ export class InfoFormComponent implements OnInit, OnChanges {
 
   public applyModeAndData(): void {
     this.form.reset();
-    
     // 1. Xác định dữ liệu nguồn
     const data = this.mode === 'create' ? this.emptyVehicle : (this.vehicle || this.emptyVehicle);
     
     // 2. Patch dữ liệu vào form
-    // Lưu ý: data từ API có featureMask là số, ta cần decode nó ra mảng ID
     if (data.featureMask) {
       this.selectedFeatureIds = this.vehicleService.decodeFeatures(data.featureMask);
     } else {
@@ -134,23 +132,33 @@ export class InfoFormComponent implements OnInit, OnChanges {
     setTimeout(() => {
       this.form.patchValue({
         ...data,
-        id: (this.vehicle as any)?.id // ID thường chỉ có trong ResponseDTO
+        id: (this.vehicle as any)?.id
       });
+
+      // --- CẬP NHẬT LOGIC VALIDATOR CHO IMAGE URL ---
+      const imageControl = this.form.get('imageUrl');
+      if (this.mode === 'create') {
+        // Bắt buộc nhập ảnh khi tạo mới
+        imageControl?.setValidators([Validators.required]);
+      } else {
+        // Không bắt buộc khi edit (hoặc tùy logic của bạn)
+        imageControl?.clearValidators();
+      }
+      imageControl?.updateValueAndValidity();
+      // ----------------------------------------------
 
       // 3. Xử lý logic Enable/Disable theo Mode và Role
       if (this.mode === 'view') {
         this.form.disable();
       } else {
         this.form.enable();
-        this.form.get('id')?.disable(); // ID luôn disable
+        this.form.get('id')?.disable(); 
 
-        // Nếu là USER mà lỡ lọt vào mode edit (logic frontend sai), ta vẫn nên khóa các trường Admin
         if (this.role !== 'ADMIN') {
           this.form.get('vehicleCode')?.disable();
           this.form.get('licensePlate')?.disable();
           this.form.get('branchId')?.disable();
           this.form.get('turnaroundMinutes')?.disable();
-          // Status user có thể xem nhưng không sửa trực tiếp ở form info thường
           this.form.get('status')?.disable(); 
         }
       }
@@ -174,6 +182,7 @@ export class InfoFormComponent implements OnInit, OnChanges {
   }
 
   onSubmit(): void {
+    console.log('isAdmin:', this.isAdmin);
     if (this.form.invalid || this.isSubmitting) {
       this.form.markAllAsTouched();
       return;
@@ -223,7 +232,7 @@ export class InfoFormComponent implements OnInit, OnChanges {
   // Getters cho template gọn hơn
   get isAdmin(): boolean { return this.role === 'ADMIN'; }
   get isViewMode(): boolean { return this.mode === 'view'; }
-  get imageUrl(): string { return this.form.get('imageUrl')?.value; }
+ get imageUrl(): string { return this.form.get('imageUrl')?.value; }
   
   hasError(controlName: string, errorName: string): boolean {
     const control = this.form.get(controlName);

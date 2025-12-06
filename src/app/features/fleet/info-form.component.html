@@ -4,28 +4,34 @@
       {{ mode === 'create' ? 'Thêm xe mới' : (mode === 'edit' ? 'Chỉnh sửa thông tin' : 'Chi tiết xe') }}
     </h2>
 
-    <span class="status-badge"
+    <span class="status-badge" 
           *ngIf="mode !== 'create'"
           [class]="form.get('status')?.value">
-      {{ form.get('status')?.value === 'AVAILABLE' ? 'Sẵn sàng' :
-      (form.get('status')?.value === 'RENTED' ? 'Đang thuê' :
+      {{ form.get('status')?.value === 'AVAILABLE' ? 'Sẵn sàng' : 
+      (form.get('status')?.value === 'RENTED' ? 'Đang thuê' : 
         (form.get('status')?.value === 'MAINTENANCE' ? 'Bảo trì' : form.get('status')?.value)) }}
     </span>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
+    
     <div class="top-section">
       <div class="image-column">
+        <!-- 1. BỎ *ngIf để luôn hiển thị khung ảnh (Preview) -->
         <div class="image-wrapper">
-          <img [src]="imageUrl && imageUrl.startsWith('http') ? imageUrl : 'https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/' + imageUrl"
-               onerror="this.src='assets/images/car-placeholder.png'"
+          <!-- Logic src đã xử lý: Nếu có input (imageUrl) thì ưu tiên hiển thị -->
+          <img [src]="imageUrl && imageUrl.startsWith('http') ? imageUrl : (imageUrl ? 'https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/' + imageUrl : 'https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/Toyota-Camry-gray.png')" 
+               onerror="this.src='assets/images/car-placeholder.png'" 
                alt="Hình ảnh xe">
         </div>
-
+        
+        <!-- Input URL -->
         <div class="url-input-group" *ngIf="isAdmin && !isViewMode">
-          <label>Đường dẫn/Tên file ảnh</label>
+          <!-- Thêm dấu sao đỏ nếu là mode create -->
+          <label>Đường dẫn/Tên file ảnh <span class="req" *ngIf="mode === 'create'">*</span></label>
           <input type="text" formControlName="imageUrl" placeholder="Nhập URL hoặc tên file...">
+          <!-- Thêm thông báo lỗi -->
+          <small class="error" *ngIf="hasError('imageUrl', 'required')">Vui lòng nhập ảnh xe</small>
         </div>
       </div>
 
@@ -36,7 +42,7 @@
             <input type="text" formControlName="brand" placeholder="VD: Toyota, Mazda...">
             <small class="error" *ngIf="hasError('brand', 'required')">Bắt buộc nhập</small>
           </div>
-
+          
           <div class="field">
             <label>Mẫu xe <span class="req" *ngIf="!isViewMode">*</span></label>
             <input type="text" formControlName="model" placeholder="VD: Camry, CX-5...">
@@ -57,7 +63,7 @@
             <label>Giá thuê (VNĐ/ngày) <span class="req" *ngIf="!isViewMode">*</span></label>
             <input type="number" formControlName="basePrice">
           </div>
-
+          
           <div class="field">
             <label>Trạng thái hiện tại</label>
             <select formControlName="status" [class.readonly-select]="!isAdmin || isViewMode">
@@ -70,6 +76,7 @@
       </div>
     </div>
 
+    <!-- ... (Phần còn lại của template giữ nguyên) ... -->
     <hr class="divider">
 
     <h3 class="section-title">⚙️ Thông số kỹ thuật</h3>
@@ -145,15 +152,15 @@
         <h4 class="group-name">{{ group.name }}</h4>
 
         <div class="feature-list">
-          <div class="feature-chip"
+          <div class="feature-chip" 
                *ngFor="let item of group.items"
                (click)="toggleFeature(item.id)"
                [class.selected]="isFeatureSelected(item.id)"
                [class.disabled]="isViewMode">
-
+            
             <span *ngIf="isFeatureSelected(item.id)">✓</span>
             <span>{{ item.name }}</span>
-
+            
           </div>
         </div>
       </div>
@@ -165,12 +172,12 @@
         {{ isSubmitting ? 'Đang xử lý...' : (mode === 'create' ? 'Thêm xe' : 'Lưu thay đổi') }}
       </button>
     </div>
-
+    
     <div class="form-actions" *ngIf="isViewMode">
-      <button type="button" class="btn-cancel" (click)="onCancel()">Quay lại</button>
-      <button type="button" class="btn-primary" *ngIf="isAdmin" (click)="mode = 'edit'; applyModeAndData()">
-        ✏️ Chỉnh sửa thông tin
-      </button>
+       <button type="button" class="btn-cancel" (click)="onCancel()">Quay lại</button>
+       <button type="button" class="btn-primary" *ngIf="isAdmin" (click)="mode = 'edit'; applyModeAndData()">
+         ✏️ Chỉnh sửa thông tin
+       </button>
     </div>
 
   </form>

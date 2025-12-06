@@ -28,7 +28,7 @@ export class StorageService {
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 
-  getUser(): RequestContext | null {
+   getUser(): RequestContext | null {
     const user = localStorage.getItem(this.USER_KEY);
     return user ? JSON.parse(user) : null;
   }

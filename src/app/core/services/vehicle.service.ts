@@ -151,13 +151,13 @@ export class VehicleService {
   // Mock data update theo cấu trúc Paging mới (size mặc định 15)
   private mockPagingData: PagingResponse<VehicleResponseDTO> = {
       content: [
-        { id: 1, vehicleCode: 'V001', brand: 'Toyota', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 1000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO,
-        { id: 2, vehicleCode: 'V001', brand: 'Toyota', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 1000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO,
-        { id: 3, vehicleCode: 'V001', brand: 'Toyota', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 1000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
+        { id: 1, vehicleCode: 'V002', brand: 'Toyota1', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 11000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO,
+        { id: 2, vehicleCode: 'V003', brand: 'Toyota2', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 12000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO,
+        { id: 3, vehicleCode: 'V004', brand: 'Toyota3', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 10300, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
 ,
-        { id: 4, vehicleCode: 'V001', brand: 'Toyota', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 1000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
+        { id: 4, vehicleCode: 'V005', brand: 'Toyota4', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 10400, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
 ,
-        { id: 5, vehicleCode: 'V001', brand: 'Toyota', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 1000, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
+        { id: 5, vehicleCode: 'V006', brand: 'Toyota5', model: 'Camry', featureMask: 12345, imageUrl: 'Toyota-Camry-gray.png',basePrice: 10050, status: 'AVAILABLE',year: 2023, color: 'Gray',turnaroundMinutes: 60 } as VehicleResponseDTO
 
       ],
       pageable: { pageNumber: 0, pageSize: 15, offset: 0, paged: true, unpaged: false, sort: { sorted: false, unsorted: true, empty: true } },

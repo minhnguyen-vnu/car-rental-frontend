@@ -19,31 +19,42 @@ export class VehicleDetailLayoutComponent implements OnInit {
   editMode = false;
   loading = false;
 
-  constructor(
+   constructor(
     private vehicleService: VehicleService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute, // ActivatedRoute là service quan trọng ở đây
     public router: Router
   ) {}
 
   ngOnInit(): void {
-    // 1. Lấy mode từ route data
+    // 1. Lấy mode (admin/customer)
     this.route.data.subscribe(data => {
       this.mode = (data['mode'] as DetailMode) || 'customer';
     });
 
-    // 2. ĐỌC TRỰC TIẾP TỪ history.state – CHẠY MƯỢT DÙ F5 HAY BACK/FORWARD
-    const state = history.state;
-    if (state?.vehicle) {
-      this.vehicle = state.vehicle;
-      this.loading = false;
-      return;
-    }
+    // 2. THEO DÕI SỰ THAY ĐỔI CỦA URL (QUAN TRỌNG)
+    // Thay vì dùng snapshot, ta dùng subscribe
+    this.route.paramMap.subscribe(params => {
+      const idString = params.get('id');
+      
+      if (idString) {
+        const id = +idString;
+        
+        // Reset lại dữ liệu cũ để tránh hiển thị thông tin xe cũ trong lúc chờ tải xe mới
+        this.vehicle = undefined; 
+        this.loading = true;
 
-    // 3. Fallback: nếu không có state (vào trực tiếp URL) → lấy ID từ param và gọi API
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadVehicleFromApi(+id);
-    }
+        // Kiểm tra State (nếu truyền từ trang danh sách sang)
+        // Cần kiểm tra thêm: state.vehicle.id phải khớp với id trên URL
+        const state = history.state;
+        if (state?.vehicle && state.vehicle.id === id) {
+          this.vehicle = state.vehicle;
+          this.loading = false;
+        } else {
+          // Nếu không có state hoặc ID không khớp, gọi API tải mới
+          this.loadVehicleFromApi(id);
+        }
+      }
+    });
   }
 
   private loadVehicleFromApi(id: number): void {
