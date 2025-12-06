@@ -90,6 +90,7 @@ export class RentalDetailComponent implements OnInit {
 
   private loadRental(id: number): void {
     this.loading = true;
+    this.filter.id = id;
     this.rentalService.getRentals(this.filter).subscribe({
       next: (res) => {
         if (res.data) {
@@ -97,6 +98,10 @@ export class RentalDetailComponent implements OnInit {
           this.totalPages = res.data.totalPages;
           this.totalElements = res.data.totalElements;
           this.currentPage = res.data.number;
+          if (this.rentals.length > 0) {
+            this.rental = this.rentals[0];
+            this.applyDataToForm();
+          }
         } else {
           this.rentals = [];
           this.totalPages = 0;
