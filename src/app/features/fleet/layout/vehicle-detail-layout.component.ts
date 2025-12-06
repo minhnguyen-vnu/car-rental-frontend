@@ -110,8 +110,15 @@ export class VehicleDetailLayoutComponent implements OnInit {
   }
 
   // Hủy sửa
-  onCancelEdit(): void {
+ onCancelEdit(): void {
     this.editMode = false;
+    
+    // Gọi lại API load xe. Việc này sẽ set loading=true -> false
+    // Hành động này sẽ hủy và tạo lại InfoFormComponent (do *ngIf="!loading" ở template cha)
+    // Đảm bảo form quay về trạng thái View sạch sẽ nhất.
+    if (this.vehicle?.id) {
+      this.loadVehicleFromApi(this.vehicle.id);
+    }
   }
 
  
