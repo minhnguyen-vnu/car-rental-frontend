@@ -101,7 +101,7 @@ export interface VehicleRequestDTO {
   featureMask?: number; 
   turnaroundMinutes?: number;
   freeText?: string;
-  isMeaningFull?: boolean;
+  isMeaningful?: boolean;
   
   // ADD: Thêm tham số phân trang vào Request DTO (size đã được bỏ)
   page?: number; 

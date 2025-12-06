@@ -34,7 +34,7 @@ export class SearchComponent implements OnInit {
   @Input() role: Role = 'USER';
 
   request: VehicleRequestDTO = {
-    isMeaningFull: true,
+    isMeaningful: true,
     page: 0,
   };
   
