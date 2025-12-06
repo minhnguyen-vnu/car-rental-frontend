@@ -59,7 +59,7 @@ export class VehicleDetailLayoutComponent implements OnInit {
 
   private loadVehicleFromApi(id: number): void {
     
-    this.vehicleService.getVehicles({ id, isMeaningful: true }).subscribe({
+    this.vehicleService.getVehicles({ id, isMeaningful: true, pickupTime: new Date().toISOString(), returnTime: new Date(new Date().getTime() + 60000).toISOString() }).subscribe({
       next: (res) => {
         // CẬP NHẬT: Truy cập vào mảng 'content' bên trong object phân trang
         this.vehicle = res.data?.content?.[0];

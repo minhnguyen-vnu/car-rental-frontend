@@ -39,6 +39,8 @@ export class InfoFormComponent implements OnInit, OnChanges {
   selectedFeatureIds: number[] = []; // Lưu các ID tính năng đang được chọn
 
   private emptyVehicle: VehicleRequestDTO = {
+    pickupTime: new Date().toISOString(),
+    returnTime: new Date(new Date().getTime() + 60000).toISOString(), // +1 minute
     isMeaningful: true,
     vehicleCode: '',
     licensePlate: '',

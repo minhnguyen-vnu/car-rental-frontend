@@ -34,6 +34,8 @@ export class SearchComponent implements OnInit {
   @Input() role: Role = 'USER';
 
   request: VehicleRequestDTO = {
+    pickupTime: new Date().toISOString(),
+    returnTime: new Date(new Date().getTime() + 1 * 60000).toISOString(), // +1 minute
     isMeaningful: true,
     page: 0,
   };

@@ -74,7 +74,7 @@ export class RentalCreateComponent implements OnInit {
 
   private loadVehicle(): void {
     this.loading = true;
-    this.vehicleService.getVehicles({ id: this.vehicleId, isMeaningful: true }).subscribe({
+    this.vehicleService.getVehicles({ id: this.vehicleId, isMeaningful: true, pickupTime: this.rentalForm.get('pickupTime')?.value, returnTime: this.rentalForm.get('returnTime')?.value }).subscribe({
       next: (res) => {
         // UPDATE: Truy cập vào mảng 'content' bên trong object phân trang
         this.vehicle = res.data?.content?.[0];

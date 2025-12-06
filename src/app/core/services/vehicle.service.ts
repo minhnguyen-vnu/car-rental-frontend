@@ -82,8 +82,8 @@ export const VEHICLE_FEATURES_LIST: VehicleFeature[] = [
 ];
 
 export interface VehicleRequestDTO {
-  returnTime?: string;
-  pickupTime?: string;
+  returnTime: string;
+  pickupTime: string;
   id?: number;
   vehicleCode?: string;
   licensePlate?: string;
@@ -189,6 +189,7 @@ export class VehicleService {
   }
 
   decodeFeatures(mask: number | undefined): number[] {
+    
     if (mask === undefined || mask === null || mask === 0) return [];
     
     const ids: number[] = [];
@@ -209,8 +210,8 @@ export class VehicleService {
     return ids;
   }
 
-  // UPDATE: getVehicles trả về PagingResponse, bỏ tham số size
-  getVehicles(request: VehicleRequestDTO = {isMeaningful: true}): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
+  // UPDATE: getVehicles trả về PagingResponse, bỏ tham số size, phải có pickupTime và returnTime = now + 1 minute
+  getVehicles(request: VehicleRequestDTO = {isMeaningful: true, pickupTime: new Date().toISOString(), returnTime: new Date(new Date().getTime() + 60000).toISOString()}): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
     // Set default page nếu thiếu
     if (request.page === undefined) request.page = 0;
     
