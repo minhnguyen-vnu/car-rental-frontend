@@ -101,7 +101,7 @@ export interface VehicleRequestDTO {
   featureMask?: number; 
   turnaroundMinutes?: number;
   freeText?: string;
-  isMeaningful?: boolean;
+  isMeaningful: boolean;
   
   // ADD: Thêm tham số phân trang vào Request DTO (size đã được bỏ)
   page?: number; 
@@ -210,7 +210,7 @@ export class VehicleService {
   }
 
   // UPDATE: getVehicles trả về PagingResponse, bỏ tham số size
-  getVehicles(request: VehicleRequestDTO = {}): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
+  getVehicles(request: VehicleRequestDTO = {isMeaningful: true}): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
     // Set default page nếu thiếu
     if (request.page === undefined) request.page = 0;
     

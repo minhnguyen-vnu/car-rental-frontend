@@ -11,19 +11,22 @@
 
 .search-container {
   width: 100%;
-  max-width: 100%; /* SỬA: Đổi từ 1200px thành 100% để nó tràn màn hình */
+  /* Đổi max-width thành 98% hoặc 100% để tận dụng màn hình lớn, trừ hao một chút lề */
+  max-width: 98%; 
   margin: 0 auto;
-  padding: 1rem 0; /* Gi.select-inputảm padding dọc, bỏ padding ngang */
+  padding: 1rem 0;
 }
 
 /* --- HEADER --- */
 .header-section {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3vh; /* Dùng vh (view height) để khoảng cách co giãn theo chiều cao màn hình */
 }
 
 .header-section h2 {
-  font-size: 3rem; /* Tăng từ 2.2rem lên 3rem cho to hẳn */
+  /* QUAN TRỌNG: Dùng clamp để chữ co giãn. 
+     Tối thiểu 2rem, ưu tiên 5% chiều rộng màn hình, tối đa 3.5rem */
+  font-size: clamp(2rem, 5vw, 3.5rem); 
   font-weight: 800;
   margin: 0;
   background: var(--primary-gradient);
@@ -35,21 +38,20 @@
 .subtitle {
   color: var(--text-light);
   margin-top: 0.5rem;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem); /* Chữ phụ cũng co giãn nhẹ */
 }
 
 /* --- FORM --- */
 .search-form {
   background: white;
-  padding: 3rem; /* Tăng padding nội bộ cho thoáng */
+  /* Thay 3rem cứng thành 4% để padding co vào/phình ra theo khung */
+  padding: 4%; 
   border-radius: 24px;
   box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  margin-bottom: 3rem;
+  margin-bottom: 3vh;
   position: relative;
   overflow: hidden;
-
-  /* THÊM MỚI: Đảm bảo form luôn rộng */
   width: 100%;
   box-sizing: border-box;
 }
@@ -57,48 +59,52 @@
 /* --- GRID --- */
 .grid {
   display: grid;
-  gap: 1.5rem;
+  /* Gap dùng % để khoảng cách giữa các ô input linh hoạt */
+  gap: 2%; 
   width: 100%;
 }
+
+/* Giữ minmax kết hợp fr là tốt nhất cho responsive, 
+   nhưng tăng min-width lên một chút để trên màn to nó không bị kéo giãn quá mức */
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-.grid-4 {
-  /* Tăng minmax từ 200px lên 260px để các ô input rộng hơn */
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-.mt-3 { margin-top: 1.5rem; }
+.grid-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+.mt-3 { margin-top: 2vh; }
 
 /* --- INPUT --- */
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%; /* Đảm bảo luôn full width cột của nó */
 }
 
 .input-group label {
-  font-size: 0.95rem; /* Tăng từ 0.85rem lên 0.95rem */
+  font-size: clamp(0.9rem, 1.2vw, 1rem); /* Label co giãn nhẹ */
   font-weight: 600;
   color: var(--text-light);
   margin-left: 4px;
-  margin-bottom: 0.5rem; /* Tăng khoảng cách với input */
+  margin-bottom: 0.5rem;
 }
 
-/* DẤU SAO ĐỎ CHỈ HIỆN KHI CÓ CLASS .required-label */
 .required-label::after {
   content: " *";
   color: var(--error-color);
   font-weight: bold;
 }
 
-/* Tìm và thay thế đoạn này */
 .input-group input,
 .select-input {
   width: 100%;
-  height: 60px !important; /* QUAN TRỌNG: Thiết lập chiều cao cố định cho "đầm" tay */
-  padding: 0 1.25rem; /* Padding ngang rộng hơn */
-  font-size: 1.1rem !important;
+  /* Thay 60px cứng bằng tương đối rem (khoảng 3.75rem ~ 60px) 
+     để nếu user chỉnh cỡ chữ trình duyệt to lên thì input cũng to theo */
+  height: 3.75rem !important; 
+  padding: 0 5%; /* Padding trong input dùng % */
+  font-size: clamp(1rem, 1.2vw, 1.1rem) !important; /* Cỡ chữ nhập liệu co giãn */
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  font-weight: 500; /* Chữ đậm hơn một chút cho rõ */
+  font-weight: 500;
   background: #f8fafc;
   color: var(--text-main);
   transition: all 0.25s ease;
@@ -107,7 +113,6 @@
   align-items: center;
 }
 
-/* STYLE LỖI (CHỈ KHI INVALID) */
 .input-group input.invalid,
 .select-input.invalid {
   border-color: var(--error-color);
@@ -118,7 +123,6 @@
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
 }
 
-/* THÔNG BÁO LỖI TEXT */
 .error-msg {
   color: var(--error-color);
   font-size: 0.8rem;
@@ -132,7 +136,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ALERT LỖI LOGIC */
 .alert-error {
   background-color: var(--error-bg);
   border: 1px solid #fca5a5;
@@ -176,7 +179,7 @@
 /* --- ADMIN PANEL --- */
 .admin-panel {
   background: var(--bg-admin);
-  padding: 1.5rem;
+  padding: 2%; /* Dùng % thay vì 1.5rem */
   border-radius: 16px;
   margin-bottom: 2rem;
   border: 1px dashed #94a3b8;
@@ -186,7 +189,7 @@
 .panel-badge {
   position: absolute;
   top: -12px;
-  left: 1.5rem;
+  left: 2%; /* Căn trái theo % */
   background: #475569;
   color: white;
   font-size: 0.75rem;
@@ -233,11 +236,12 @@
 
 /* --- ACTIONS --- */
 .form-actions {
-  margin-top: 2.5rem;
+  margin-top: 4vh;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap; /* Cho phép xuống dòng nếu màn hình quá bé */
 }
 
 .btn-toggle {
@@ -246,7 +250,7 @@
   color: var(--primary-color);
   font-weight: 600;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 1vw, 1rem);
   padding: 0.75rem 1.5rem;
   border-radius: 12px;
   transition: background 0.2s;
@@ -257,19 +261,19 @@
 }
 
 .search-btn {
-  /* Xóa padding cũ, dùng height để canh giữa */
-  height: 54px;
-  padding: 0 3rem;
+  height: 3.5rem; /* Tương đương 56px */
+  /* Thay padding cố định bằng width % có giới hạn min-max */
+  width: 25%; 
+  min-width: 200px; /* Không bé hơn 200px trên mobile */
   background: var(--primary-gradient);
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 1.1rem; /* Chữ to hơn */
+  font-size: clamp(1rem, 1.2vw, 1.2rem); /* Chữ trong nút co giãn */
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
-  min-width: 220px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -286,17 +290,17 @@
   filter: grayscale(1);
 }
 
-/* --- RESULTS (FIXED GRID STRETCH) --- */
+/* --- RESULTS --- */
 .vehicles-grid {
   display: grid;
-  /* Thay auto-fit thành auto-fill để tránh card bị stretch khi ít item */
+  /* Auto-fill tốt hơn auto-fit khi muốn giữ kích thước chuẩn */
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.75rem;
+  gap: 2%; /* Gap linh hoạt */
 }
 
 .no-results {
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 5vh 2vw; /* Padding co giãn */
   background: white;
   border-radius: 24px;
   border: 1px dashed var(--border-color);
@@ -304,7 +308,7 @@
 }
 
 .no-results-icon {
-  font-size: 3.5rem;
+  font-size: clamp(3rem, 5vw, 4rem); /* Icon to nhỏ theo màn hình */
   margin-bottom: 1rem;
   opacity: 0.5;
 }
@@ -312,6 +316,7 @@
 .no-results h3 {
   color: var(--text-main);
   margin: 0 0 0.5rem 0;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
 }
 
 /* --- SPINNER --- */
@@ -336,18 +341,19 @@
 }
 
 @media (max-width: 768px) {
-  .search-form { padding: 1.5rem; }
+  .search-form { padding: 1.5rem; } /* Mobile vẫn cần padding cứng để không bị quá sát */
   .form-actions { flex-direction: column-reverse; }
-  .search-btn, .btn-toggle { width: 100%; }
+  .search-btn, .btn-toggle { width: 100%; min-width: 100%; } /* Mobile full width */
   .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }
 
-/* --- FEATURE SELECTION (MODAL TRIGGER) --- */
+/* --- MODAL (Cũng chuyển sang % và vh/vw) --- */
 .feature-select-trigger {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0 1.25rem; /* Padding ngang */
+  height: 3.75rem; /* Đồng bộ height với input */
   border: 1px solid var(--border-color);
-  border-radius: 14px;
+  border-radius: 12px; /* Đồng bộ radius với input */
   background: white;
   color: var(--text-main);
   cursor: pointer;
@@ -356,6 +362,7 @@
   align-items: center;
   user-select: none;
   transition: all 0.2s;
+  box-sizing: border-box;
 }
 
 .feature-select-trigger:hover {
@@ -363,19 +370,13 @@
   background: #f8fafc;
 }
 
-.feature-select-trigger .arrow {
-  font-size: 0.8rem;
-  color: #94a3b8;
-}
-
-/* --- MODAL STYLES --- */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5); /* Nền tối mờ */
+  background: rgba(0, 0, 0, 0.5);
   z-index: 10000;
   display: flex;
   justify-content: center;
@@ -385,9 +386,9 @@
 
 .modal-content {
   background: white;
-  width: 90%;
-  max-width: 800px;
-  max-height: 85vh;
+  width: 90%; /* Chiếm 90% màn hình bất kể độ phân giải */
+  max-width: 1000px; /* Giới hạn tối đa để không quá bè trên màn hình siêu rộng */
+  max-height: 85vh; /* Chiều cao tối đa 85% chiều cao màn hình */
   border-radius: 20px;
   display: flex;
   flex-direction: column;
@@ -403,14 +404,8 @@
   align-items: center;
 }
 
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: #1e293b;
-}
-
 .modal-body {
-  padding: 1.5rem;
+  padding: 2rem;
   overflow-y: auto;
   flex: 1;
 }
@@ -444,7 +439,8 @@
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  /* Dùng auto-fill với minmax tương đối nhỏ để dàn đều features */
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 1rem;
 }
 
@@ -458,13 +454,11 @@
   user-select: none;
 }
 
-.checkbox-item input {
-  display: none;
-}
+.checkbox-item input { display: none; }
 
 .checkmark {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem; /* Dùng rem thay px */
+  height: 1.25rem;
   border: 2px solid #cbd5e1;
   border-radius: 6px;
   margin-right: 10px;
@@ -483,7 +477,7 @@
 .checkbox-item input:checked + .checkmark::after {
   content: '✓';
   color: white;
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: bold;
 }
 
@@ -510,15 +504,17 @@
   font-weight: 600;
 }
 .btn-text:hover { color: #ef4444; }
+
 /* --- PAGINATION --- */
 .pagination-controls {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1.5rem;
-  margin-top: 3rem;
-  padding-top: 1.5rem;
+  margin-top: 4vh;
+  padding-top: 2vh;
   border-top: 1px solid var(--border-color);
+  flex-wrap: wrap;
 }
 
 .page-btn {
@@ -550,6 +546,5 @@
   font-weight: 500;
 }
 
-/* Animations */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
