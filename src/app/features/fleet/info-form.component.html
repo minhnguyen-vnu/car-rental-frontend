@@ -3,49 +3,48 @@
     <h2>
       {{ mode === 'create' ? 'Thêm xe mới' : (mode === 'edit' ? 'Chỉnh sửa thông tin' : 'Chi tiết xe') }}
     </h2>
-    <span class="status-badge" 
+
+    <span class="status-badge"
           *ngIf="mode !== 'create'"
           [class]="form.get('status')?.value">
-      {{ form.get('status')?.value }}
+      {{ form.get('status')?.value === 'AVAILABLE' ? 'Sẵn sàng' :
+      (form.get('status')?.value === 'RENTED' ? 'Đang thuê' :
+        (form.get('status')?.value === 'MAINTENANCE' ? 'Bảo trì' : form.get('status')?.value)) }}
     </span>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    
-    <!-- SECTION 1: TOP INFO (Ảnh & Thông tin chính) -->
+
     <div class="top-section">
-      <!-- Cột Trái: Ảnh xe -->
       <div class="image-column">
         <div class="image-wrapper">
-          <img [src]="'https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/' + imageUrl" 
-               onerror="this.src='assets/images/car-placeholder.png'" 
-               alt="Vehicle Image">
+          <img [src]="imageUrl && imageUrl.startsWith('http') ? imageUrl : 'https://car-rental-images-prod.s3.ap-southeast-2.amazonaws.com/' + imageUrl"
+               onerror="this.src='assets/images/car-placeholder.png'"
+               alt="Hình ảnh xe">
         </div>
-        
-        <!-- Input URL chỉ hiện khi Admin Edit/Create -->
-        <div class="url-input-group" *ngIf="isAdmin">
-          <label>URL Hình ảnh</label>
-          <input type="text" formControlName="imageUrl" placeholder="{{ imageUrl ? imageUrl : 'Nhập tên file ảnh...' }}">
+
+        <div class="url-input-group" *ngIf="isAdmin && !isViewMode">
+          <label>Đường dẫn/Tên file ảnh</label>
+          <input type="text" formControlName="imageUrl" placeholder="Nhập URL hoặc tên file...">
         </div>
       </div>
 
-      <!-- Cột Phải: Thông tin chung -->
       <div class="main-info-column">
         <div class="grid-2">
           <div class="field">
             <label>Hãng xe <span class="req" *ngIf="!isViewMode">*</span></label>
-            <input type="text" formControlName="brand" placeholder="VD: Toyota">
-            <small class="error" *ngIf="hasError('brand', 'required')">Bắt buộc</small>
-          </div>
-          
-          <div class="field">
-            <label>Mẫu xe <span class="req" *ngIf="!isViewMode">*</span></label>
-            <input type="text" formControlName="model" placeholder="VD: Camry">
-            <small class="error" *ngIf="hasError('model', 'required')">Bắt buộc</small>
+            <input type="text" formControlName="brand" placeholder="VD: Toyota, Mazda...">
+            <small class="error" *ngIf="hasError('brand', 'required')">Bắt buộc nhập</small>
           </div>
 
           <div class="field">
-            <label>Năm SX <span class="req" *ngIf="!isViewMode">*</span></label>
+            <label>Mẫu xe <span class="req" *ngIf="!isViewMode">*</span></label>
+            <input type="text" formControlName="model" placeholder="VD: Camry, CX-5...">
+            <small class="error" *ngIf="hasError('model', 'required')">Bắt buộc nhập</small>
+          </div>
+
+          <div class="field">
+            <label>Năm sản xuất <span class="req" *ngIf="!isViewMode">*</span></label>
             <input type="number" formControlName="year">
           </div>
 
@@ -58,14 +57,13 @@
             <label>Giá thuê (VNĐ/ngày) <span class="req" *ngIf="!isViewMode">*</span></label>
             <input type="number" formControlName="basePrice">
           </div>
-          
+
           <div class="field">
-            <label>Trạng thái</label>
-            <!-- User chỉ xem text, Admin có dropdown -->
+            <label>Trạng thái hiện tại</label>
             <select formControlName="status" [class.readonly-select]="!isAdmin || isViewMode">
-              <option value="AVAILABLE">Sẵn sàng</option>
-              <option value="MAINTENANCE">Bảo trì</option>
-              <option value="RENTED">Đang thuê</option>
+              <option value="AVAILABLE">Sẵn sàng (Available)</option>
+              <option value="MAINTENANCE">Bảo trì (Maintenance)</option>
+              <option value="RENTED">Đang thuê (Rented)</option>
             </select>
           </div>
         </div>
@@ -74,14 +72,18 @@
 
     <hr class="divider">
 
-    <!-- SECTION 2: CHI TIẾT KỸ THUẬT -->
     <h3 class="section-title">⚙️ Thông số kỹ thuật</h3>
     <div class="specs-grid">
       <div class="field">
         <label>Loại xe</label>
         <select formControlName="vehicleType">
-          <option>Sedan</option><option>SUV</option><option>MPV</option><option>Hatchback</option>
-          <option>Coupe</option><option>Truck</option>
+          <option>Sedan</option>
+          <option>SUV</option>
+          <option>MPV</option>
+          <option>Hatchback</option>
+          <option>Coupe</option>
+          <option>Truck</option>
+          <option>Convertible</option>
         </select>
       </div>
 
@@ -93,40 +95,43 @@
       <div class="field">
         <label>Hộp số</label>
         <select formControlName="transmission">
-          <option>Tự động</option><option>Số sàn</option>
+          <option>Tự động (Automatic)</option>
+          <option>Số sàn (Manual)</option>
         </select>
       </div>
 
       <div class="field">
         <label>Nhiên liệu</label>
         <select formControlName="fuelType">
-          <option>Xăng</option><option>Dầu</option><option>Điện</option><option>Hybrid</option>
+          <option>Xăng</option>
+          <option>Dầu (Diesel)</option>
+          <option>Điện (Electric)</option>
+          <option>Hybrid</option>
         </select>
       </div>
     </div>
 
-    <!-- SECTION 3: QUẢN TRỊ (Chỉ Admin thấy) -->
     <div class="admin-section" *ngIf="isAdmin">
-      <h3 class="section-title admin-title">🛡️ Thông tin quản trị (Admin Only)</h3>
+      <h3 class="section-title admin-title">🛡️ System Admin Console</h3>
       <div class="specs-grid">
         <div class="field">
-          <label>ID Hệ thống</label>
-          <input type="text" formControlName="id" class="input-id">
+          <label>System ID</label>
+          <input type="text" formControlName="id" readonly style="opacity: 0.7;">
         </div>
         <div class="field">
-          <label>Mã quản lý xe</label>
+          <label>Mã quản lý (Internal Code)</label>
           <input type="text" formControlName="vehicleCode">
         </div>
         <div class="field">
-          <label>Biển số xe</label>
+          <label>Biển số xe (License Plate)</label>
           <input type="text" formControlName="licensePlate" placeholder="xxX-xxxxx">
         </div>
         <div class="field">
-          <label>Chi nhánh (Branch ID)</label>
+          <label>Branch ID</label>
           <input type="number" formControlName="branchId">
         </div>
         <div class="field">
-          <label>Thời gian quay đầu (phút)</label>
+          <label>Turnaround Time (Min)</label>
           <input type="number" formControlName="turnaroundMinutes">
         </div>
       </div>
@@ -134,40 +139,38 @@
 
     <hr class="divider">
 
-    <!-- SECTION 4: TÍNH NĂNG & TIỆN NGHI (Feature Mask) -->
     <h3 class="section-title">✨ Tiện nghi & Tính năng</h3>
     <div class="features-container">
       <div class="feature-group" *ngFor="let group of featureGroups">
         <h4 class="group-name">{{ group.name }}</h4>
+
         <div class="feature-list">
-          <div class="feature-item" 
+          <div class="feature-chip"
                *ngFor="let item of group.items"
                (click)="toggleFeature(item.id)"
                [class.selected]="isFeatureSelected(item.id)"
                [class.disabled]="isViewMode">
-            
-            <!-- Checkbox ảo để style -->
-            <div class="checkbox-mock" [class.checked]="isFeatureSelected(item.id)">
-              <span *ngIf="isFeatureSelected(item.id)">✓</span>
-            </div>
+
+            <span *ngIf="isFeatureSelected(item.id)">✓</span>
             <span>{{ item.name }}</span>
+
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ACTIONS -->
     <div class="form-actions" *ngIf="!isViewMode">
       <button type="button" class="btn-cancel" (click)="onCancel()">Hủy bỏ</button>
       <button type="submit" class="btn-save" [disabled]="form.invalid || isSubmitting">
         {{ isSubmitting ? 'Đang xử lý...' : (mode === 'create' ? 'Thêm xe' : 'Lưu thay đổi') }}
       </button>
     </div>
-    
-    <!-- Back button for view mode -->
+
     <div class="form-actions" *ngIf="isViewMode">
-       <button type="button" class="btn-cancel" (click)="onCancel()">Quay lại</button>
-       <button type="button" class="btn-primary" *ngIf="isAdmin" (click)="mode = 'edit'; applyModeAndData()">Chỉnh sửa</button>
+      <button type="button" class="btn-cancel" (click)="onCancel()">Quay lại</button>
+      <button type="button" class="btn-primary" *ngIf="isAdmin" (click)="mode = 'edit'; applyModeAndData()">
+        ✏️ Chỉnh sửa thông tin
+      </button>
     </div>
 
   </form>

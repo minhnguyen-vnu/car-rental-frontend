@@ -1,79 +1,94 @@
-/* Container chính */
+/* info-form.component.css */
+
+/* --- TỔNG THỂ --- */
 .info-card {
   background: white;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  max-width: 1000px;
+  padding: 2.5rem;
+  border-radius: 20px;
+  /* Shadow mềm mại, hiện đại */
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  max-width: 1100px;
   margin: 0 auto;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #f1f5f9;
 }
 
-/* Header */
+/* --- HEADER --- */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .card-header h2 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 1.75rem;
   color: #1e293b;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-/* Status Badges */
+/* Badge trạng thái */
 .status-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 99px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-.status-badge.AVAILABLE { background: #dcfce7; color: #166534; }
-.status-badge.MAINTENANCE { background: #ffedd5; color: #9a3412; }
-.status-badge.RENTED { background: #dbeafe; color: #1e40af; }
+.status-badge.AVAILABLE { background: #dcfce7; color: #15803d; }
+.status-badge.MAINTENANCE { background: #ffedd5; color: #c2410c; }
+.status-badge.RENTED { background: #dbeafe; color: #1d4ed8; }
 
-/* --- Top Section (Image + Main Info) --- */
+/* --- SECTION 1: TOP (Ảnh & Info) --- */
 .top-section {
   display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  gap: 3rem;
+  margin-bottom: 2.5rem;
 }
 
-@media (max-width: 768px) {
-  .top-section { flex-direction: column; }
-}
-
+/* Ảnh xe đẹp hơn */
 .image-column {
   flex: 1;
-  max-width: 400px;
+  max-width: 450px;
 }
 
 .image-wrapper {
   width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
+  aspect-ratio: 16/10; /* Tỉ lệ chuẩn hơn cho xe */
+  border-radius: 16px;
   overflow: hidden;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 1rem;
+  background: #f8fafc;
+  /* Đổ bóng cho ảnh để nổi lên */
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .image-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.image-wrapper:hover img {
+  transform: scale(1.03); /* Zoom nhẹ khi hover */
 }
 
 .url-input-group label {
   font-size: 0.85rem;
+  font-weight: 600;
   color: #64748b;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
   display: block;
 }
 
+/* Form Layout */
 .main-info-column {
   flex: 1.5;
 }
@@ -84,7 +99,7 @@
   gap: 1.5rem;
 }
 
-/* --- Fields Common --- */
+/* --- INPUT FIELDS HIỆN ĐẠI --- */
 .field {
   display: flex;
   flex-direction: column;
@@ -94,173 +109,233 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: #475569;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .req { color: #ef4444; }
 
+/* Input Style: Nền xám, không viền (hoặc viền rất nhạt) */
 .field input, .field select {
-  padding: 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  border: 1px solid transparent; /* Ẩn viền mặc định */
+  background-color: #f1f5f9; /* Nền xám nhạt */
+  border-radius: 10px;
   font-size: 0.95rem;
-  transition: all 0.2s;
+  font-weight: 500;
+  color: #1e293b;
+  transition: all 0.25s ease;
 }
 
+/* Hiệu ứng khi focus */
 .field input:focus, .field select:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  background-color: white;
+  border-color: #6366f1; /* Màu tím chủ đạo */
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
 }
 
 .field input:disabled, .field select:disabled, .readonly-select {
   background: #f8fafc;
-  color: #64748b;
-  cursor: not-allowed;
-  border-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: default;
+  border: 1px solid #e2e8f0;
 }
 
+/* Highlight Giá tiền */
 .highlight-field input {
+  font-size: 1.1rem;
   font-weight: 700;
-  color: #6366f1;
-  background: #eff6ff;
-  border-color: #c7d2fe;
+  color: #4f46e5;
+  background: #eef2ff;
+}
+.highlight-field input:focus {
+  background: white;
 }
 
 .error {
   color: #ef4444;
   font-size: 0.8rem;
-  margin-top: 4px;
+  margin-top: 6px;
+  font-weight: 500;
 }
 
-/* Divider & Titles */
+/* --- DIVIDER & TITLES --- */
 .divider {
   border: 0;
-  border-top: 1px solid #e2e8f0;
-  margin: 2rem 0;
+  height: 1px;
+  background: linear-gradient(to right, #e2e8f0, white); /* Fade out divider */
+  margin: 2.5rem 0;
 }
 
 .section-title {
-  font-size: 1.2rem;
-  color: #334155;
+  font-size: 1.25rem;
+  color: #1e293b;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  font-weight: 700;
 }
 
-/* --- Specs Grid --- */
+/* Specs Grid */
 .specs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.5rem;
 }
 
-/* --- Admin Section --- */
+/* --- ADMIN SECTION (System Block) --- */
 .admin-section {
-  background: #f8fafc;
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px dashed #94a3b8;
-  margin-top: 2rem;
+  background: #1e293b; /* Nền tối admin */
+  padding: 2rem;
+  border-radius: 16px;
+  margin-top: 3rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hiệu ứng trang trí background admin */
+.admin-section::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.03) 10px,
+    rgba(255, 255, 255, 0.03) 20px
+  );
+  pointer-events: none;
 }
 
 .admin-title {
-  font-size: 1rem;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
 }
 
-/* --- Features Section --- */
+/* Input trong Admin section */
+.admin-section label { color: #cbd5e1; }
+.admin-section input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+.admin-section input:focus {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+}
+
+/* --- FEATURES (CHIPS STYLE) --- */
+/* Đây là phần thay đổi lớn nhất */
 .features-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
 }
 
 .feature-group {
-  background: #fff;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 16px;
 }
 
 .group-name {
-  font-size: 0.95rem;
-  color: #94a3b8;
-  border-bottom: 2px solid #f1f5f9;
-  padding-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #64748b;
   margin-bottom: 1rem;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .feature-list {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap; /* Cho phép xuống dòng */
   gap: 0.75rem;
 }
 
-.feature-item {
-  display: flex;
+/* Biến item thành dạng "Chip" (Viên thuốc) */
+.feature-chip {
+  display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 99px; /* Bo tròn hoàn toàn */
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 6px;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
   user-select: none;
 }
 
-.feature-item:hover:not(.disabled) {
-  background: #f8fafc;
+/* Trạng thái Hover */
+.feature-chip:hover:not(.disabled) {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.checkbox-mock {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #cbd5e1;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.checkbox-mock.checked {
-  background: #6366f1;
+/* Trạng thái đã Chọn (Active) */
+.feature-chip.selected {
+  background: #6366f1; /* Nền tím */
   border-color: #6366f1;
+  color: white; /* Chữ trắng */
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
 }
 
-.feature-item.selected span {
-  color: #1e293b;
-  font-weight: 500;
-}
-
-.feature-item.disabled {
+.feature-chip.disabled {
   cursor: default;
+  opacity: 0.8;
 }
 
-/* Actions */
+.feature-chip.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- ACTIONS --- */
 .form-actions {
-  margin-top: 3rem;
+  margin-top: 4rem;
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f1f5f9;
 }
 
 .btn-cancel, .btn-save, .btn-primary {
-  padding: 0.85rem 2rem;
-  border-radius: 10px;
+  padding: 0 2rem;
+  height: 50px; /* Chiều cao cố định cho nút */
+  border-radius: 12px;
   font-weight: 600;
+  font-size: 1rem;
   border: none;
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-cancel {
-  background: #f1f5f9;
+  background: white;
+  border: 1px solid #e2e8f0;
   color: #64748b;
+}
+.btn-cancel:hover {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #cbd5e1;
 }
 
 .btn-save, .btn-primary {
@@ -269,11 +344,21 @@
   box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
-.btn-save:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
 .btn-save:hover:not(:disabled), .btn-primary:hover {
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-card { padding: 1.5rem; }
+  .top-section { flex-direction: column; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .image-column { max-width: 100%; }
 }

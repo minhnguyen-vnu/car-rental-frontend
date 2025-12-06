@@ -5,15 +5,15 @@
   --border-color: #e2e8f0;
   --text-main: #1e293b;
   --text-light: #64748b;
-  --error-color: #ef4444; 
+  --error-color: #ef4444;
   --error-bg: #fef2f2;
 }
 
 .search-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%; /* SỬA: Đổi từ 1200px thành 100% để nó tràn màn hình */
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 1rem 0; /* Gi.select-inputảm padding dọc, bỏ padding ngang */
 }
 
 /* --- HEADER --- */
@@ -23,7 +23,7 @@
 }
 
 .header-section h2 {
-  font-size: 2.2rem;
+  font-size: 3rem; /* Tăng từ 2.2rem lên 3rem cho to hẳn */
   font-weight: 800;
   margin: 0;
   background: var(--primary-gradient);
@@ -41,13 +41,17 @@
 /* --- FORM --- */
 .search-form {
   background: white;
-  padding: 2rem;
+  padding: 3rem; /* Tăng padding nội bộ cho thoáng */
   border-radius: 24px;
   box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.8);
   margin-bottom: 3rem;
   position: relative;
   overflow: hidden;
+
+  /* THÊM MỚI: Đảm bảo form luôn rộng */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* --- GRID --- */
@@ -57,8 +61,10 @@
   width: 100%;
 }
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-.grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid-4 {
+  /* Tăng minmax từ 200px lên 260px để các ô input rộng hơn */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 .mt-3 { margin-top: 1.5rem; }
 
 /* --- INPUT --- */
@@ -69,10 +75,11 @@
 }
 
 .input-group label {
-  font-size: 0.85rem;
+  font-size: 0.95rem; /* Tăng từ 0.85rem lên 0.95rem */
   font-weight: 600;
   color: var(--text-light);
   margin-left: 4px;
+  margin-bottom: 0.5rem; /* Tăng khoảng cách với input */
 }
 
 /* DẤU SAO ĐỎ CHỈ HIỆN KHI CÓ CLASS .required-label */
@@ -82,17 +89,22 @@
   font-weight: bold;
 }
 
+/* Tìm và thay thế đoạn này */
 .input-group input,
 .select-input {
   width: 100%;
-  padding: 0.85rem 1rem;
+  height: 60px !important; /* QUAN TRỌNG: Thiết lập chiều cao cố định cho "đầm" tay */
+  padding: 0 1.25rem; /* Padding ngang rộng hơn */
+  font-size: 1.1rem !important;
   border: 1px solid var(--border-color);
-  border-radius: 14px;
-  font-size: 0.95rem;
+  border-radius: 12px;
+  font-weight: 500; /* Chữ đậm hơn một chút cho rõ */
   background: #f8fafc;
   color: var(--text-main);
   transition: all 0.25s ease;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
 }
 
 /* STYLE LỖI (CHỈ KHI INVALID) */
@@ -245,12 +257,14 @@
 }
 
 .search-btn {
-  padding: 1rem 3rem;
+  /* Xóa padding cũ, dùng height để canh giữa */
+  height: 54px;
+  padding: 0 3rem;
   background: var(--primary-gradient);
   color: white;
   border: none;
-  border-radius: 14px;
-  font-size: 1.05rem;
+  border-radius: 12px;
+  font-size: 1.1rem; /* Chữ to hơn */
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;

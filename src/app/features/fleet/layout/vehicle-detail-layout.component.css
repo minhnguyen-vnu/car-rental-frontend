@@ -1,343 +1,252 @@
-/* vehicle-detail-layout.component.css */
+/* Layout chung */
 .detail-layout {
   min-height: 100vh;
-  background: #0f172a;
-  position: relative;
-  overflow-x: hidden;
+  background-color: #f1f5f9; /* Màu nền xám xanh nhạt rất dịu mắt */
+  font-family: 'Inter', sans-serif;
 }
 
-/* Hero Header */
-.hero-header {
-  position: relative;
-  padding: 3rem 2rem 4rem;
-  overflow: hidden;
-}
-
-.hero-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  opacity: 0.95;
-}
-
-.hero-background::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-  animation: gridMove 20s linear infinite;
-}
-
-@keyframes gridMove {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(40px, 40px); }
-}
-
-.hero-content {
-  position: relative;
-  max-width: 1400px;
+.container {
+  max-width: 1100px; /* Giới hạn chiều rộng để mắt đỡ mỏi */
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap;
+  padding: 0 1.5rem;
+}
+
+/* --- HEADER AREA --- */
+.page-header {
+  background: white;
+  padding: 1.5rem 0 2rem; /* Khoảng cách trên dưới rộng rãi */
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Tầng 1: Navigation */
+.nav-breadcrumb {
+  margin-bottom: 1rem; /* Cách tầng dưới 1 đoạn */
 }
 
 .btn-back {
-  padding: 0.875rem 1.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
+  gap: 6px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
 }
 
 .btn-back:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateX(-5px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  color: #0f172a;
+  text-decoration: underline;
 }
 
-.btn-back svg {
-  transition: transform 0.3s ease;
-}
-
-.btn-back:hover svg {
-  transform: translateX(-3px);
-}
-
-.hero-title {
-  flex: 1;
-  text-align: center;
-}
-
-.hero-title h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: white;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  letter-spacing: -0.5px;
-}
-
-.subtitle {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.1rem;
-  font-weight: 400;
-}
-
-.header-actions {
+/* Tầng 2: Title & Actions */
+.title-action-row {
   display: flex;
+  justify-content: space-between; /* Đẩy 2 bên ra xa nhau */
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* Tiêu đề */
+.title-wrapper {
+  display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
-.btn-edit,
-.btn-delete,
-.btn-rent {
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
+.title-wrapper h1 {
+  margin: 0;
+  font-size: 2rem; /* Chữ to, rõ ràng */
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+/* Badge trạng thái */
+.status-badge {
+  font-size: 0.75rem;
   font-weight: 700;
-  font-size: 1rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #e2e8f0;
+  color: #475569;
+}
+.status-badge.available { background: #dcfce7; color: #166534; }
+.status-badge.rented { background: #fee2e2; color: #991b1b; }
+.status-badge.maintenance { background: #fef3c7; color: #92400e; }
+
+/* Buttons Action */
+.actions-wrapper {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Class chung cho nút bấm - Kích thước chuẩn */
+.btn {
+  height: 42px; /* Chiều cao cố định, không quá to */
+  padding: 0 1.25rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
-.btn-edit::before,
-.btn-delete::before,
-.btn-rent::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s;
-}
-
-.btn-edit:hover::before,
-.btn-delete:hover::before,
-.btn-rent:hover::before {
-  left: 100%;
-}
-
-.btn-edit {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+/* Style từng loại nút */
+.btn-primary {
+  background: #4f46e5; /* Màu tím xanh đậm */
   color: white;
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+}
+.btn-primary:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
 }
 
-.btn-edit:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
+.btn-secondary {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+.btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
 }
 
-.btn-delete {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+.btn-outline-danger {
+  background: white;
+  border: 1px solid #fca5a5;
+  color: #ef4444;
+}
+.btn-outline-danger:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
 }
 
-.btn-delete:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(239, 68, 68, 0.6);
-}
-
-.btn-rent {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  padding: 1.25rem 3rem;
-  font-size: 1.125rem;
-  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
-}
-
-.btn-rent:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 20px 50px rgba(16, 185, 129, 0.6);
-}
-
-/* Content */
+/* --- CONTENT AREA --- */
 .content-wrapper {
-  max-width: 1400px;
-  margin: -2rem auto 0;
-  padding: 0 2rem 3rem;
-  position: relative;
-  z-index: 1;
+  padding-bottom: 3rem;
 }
 
-.detail-card {
+.info-card {
   background: white;
-  border-radius: 24px;
-  padding: 3rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  padding: 2.5rem;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Loading Animation */
-.loading-card {
-  background: white;
-  border-radius: 24px;
-  padding: 5rem 3rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+/* Loading */
+.loading-state {
   text-align: center;
-}
-
-.loading-animation {
-  margin-bottom: 2rem;
-}
-
-.car-loader {
-  width: 100px;
-  height: 60px;
-  margin: 0 auto;
-  position: relative;
-  animation: carMove 2s ease-in-out infinite;
-}
-
-@keyframes carMove {
-  0%, 100% { transform: translateX(-20px); }
-  50% { transform: translateX(20px); }
-}
-
-.car-body {
-  width: 100px;
-  height: 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 15px 15px 5px 5px;
-  position: relative;
-}
-
-.car-body::before {
-  content: '';
-  position: absolute;
-  top: -15px;
-  left: 20px;
-  width: 40px;
-  height: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px 10px 0 0;
-}
-
-.car-wheel {
-  width: 20px;
-  height: 20px;
-  background: #1e293b;
-  border-radius: 50%;
-  position: absolute;
-  bottom: -10px;
-  animation: wheelRotate 1s linear infinite;
-}
-
-@keyframes wheelRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.wheel-left {
-  left: 10px;
-}
-
-.wheel-right {
-  right: 10px;
-}
-
-.loading-text {
+  padding: 4rem;
   color: #64748b;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
-  animation: pulse 1.5s ease-in-out infinite;
 }
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
 }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .hero-content {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .hero-title {
-    text-align: center;
-  }
-
-  .hero-title h1 {
-    font-size: 2rem;
-  }
-
-  .header-actions {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-}
-
+/* Mobile Responsive */
 @media (max-width: 640px) {
-  .hero-header {
-    padding: 2rem 1rem 3rem;
+  .title-action-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .hero-title h1 {
-    font-size: 1.75rem;
-  }
-
-  .subtitle {
-    font-size: 1rem;
-  }
-
-  .header-actions {
+  .actions-wrapper {
     width: 100%;
   }
 
-  .btn-edit,
-  .btn-delete,
-  .btn-rent {
-    flex: 1;
-    justify-content: center;
-    padding: 0.875rem 1.5rem;
+  .btn {
+    flex: 1; /* Nút trên mobile sẽ giãn đều */
   }
 
-  .detail-card {
-    padding: 1.5rem;
-    border-radius: 16px;
+  .title-wrapper h1 {
+    font-size: 1.5rem;
   }
+}
 
-  .content-wrapper {
-    padding: 0 1rem 2rem;
-  }
+/* --- BUTTON THUÊ XE ĐẶC BIỆT --- */
+.btn-rent-shine {
+  position: relative;
+  /* Màu nền Gradient tím hồng */
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  border: none;
+
+  /* Kích thước và font chữ */
+  height: 48px;
+  padding: 0 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 50px; /* Bo tròn viên thuốc */
+
+  /* Căn chỉnh icon và chữ */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  overflow: hidden;
+
+  /* Bóng đổ phát sáng (Glow) */
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Hiệu ứng khi di chuột vào: Nổi lên và bóng đậm hơn */
+.btn-rent-shine:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+  background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+}
+
+/* Hiệu ứng bấm nút */
+.btn-rent-shine:active {
+  transform: translateY(-1px);
+}
+
+/* Hiệu ứng luồng sáng chạy qua (Shine Animation) */
+.btn-rent-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  animation: shine 3s infinite; /* Chạy liên tục mỗi 3 giây */
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 200%; }
+  100% { left: 200%; }
 }
