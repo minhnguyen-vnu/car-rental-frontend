@@ -50,7 +50,7 @@ export class RentalCreateComponent implements OnInit {
 
   private createForm(): void {
     const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setDate(tomorrow.getDate() + 2);
     tomorrow.setHours(0, 0, 0, 0);
     const pickupDate = this.toDateInputValue(tomorrow);
     const returnDate = this.toDateInputValue(this.addDays(tomorrow, 1));

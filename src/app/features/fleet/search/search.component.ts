@@ -44,6 +44,8 @@ export class SearchComponent implements OnInit {
   
   vehicles: VehicleResponseDTO[] = [];
   loading = false;
+  minPickupDate = '';
+  minReturnDate = '';
   
   // Pagination State
   currentPage = 0;
@@ -70,6 +72,12 @@ export class SearchComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    this.minPickupDate = tomorrow.toISOString().slice(0,16);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    this.minReturnDate = tomorrow.toISOString().slice(0,16);
     this.initFeatureGroups();
     this.search();
   }

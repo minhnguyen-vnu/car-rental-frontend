@@ -62,6 +62,7 @@
             [(ngModel)]="request.pickupTime" 
             name="pickupTime" 
             [required]="role === 'USER'"
+            [min]="minPickupDate"
             #pickupCtrl="ngModel"
             [class.invalid]="pickupCtrl.invalid && (searchForm.submitted || pickupCtrl.touched)">
           
@@ -77,6 +78,7 @@
             [(ngModel)]="request.returnTime" 
             name="returnTime" 
             [required]="role === 'USER'"
+            [min]="minReturnDate"
             #returnCtrl="ngModel"
             [class.invalid]="returnCtrl.invalid && (searchForm.submitted || returnCtrl.touched)">
             
