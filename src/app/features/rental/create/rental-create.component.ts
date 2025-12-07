@@ -74,11 +74,10 @@ export class RentalCreateComponent implements OnInit {
 
   private loadVehicle(): void {
     this.loading = true;
-    this.rentalForm.patchValue({
-      pickupTime: new Date().toISOString(),
-      returnTime: new Date(new Date().getTime() + 1 * 60000).toISOString()
-    }, { emitEvent: false });
-    this.vehicleService.getVehicles({ id: this.vehicleId, isMeaningful: true, pickupTime: this.rentalForm.get('pickupTime')?.value, returnTime: this.rentalForm.get('returnTime')?.value }).subscribe({
+    const now = new Date().toISOString();
+    const oneMinuteLater = new Date(new Date().getTime() + 1 * 60000).toISOString();
+   
+    this.vehicleService.getVehicles({ id: this.vehicleId, isMeaningful: true, pickupTime: now , returnTime: oneMinuteLater }).subscribe({
       next: (res) => {
         // UPDATE: Truy cập vào mảng 'content' bên trong object phân trang
         this.vehicle = res.data?.content?.[0];
@@ -134,6 +133,16 @@ export class RentalCreateComponent implements OnInit {
     if (!user || !user.userId) {
       alert('Vui lòng đăng nhập lại!');
       this.router.navigate(['/login']);
+      return;
+    }
+
+    const pickupTime = new Date(this.rentalForm.get('pickupTime')?.value);
+    const returnTime = new Date(this.rentalForm.get('returnTime')?.value);
+    // Kiểm tra thời gian hợp lệ >= 12 giờ
+    const diffMs = returnTime.getTime() - pickupTime.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+    if (diffHours < 12) {
+      alert('Thời gian thuê tối thiểu là 12 giờ. Vui lòng điều chỉnh lại thời gian.');
       return;
     }
 

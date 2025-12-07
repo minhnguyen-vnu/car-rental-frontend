@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common'; // <--- 1. Thêm Import Location
 import { ReactiveFormsModule } from '@angular/forms';
 import { PaymentFormComponent } from './payment-form/payment-form.component';
 
@@ -29,7 +29,8 @@ export class PaymentChargeComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location: Location // <--- 2. Inject Location
   ) {}
 
   ngOnInit(): void {
@@ -64,7 +65,7 @@ export class PaymentChargeComponent implements OnInit {
     window.location.href = url;
   }
 
-  onBack() {
-    this.router.navigate(['/user']);
+ onBack() {
+    this.location.back(); // <--- 3. Quay lại trang trước đó trong history
   }
 }
