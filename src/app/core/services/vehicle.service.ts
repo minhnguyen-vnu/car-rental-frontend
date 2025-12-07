@@ -122,7 +122,7 @@ export interface VehicleRequestDTO {
   featureMask?: number;
   turnaroundMinutes?: number;
   freeText?: string;
-  isMeaningful: boolean;
+  isMeaningful?: boolean;
   page?: number;
 }
 
@@ -242,7 +242,7 @@ export class VehicleService {
     return ids;
   }
 
-  getVehicles(request: VehicleRequestDTO = { isMeaningful: true, pickupTime: new Date().toISOString(), returnTime: new Date(new Date().getTime() + 60000).toISOString() }): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
+  getVehicles(request: VehicleRequestDTO = { pickupTime: new Date().toISOString(), returnTime: new Date(new Date().getTime() + 60000).toISOString() }): Observable<GeneralResponse<PagingResponse<VehicleResponseDTO>>> {
     if (request.page === undefined) request.page = 0;
 
     return this.http.post<GeneralResponse<PagingResponse<VehicleResponseDTO>>>(`${this.baseUrl}/get`, request).pipe(
