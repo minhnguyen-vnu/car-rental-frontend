@@ -1,31 +1,31 @@
 /* user-main-layout.component.css */
-.logo {
-  float: right;
-  display: block;
-  height: 10vh;
-  margin-right: 16px;
-}
+
 .user-layout {
   min-height: 100vh;
   background-color: #f3f6fd;
 }
 
+/* --- HEADER --- */
 .user-header {
+  /* Flexbox để căn chỉnh các item bên trong */
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   color: #2d3748;
-  padding: 1rem 3vw;
+  padding: 0 3vw; /* Bỏ padding top/bottom vì đã dùng flex + height cố định */
   box-shadow: none;
   border-bottom: 1px solid rgba(237, 242, 247, 0.8);
   height: 14vh;
 }
 
-.user-header h2 {
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #1a202c;
-  letter-spacing: -0.5px;
+.logo {
+  /* XÓA float: right; */
+  display: block;
+  height: 10vh; /* Chiều cao logo */
+  width: auto;  /* Giữ tỷ lệ ảnh */
+  margin-right: 24px; /* Khoảng cách giữa Logo và Tabs */
 }
 
 .user-tabs {
@@ -34,6 +34,45 @@
   padding: 4px;
   border-radius: 12px;
   gap: 0;
+  /* Nếu bạn muốn Tabs nằm tách biệt hẳn với logo thì bỏ comment dòng dưới */
+  /* margin-left: 20px; */
+}
+
+/* Nút Logout */
+.logout-btn {
+  /* QUAN TRỌNG: margin-left: auto sẽ đẩy nút này dạt về phía bên phải cùng */
+  margin-left: auto; 
+  
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.logout-btn svg {
+  width: 28px; /* Tăng kích thước icon một chút cho cân đối với header 14vh */
+  height: 28px;
+}
+
+.logout-btn:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+/* --- CÁC PHẦN KHÁC GIỮ NGUYÊN --- */
+
+.user-header h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a202c;
+  letter-spacing: -0.5px;
 }
 
 .tab-btn {
@@ -47,6 +86,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 600;
   position: relative;
+  white-space: nowrap; /* Đảm bảo chữ không bị xuống dòng */
 }
 
 .tab-btn.active {
@@ -60,15 +100,12 @@
   color: #475569;
 }
 
-/* THU NHỎ LẠI - 85vw thay vì 94vw */
 .user-content {
   width: 100%;
   margin: 1.5rem auto 0;
   padding: 0 2vw 2rem;
   max-width: 95vw;
 }
-
-
 
 @keyframes fadeIn {
   from {
@@ -88,7 +125,6 @@
   font-size: 1.25rem;
   position: relative;
   padding-bottom: 0.75rem;
-  
 }
 
 .rental-history-page h3::after {
@@ -103,6 +139,6 @@
 }
 
 app-search {
-  display: block ;
+  display: block;
   width: 100%;
 }
