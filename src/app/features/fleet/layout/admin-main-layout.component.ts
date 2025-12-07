@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { SearchComponent } from '../search/search.component'; // fleet search
 import { InfoFormComponent } from '../info-form.component';
 import { RentalSearchComponent } from '../../rental/search/search.component'; // <-- mới thêm
+import { AuthService } from '../../../core/services/auth.service';
 
 type AdminTab = 'vehicle-search' | 'vehicle-add' | 'rental-manage'; // <-- mở rộng
 
@@ -19,6 +20,7 @@ type AdminTab = 'vehicle-search' | 'vehicle-add' | 'rental-manage'; // <-- mở 
   styleUrl: './admin-main-layout.component.css'
 })
 export class AdminMainLayoutComponent {
+  constructor(private authService: AuthService) {}
   activeTab: AdminTab = 'vehicle-search'; // mặc định mở tab quản lý xe
 
   setTab(tab: AdminTab) {
@@ -27,5 +29,9 @@ export class AdminMainLayoutComponent {
 
   onVehicleAdded() {
     this.setTab('vehicle-search');
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }
